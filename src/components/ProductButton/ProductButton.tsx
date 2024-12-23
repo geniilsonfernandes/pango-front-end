@@ -30,7 +30,7 @@ export type ProductButtonProps = {
   /**
    * An optional Product object containing product details.
    */
-  product?: Product;
+  product?: Omit<Product, 'id'>;
 
   variant?: ButtonVariant;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
@@ -46,7 +46,6 @@ export const ProductButton: React.FC<ProductButtonProps> = ({
   onIncrement,
   onDecrement,
   onRemove,
-  onClick,
   ...props
 }) => {
   return (
@@ -55,9 +54,15 @@ export const ProductButton: React.FC<ProductButtonProps> = ({
       color="gray"
       justify="space-between"
       size="xs"
+      aria-selected={!!product?.quantity}
+      aria-labelledby={name}
+      aria-label={name}
       leftSection={
         <ThemeIcon
+          component="span"
           onClick={onIncrement}
+          aria-label="increment-button"
+          role="button"
           size={14}
           variant={product ? 'filled' : 'subtle'}
           color={product ? 'green' : 'gray'}
@@ -68,9 +73,11 @@ export const ProductButton: React.FC<ProductButtonProps> = ({
       rightSection={
         product?.quantity && product.quantity >= 2 ? (
           <Flex gap={8} align="center">
-            <>{product?.quantity}</>
-
+            <span aria-label="quantity">{product?.quantity}</span>
             <ActionIcon
+              component="span"
+              role="button"
+              aria-label="decrement-button"
               size={14}
               onClick={(e) => {
                 e.stopPropagation();
@@ -83,6 +90,9 @@ export const ProductButton: React.FC<ProductButtonProps> = ({
         ) : (
           <ThemeIcon
             display={product ? 'block' : 'none'}
+            component="span"
+            aria-label="remove-button"
+            role="button"
             onClick={(e) => {
               e.stopPropagation();
               onRemove?.();

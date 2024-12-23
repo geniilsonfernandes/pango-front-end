@@ -7,6 +7,7 @@ const setup = (overrides: Partial<ProductButtonProps> = {}) => {
     onIncrement: vi.fn(),
     onDecrement: vi.fn(),
     onRemove: vi.fn(),
+    onClick: vi.fn(),
     name: 'Banana',
     product: { name: 'banana', category: 'fruits', quantity: 2 },
     ...overrides,
@@ -25,12 +26,17 @@ const setup = (overrides: Partial<ProductButtonProps> = {}) => {
 };
 
 describe('ProductButton component', () => {
-  it('renders with correct props and selected state', () => {
-    const { name, quantity, button } = setup();
+  it('renders with correct props and selected state', async () => {
+    const user = userEvent.setup();
+    const { name, quantity, button, onClick } = setup();
 
     expect(name).toBeInTheDocument();
     expect(quantity).toHaveTextContent('2');
     expect(button).toHaveAttribute('aria-selected', 'true');
+
+    await user.click(button);
+
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 
   it('calls onIncrement when increment button is clicked', async () => {
