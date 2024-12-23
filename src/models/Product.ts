@@ -1,0 +1,10 @@
+// Definindo o tipo para o produto
+export interface Product {
+  id: string | number;
+  quantity?: number;
+  unit?: string;
+  price?: number;
+  name: string;
+  category: string;
+  code?: string;
+}
