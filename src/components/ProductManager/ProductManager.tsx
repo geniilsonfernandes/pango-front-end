@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { IconSearch, IconX } from '@tabler/icons-react';
-import { ActionIcon, Button, Group, Paper, Stack, Text, TextInput } from '@mantine/core';
+import { ActionIcon, Button, Group, Paper, Stack, TextInput } from '@mantine/core';
 import { useDebouncedCallback, useToggle } from '@mantine/hooks';
 import { products as mockProducts } from '@/dummyData';
 import { Product } from '@/models/Product';
@@ -42,11 +42,7 @@ export const ProductManager = () => {
 
   const renderProducts = (list: Product[]) => {
     if (list.length === 0) {
-      return (
-        <Text ta="center" c="dimmed" fz={14}>
-          Add a product to the list
-        </Text>
-      );
+      return null;
     }
     return (
       <>
