@@ -1,32 +1,51 @@
-import React from 'react';
-import { IconDotsVertical } from '@tabler/icons-react';
-import { ActionIcon, Checkbox, CheckboxProps, Flex, Group, Text, Title } from '@mantine/core';
+import React, { useMemo } from 'react';
+import { Card, Checkbox, CheckboxProps, Flex, Group, Text, Title, Tooltip } from '@mantine/core';
+import { Product } from '@/models/Product';
+import { CurrencyMode, formatCurrency } from '@/utils/formatCurrency';
 import classes from './ProductCheckbox.module.css';
 
-type ProductCheckboxProps = {} & CheckboxProps;
+export type ProductCheckboxProps = {
+  name: string;
+  product?: Omit<Product, 'id'>;
+  currency?: CurrencyMode;
+  onClick?: () => void;
+} & CheckboxProps;
 
-export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({ checked, opacity }) => {
+export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
+  checked,
+  opacity,
+  name,
+  product,
+  currency = 'br',
+  onClick,
+}) => {
+  const value = useMemo(() => {
+    if (product) {
+      return formatCurrency((product.quantity || 0) * (product.price || 0), currency);
+    }
+    return 0;
+  }, [currency, product]);
+
   return (
-    <Checkbox.Card checked={checked} opacity={opacity} className={classes.card} tabIndex={0}>
+    <Card opacity={opacity} className={classes.card} tabIndex={0} p={0} onClick={onClick}>
       <Flex p="sm" py="xs" align="center" justify="space-between" gap={12}>
         <Group gap="xs">
-          <Checkbox.Indicator />
+          <Tooltip label={checked ? 'Remove' : 'Add'}>
+            <Checkbox checked={checked} />
+          </Tooltip>
           <Title order={3} fz="sm" fw={500}>
-            Buy milk
+            {product?.name || name}
           </Title>
         </Group>
         <Group gap="xs">
           <Text c="gray" fz="xs">
-            2L
+            {product?.quantity}
           </Text>
           <Text c="gray" fz="xs" fw="bolder">
-            $2.99
+            {value}
           </Text>
-          <ActionIcon size={16} variant="transparent" color="gray">
-            <IconDotsVertical stroke={1.5} />
-          </ActionIcon>
         </Group>
       </Flex>
-    </Checkbox.Card>
+    </Card>
   );
 };

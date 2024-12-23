@@ -1,6 +1,9 @@
 .card {
   border: none;
+  cursor: pointer;
+  display: flex;
+  
   @mixin hover {
-    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8));
+    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-5));
   }
 }
