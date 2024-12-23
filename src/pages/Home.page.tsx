@@ -1,59 +1,39 @@
-import { IconMenu, IconPlus, IconSearch, IconX } from '@tabler/icons-react';
+import { IconMenu } from '@tabler/icons-react';
 import {
   ActionIcon,
   Avatar,
   AvatarGroup,
   Badge,
   Box,
-  Button,
-  Checkbox,
   Flex,
   Group,
   Paper,
   rem,
   Stack,
   Text,
-  TextInput,
   Title,
 } from '@mantine/core';
+import { ProductCheckbox } from '@/components/ProductCheckbox/ProductCheckbox';
+import { ProductManager } from '@/components/ProductManager/ProductManager';
 import { SideNavigation } from '@/components/SideNavigation/SideNavigation';
-import { products } from '@/dummyData';
-
-const ItemCheckbox = ({ checked, opacity }: { checked?: boolean; opacity?: number }) => {
-  return (
-    <Checkbox.Card
-      checked={checked}
-      opacity={opacity}
-      styles={{
-        card: {
-          border: 'none',
-        },
-      }}
-      tabIndex={0}
-    >
-      <Flex p="sm" py="xs" align="center" justify="space-between" gap={12}>
-        <Group gap="xs">
-          <Checkbox.Indicator />
-          <Title order={3} fz="sm" fw={500}>
-            Buy milk
-          </Title>
-        </Group>
-        <Group gap="xs">
-          <Text c="gray" fz="xs">
-            2L
-          </Text>
-          <Text c="gray" fz="xs" fw="bolder">
-            $2.99
-          </Text>
-        </Group>
-      </Flex>
-    </Checkbox.Card>
-  );
-};
+import { useListStore } from '@/store/listStore';
 
 export function HomePage() {
+  const {
+    list: { products },
+  } = useListStore();
   return (
-    <Flex component={Paper} direction="column" h="100vh" px="gr" gap="sm" py="xl">
+    <Flex
+      component={Paper}
+      style={{
+        backgroundColor: 'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-5))',
+      }}
+      direction="column"
+      h="100vh"
+      px="gr"
+      gap="sm"
+      py="xl"
+    >
       <Flex gap="lg" flex={1}>
         <SideNavigation initialValue={0} step={1} />
         <Flex
@@ -65,7 +45,7 @@ export function HomePage() {
           }}
         >
           <Box flex={1}>
-            <Flex justify="space-between" align="center" my="lg">
+            <Flex justify="space-between" align="center" my="lg" px="md">
               <Box>
                 <Title order={1} fz="xl">
                   Lista de Novembro
@@ -91,10 +71,10 @@ export function HomePage() {
               </Group>
             </Flex>
             <Paper p="xxs" component={Stack} gap="xxs">
-              <ItemCheckbox />
-              <ItemCheckbox />
-              <ItemCheckbox />
-              <ItemCheckbox />
+              {products?.map((product) => (
+                <ProductCheckbox key={product.name} name={product.name} product={product} />
+              ))}
+
               <Stack pt="xs" gap="xxs">
                 <Group px="xs" pb="xs" justify="space-between">
                   <Text fw={500} fz="xs" c="dimmed">
@@ -104,44 +84,11 @@ export function HomePage() {
                     Clear
                   </Badge>
                 </Group>
-                <ItemCheckbox opacity={0.5} />
-                <ItemCheckbox opacity={0.5} />
-                <ItemCheckbox opacity={0.5} />
               </Stack>
             </Paper>
           </Box>
 
-          <Paper p="sm" w={350} withBorder shadow="md">
-            <Flex justify="space-between" align="center">
-              <Title order={3} fz="md">
-                Add products
-              </Title>
-              <ActionIcon variant="light" color="gray" radius="xl">
-                <IconX size={18} stroke={1.5} />
-              </ActionIcon>
-            </Flex>
-            <TextInput
-              mt="lg"
-              variant="filled"
-              size="md"
-              placeholder="Search for products"
-              rightSectionWidth={42}
-              leftSection={<IconSearch size={18} stroke={1.5} />}
-            />
-            <Stack pt="xs" gap="xxs">
-              {products.map((product) => (
-                <Button
-                  variant="subtle"
-                  color="gray"
-                  justify="flex-start"
-                  size="xs"
-                  leftSection={<IconPlus size={14} />}
-                >
-                  {product.name}
-                </Button>
-              ))}
-            </Stack>
-          </Paper>
+          <ProductManager />
         </Flex>
       </Flex>
     </Flex>
