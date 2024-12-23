@@ -1,21 +1,23 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { ProductManager } from './ProductManager';
+import { Stack } from '@mantine/core';
+import { ListManager } from './ListManager';
 
 //👇 This default export determines where your story goes in the story list
-const meta: Meta<typeof ProductManager> = {
-  component: ProductManager,
+const meta: Meta<typeof ListManager> = {
+  title: 'List/ListManager',
+  component: ListManager,
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 50 }}>
+      <Stack align="center" p="lg">
         <Story />
-      </div>
+      </Stack>
     ),
   ],
 };
 
 export default meta;
-type Story = StoryObj<typeof ProductManager>;
+type Story = StoryObj<typeof ListManager>;
 
 export const FirstStory: Story = {
   args: {

@@ -11,7 +11,7 @@ import { RenderIf } from '../RenderIf/RenderIf';
 
 const tabsOptions = ['Popular', 'Favorites', 'Recent'];
 
-export const ProductManager = () => {
+export const ListManager = () => {
   const {
     addProduct,
     onRemoveProduct,
