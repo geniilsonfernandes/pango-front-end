@@ -14,7 +14,7 @@
     "prettier": "prettier --check \"**/*.{ts,tsx}\"",
     "prettier:write": "prettier --write \"**/*.{ts,tsx}\"",
     "vitest": "vitest run",
-    "vitest:watch": "vitest",
+    "vitest:watch": "vitest --ui",
     "test": "npm run typecheck && npm run prettier && npm run lint && npm run vitest && npm run build",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
@@ -24,10 +24,13 @@
   "dependencies": {
     "@mantine/core": "7.15.1",
     "@mantine/hooks": "7.15.1",
+    "@mantine/notifications": "^7.15.1",
     "@tabler/icons-react": "^3.26.0",
+    "motion": "^11.15.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^7.0.1"
+    "react-router-dom": "^7.0.1",
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.3",
@@ -44,9 +47,12 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "^14.5.2",
+    "@types/node": "^22.10.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/coverage-v8": "2.1.6",
+    "@vitest/ui": "^2.1.8",
     "eslint": "^9.15.0",
     "eslint-config-mantine": "^4.0.3",
     "eslint-plugin-jsx-a11y": "^6.10.2",
