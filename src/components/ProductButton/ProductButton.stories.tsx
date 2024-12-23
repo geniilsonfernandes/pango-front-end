@@ -78,7 +78,7 @@ export const Default: Story = {
  */
 export const Selected: Story = {
   args: {
-    product: { id: 'mock', name: 'banana', category: 'fruits' },
+    product: { name: 'banana', category: 'fruits' },
   },
 };
 
@@ -98,7 +98,7 @@ export const WithDecrement: Story = {
         <ProductButton
           variant={args.variant}
           name="Banana"
-          product={{ quantity, id: 'mock', name: 'banana', category: 'fruits' }}
+          product={{ quantity, name: 'banana', category: 'fruits' }}
           onIncrement={handleIncrement}
           onDecrement={handleDecrement}
         />
@@ -108,6 +108,6 @@ export const WithDecrement: Story = {
   args: {
     onDecrement: fn(),
 
-    product: { id: 'mock', name: 'banana', category: 'fruits', quantity: 2 },
+    product: { name: 'banana', category: 'fruits', quantity: 2 },
   },
 };
