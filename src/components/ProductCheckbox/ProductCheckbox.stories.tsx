@@ -4,7 +4,8 @@ import { ProductCheckbox, type ProductCheckboxProps } from './ProductCheckbox';
 
 const mock: ProductCheckboxProps = {
   name: 'Banana',
-  product: { name: 'banana', category: 'fruits', quantity: 2, price: 10 },
+  showCurrency: true,
+  product: { name: 'banana', category: 'fruits', quantity: 2, price: 10, unit: 'kg' },
 };
 
 //👇 This default export determines where your story goes in the story list
@@ -25,6 +26,10 @@ const meta: Meta<ProductCheckboxProps> = {
       description: 'The product name displayed on the button.',
     },
 
+    showCurrency: {
+      description: 'whether to display the currency.',
+      control: 'boolean',
+    },
     product: {
       description: 'An object with product details.',
       control: 'object',

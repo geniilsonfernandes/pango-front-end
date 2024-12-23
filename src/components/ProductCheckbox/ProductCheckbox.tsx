@@ -2,12 +2,14 @@ import React, { useMemo } from 'react';
 import { Card, Checkbox, CheckboxProps, Flex, Group, Text, Title, Tooltip } from '@mantine/core';
 import { Product } from '@/models/Product';
 import { CurrencyMode, formatCurrency } from '@/utils/formatCurrency';
+import { RenderIf } from '../RenderIf/RenderIf';
 import classes from './ProductCheckbox.module.css';
 
 export type ProductCheckboxProps = {
   name: string;
   product?: Omit<Product, 'id'>;
   currency?: CurrencyMode;
+  showCurrency?: boolean;
   onClick?: () => void;
 } & CheckboxProps;
 
@@ -17,6 +19,7 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
   name,
   product,
   currency = 'br',
+  showCurrency = false,
   onClick,
 }) => {
   const value = useMemo(() => {
@@ -25,6 +28,13 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
     }
     return 0;
   }, [currency, product]);
+
+  const quantity = useMemo(() => {
+    if (product) {
+      return `${product.quantity} ${product?.unit || ''}`;
+    }
+    return 0;
+  }, [product]);
 
   return (
     <Card opacity={opacity} className={classes.card} tabIndex={0} p={0} onClick={onClick}>
@@ -39,11 +49,13 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
         </Group>
         <Group gap="xs">
           <Text c="gray" fz="xs">
-            {product?.quantity}
+            {quantity}
           </Text>
-          <Text c="gray" fz="xs" fw="bolder">
-            {value}
-          </Text>
+          <RenderIf condition={showCurrency}>
+            <Text c="gray" fz="xs" fw="bolder">
+              {value}
+            </Text>
+          </RenderIf>
         </Group>
       </Flex>
     </Card>
