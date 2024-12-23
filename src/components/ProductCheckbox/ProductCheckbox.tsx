@@ -43,7 +43,7 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
           <Tooltip label={checked ? 'Remove' : 'Add'}>
             <Checkbox checked={checked} />
           </Tooltip>
-          <Title order={3} fz="sm" fw={500}>
+          <Title order={3} fz="xs" fw={500}>
             {product?.name || name}
           </Title>
         </Group>
