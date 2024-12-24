@@ -1,12 +1,12 @@
+import { randomId } from '@mantine/hooks';
 import { Product } from '@/models/Product';
-import { generateRandomId } from '../generateRandomId';
 
 export const createProduct = (name: string, category: string): Product => {
   return {
-    id: generateRandomId(),
+    id: randomId('pango'),
     name,
     category,
-    code: generateRandomId(),
+    code: randomId('pango'),
     quantity: 1,
   };
 };

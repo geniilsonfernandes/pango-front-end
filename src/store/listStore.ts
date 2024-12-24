@@ -15,10 +15,12 @@ interface ListStore {
   addProduct: (name: string, category: string) => void;
   onDecrementProduct: (name: string) => void;
   onRemoveProduct: (name: string) => void;
+  onCheckProduct: (name: string) => void;
+  clearCheckedProducts: () => void;
 }
 
 const showNotification = (title: string, message: string, color: string) => {
-  notifications.show({ title, message, color, position: 'top-center' });
+  notifications.show({ title, message, color, position: 'bottom-left' });
 };
 
 const updateProductQuantity = (product: Product, change: number) => ({
@@ -105,6 +107,30 @@ export const useListStore = create<ListStore>((set) => ({
         list: {
           ...state.list,
           products: state.list.products.filter((product) => product.name !== name),
+        },
+      };
+    });
+  },
+
+  onCheckProduct: (name: string) => {
+    set((state) => {
+      return {
+        list: {
+          ...state.list,
+          products: state.list.products.map((product) =>
+            product.name === name ? { ...product, checked: !product.checked } : product
+          ),
+        },
+      };
+    });
+  },
+
+  clearCheckedProducts: () => {
+    set((state) => {
+      return {
+        list: {
+          ...state.list,
+          products: state.list.products.filter((product) => !product.checked),
         },
       };
     });
