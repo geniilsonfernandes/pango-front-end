@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Card, Checkbox, CheckboxProps, Flex, Group, Text, Title, Tooltip } from '@mantine/core';
+import { Button, Card, Checkbox, CheckboxProps, Group, Text, Title, Tooltip } from '@mantine/core';
 import { Product } from '@/models/Product';
 import { CurrencyMode, formatCurrency } from '@/utils/formatCurrency';
 import { RenderIf } from '../RenderIf/RenderIf';
@@ -10,6 +10,9 @@ export type ProductCheckboxProps = {
   product?: Omit<Product, 'id'>;
   currency?: CurrencyMode;
   showCurrency?: boolean;
+  onCheck?: () => void;
+  checked?: boolean;
+  onPriceClick?: () => void;
   onClick?: () => void;
 } & CheckboxProps;
 
@@ -20,6 +23,9 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
   product,
   currency = 'br',
   showCurrency = false,
+  onPriceClick,
+  onCheck,
+
   onClick,
 }) => {
   const value = useMemo(() => {
@@ -37,27 +43,41 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
   }, [product]);
 
   return (
-    <Card opacity={opacity} className={classes.card} tabIndex={0} p={0} onClick={onClick}>
-      <Flex p="sm" py="xs" align="center" justify="space-between" gap={12}>
-        <Group gap="xs">
-          <Tooltip label={checked ? 'Remove' : 'Add'}>
-            <Checkbox checked={checked} />
-          </Tooltip>
-          <Title order={3} fz="xs" fw={500}>
-            {product?.name || name}
-          </Title>
-        </Group>
-        <Group gap="xs">
-          <Text c="gray" fz="xs">
-            {quantity}
-          </Text>
-          <RenderIf condition={showCurrency}>
-            <Text c="gray" fz="xs" fw="bolder">
-              {value}
-            </Text>
-          </RenderIf>
-        </Group>
-      </Flex>
+    <Card opacity={opacity} className={classes.card} onClick={onClick}>
+      <Group gap="xs">
+        <Tooltip label={checked ? 'Remove' : 'Add'}>
+          <Checkbox
+            checked={checked}
+            onClick={(e) => e.stopPropagation()}
+            onChange={(e) => {
+              e.stopPropagation();
+              onCheck?.();
+            }}
+          />
+        </Tooltip>
+        <Title order={3} fz="sm" fw={500}>
+          {product?.name || name}
+        </Title>
+      </Group>
+      <Group gap="xs">
+        <Text c="gray" fz="xs">
+          {quantity}
+        </Text>
+        <RenderIf condition={showCurrency}>
+          <Button
+            c="gray"
+            fz="xs"
+            fw="bolder"
+            size="compact-xs"
+            variant="light"
+            color="gray"
+            radius="sm"
+            onClick={onPriceClick}
+          >
+            {value}
+          </Button>
+        </RenderIf>
+      </Group>
     </Card>
   );
 };
