@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Box, Button, Group, Paper, Stack, Text } from '@mantine/core';
+import { Box, Button, Center, Group, Loader, Paper, rem, Stack, Text } from '@mantine/core';
+import { useShoppingList } from '@/hooks/queries/useShoppingList';
 import { Product as ProductType } from '@/models/Product';
 import { useListStore } from '@/store/listStore';
 import { ListHeader } from '../ListHeader/ListHeader';
@@ -13,6 +14,7 @@ type ProductSelectionProps = {
 } & ProductType;
 
 export const List = () => {
+  const { data, isLoading } = useShoppingList();
   const {
     list: { products },
     onCheckProduct,
@@ -20,11 +22,14 @@ export const List = () => {
   } = useListStore();
 
   const [product, setProduct] = useState<ProductSelectionProps>();
-  const uncheckedProducts = useMemo(
-    () => products.filter((product) => !product.checked),
-    [products]
-  );
-  const checkedProducts = useMemo(() => products.filter((product) => product.checked), [products]);
+  const uncheckedProducts = useMemo(() => {
+    if (!data) return [];
+    return data.filter((product) => !product.checked);
+  }, [data]);
+  const checkedProducts = useMemo(() => {
+    if (!data) return [];
+    return data.filter((product) => product.checked);
+  }, [data]);
 
   return (
     <Box flex={1}>
@@ -34,6 +39,12 @@ export const List = () => {
       />
       <RenderIf
         condition={!!uncheckedProducts?.length}
+        isLoading={isLoading}
+        isLoadingFallback={
+          <Center p="md" h={rem(200)}>
+            <Loader size="sm" />
+          </Center>
+        }
         fallback={
           <Text fw={500} fz="xs" c="dimmed" p="md" ta="center">
             No items yet

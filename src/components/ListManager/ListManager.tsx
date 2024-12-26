@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import { IconSearch, IconX } from '@tabler/icons-react';
 import { ActionIcon, Button, Group, Paper, Stack, TextInput } from '@mantine/core';
-import { useDebouncedCallback, useToggle } from '@mantine/hooks';
+import { useDebouncedCallback, useListState, useToggle } from '@mantine/hooks';
 import { products as mockProducts } from '@/dummyData';
+import { useAddItem, useShoppingList } from '@/hooks/queries/useShoppingList';
 import { Product } from '@/models/Product';
 import { useListStore } from '@/store/listStore';
 import { filterItems, findProductByName } from '@/utils/filterProducts';
@@ -20,8 +21,12 @@ export const ListManager = () => {
     favoriteProducts,
     list: { products },
   } = useListStore();
+  const { mutate, isLoading } = useAddItem();
+  const { data } = useShoppingList();
+
   const [tab, toggleTab] = useToggle(tabsOptions);
   const [queryValue, setQueryValue] = useState('');
+  const [values, handlers] = useListState<{ name: string }>();
 
   const filteredProducts = useMemo(
     () =>
@@ -33,10 +38,9 @@ export const ListManager = () => {
     [queryValue]
   );
 
-  const isItemCheckboxChecked = (name: string) => findProductByName(products, name);
+  const isItemCheckboxChecked = (name: string) => findProductByName(data || [], name);
 
   const handleSearch = useDebouncedCallback((query: string) => {
-    // logic to fetch data
     console.log(query);
   }, 500);
 
@@ -48,9 +52,17 @@ export const ListManager = () => {
       <>
         {list.map((product) => (
           <ProductButton
+            key={product.name}
             name={product.name}
             product={isItemCheckboxChecked(product.name)}
-            onClick={() => addProduct(product.name, product.category)}
+            onClick={() => {
+              mutate({
+                name: product.name,
+                category: product.category,
+                id: Math.random(),
+                quantity: 1,
+              });
+            }}
             onRemove={() => onRemoveProduct(product.name)}
             onDecrement={() => onDecrementProduct(product.name)}
           />
@@ -109,6 +121,7 @@ export const ListManager = () => {
         <Group gap="xs" my="xs">
           {tabsOptions.map((label) => (
             <Button
+              key={label}
               size="compact-xs"
               radius="xl"
               variant={label === tab ? 'filled' : 'outline'}

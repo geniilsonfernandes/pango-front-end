@@ -25,7 +25,6 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
   showCurrency = false,
   onPriceClick,
   onCheck,
-
   onClick,
 }) => {
   const value = useMemo(() => {

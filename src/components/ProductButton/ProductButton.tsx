@@ -32,7 +32,18 @@ export type ProductButtonProps = {
    */
   product?: Omit<Product, 'id'>;
 
+  /**
+   * The variant of the button.
+   * @default 'subtle'
+   * @see https://mantine.dev/core/button
+   */
   variant?: ButtonVariant;
+
+  /**
+   * Whether the button is loading.
+   * @default false
+   */
+  isLoading?: boolean;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 /**
@@ -46,6 +57,7 @@ export const ProductButton: React.FC<ProductButtonProps> = ({
   onIncrement,
   onDecrement,
   onRemove,
+  isLoading,
   ...props
 }) => {
   return (
@@ -58,17 +70,19 @@ export const ProductButton: React.FC<ProductButtonProps> = ({
       aria-labelledby={name}
       aria-label={name}
       leftSection={
-        <ThemeIcon
+        <ActionIcon
+          loading={isLoading}
           component="span"
           onClick={onIncrement}
           aria-label="increment-button"
           role="button"
-          size={14}
+          size="xs"
+          radius="sm"
           variant={product ? 'filled' : 'subtle'}
           color={product ? 'green' : 'gray'}
         >
           <IconPlus size={14} />
-        </ThemeIcon>
+        </ActionIcon>
       }
       rightSection={
         product?.quantity && product.quantity >= 2 ? (
