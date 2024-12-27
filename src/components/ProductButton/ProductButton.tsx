@@ -30,7 +30,7 @@ export type ProductButtonProps = {
   /**
    * An optional Product object containing product details.
    */
-  product?: Omit<ShoppingItem, 'id'>;
+  product?: ShoppingItem;
 
   /**
    * The variant of the button.

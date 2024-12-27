@@ -2,13 +2,14 @@ import { useMemo, useState } from 'react';
 import { IconSearch, IconX } from '@tabler/icons-react';
 import { ActionIcon, Button, Group, Paper, Stack, TextInput } from '@mantine/core';
 import { useDebouncedCallback, useToggle } from '@mantine/hooks';
-import { products as mockProducts } from '@/dummyData';
+import { products as mockProducts, type Product } from '@/dummyData';
 import { useAddShoppingItem } from '@/hooks/mutation/useAddShoppingItem';
 import { useDeleteShoppingItem } from '@/hooks/mutation/useDeleteShoppingItem';
 import { useUpdateShoppingItem } from '@/hooks/mutation/useUpdateShoppingItem';
 import { useShoppingList } from '@/hooks/queries/useShoppingList';
-import { Product } from '@/models/Product';
+import { ShoppingItem } from '@/service/api';
 import { filterItems, findProductByName } from '@/utils/filterProducts';
+import { generateNumericId } from '@/utils/generateNumericId';
 import { ProductButton } from '../ProductButton/ProductButton';
 import { RenderIf } from '../RenderIf/RenderIf';
 
@@ -33,7 +34,7 @@ export const ListManager = () => {
     [queryValue]
   );
 
-  const isItemCheckboxChecked = (name: string) => findProductByName(products || [], name);
+  const isItemSelected = (name: string) => findProductByName(products || [], name);
 
   const handleSearch = useDebouncedCallback((query: string) => {
     console.log(query);
@@ -41,13 +42,37 @@ export const ListManager = () => {
 
   const handleAddItem = useDebouncedCallback((product: Product) => {
     addItem({
-      id: product.name,
+      id: generateNumericId().toString(),
       name: product.name,
       category: product.category,
       quantity: 1,
       listId: 1,
     });
   }, 500);
+
+  const itemIncrement = (item?: ShoppingItem) => {
+    if (!item) return;
+    const quantity = item.quantity + 1;
+
+    updateItem({ id: item.id, data: { quantity } });
+  };
+
+  const itemDecrement = (item?: ShoppingItem) => {
+    if (!item) return;
+    const quantity = item.quantity - 1;
+
+    if (quantity === 0) {
+      deleteItem(item.id);
+      return;
+    }
+
+    updateItem({ id: item.id, data: { quantity } });
+  };
+
+  const itemDelete = (item?: ShoppingItem) => {
+    if (!item) return;
+    deleteItem(item.id);
+  };
 
   const renderProducts = (list: Product[]) => {
     if (list.length === 0) {
@@ -57,28 +82,20 @@ export const ListManager = () => {
     return (
       <>
         {list.map((product) => {
-          const isChecked = isItemCheckboxChecked(product.name);
+          const itemSelected = isItemSelected(product.name);
           return (
             <ProductButton
               key={product.name}
               name={product.name}
-              product={isChecked}
+              product={itemSelected}
               onClick={() => {
-                if (!isChecked) {
+                if (!itemSelected) {
                   handleAddItem(product);
                 }
               }}
-              onRemove={() => deleteItem(product.name)}
-              onIncrement={() => {
-                if (isChecked && isChecked.quantity) {
-                  updateItem({ id: product.name, data: { quantity: isChecked.quantity + 1 } });
-                }
-              }}
-              onDecrement={() => {
-                if (isChecked && isChecked.quantity) {
-                  updateItem({ id: product.name, data: { quantity: isChecked.quantity - 1 } });
-                }
-              }}
+              onRemove={() => itemDelete(itemSelected)}
+              onIncrement={() => itemIncrement(itemSelected)}
+              onDecrement={() => itemDecrement(itemSelected)}
             />
           );
         })}
@@ -123,7 +140,7 @@ export const ListManager = () => {
           <ProductButton
             name={queryValue}
             variant="outline"
-            product={isItemCheckboxChecked(queryValue)}
+            product={isItemSelected(queryValue)}
             // onClick={() => addProduct(queryValue, 'custom')}
             // onRemove={() => onRemoveProduct(queryValue)}
             // onDecrement={() => onDecrementProduct(queryValue)}

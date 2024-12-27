@@ -18,7 +18,7 @@ export type ProductCheckboxProps = {
 } & CheckboxProps;
 
 export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
-  checked,
+  checked = false,
   opacity,
   name,
   shoppingItem,

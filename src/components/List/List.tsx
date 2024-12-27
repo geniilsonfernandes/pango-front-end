@@ -23,7 +23,7 @@ export const List = () => {
     clearCheckedProducts,
   } = useListStore();
 
-  const [product, setProduct] = useState<ProductSelectionProps>();
+  const [shoppingItem, setShoppingItem] = useState<ShoppingItem>();
 
   const uncheckedProducts = useMemo(() => {
     if (!data) return [];
@@ -54,7 +54,7 @@ export const List = () => {
           </Text>
         }
       >
-        <Paper p="xs" component={Stack} gap="xs">
+        <Paper p="xs" component={Stack} gap="xxs">
           <AnimatePresence>
             {uncheckedProducts?.map((item) => (
               <motion.div
@@ -62,20 +62,21 @@ export const List = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
+                transition={{ duration: 0.2, delay: 0.2 }}
                 layout
               >
                 <ProductCheckbox
                   name={item.name}
-                  shoppingItem={product}
+                  shoppingItem={item}
                   showCurrency
-                  onClick={() => setProduct(product)}
+                  onClick={() => setShoppingItem(item)}
                   onCheck={() =>
                     toggleShoppingItem({
-                      id: item.name,
+                      id: item.id,
                       checked: true,
                     })
                   }
-                  onPriceClick={() => setProduct({ ...item, initialfocus: 'quantity' })}
+                  onPriceClick={() => setShoppingItem(item)}
                   checked={item.checked}
                 />
               </motion.div>
@@ -85,53 +86,55 @@ export const List = () => {
       </RenderIf>
       <RenderIf condition={!!checkeditems?.length}>
         <Stack pt="xs" px="sm" gap="xxs">
-          <motion.div layout>
-            <Group px="xs" pb="xs" justify="space-between">
-              <Text fw={500} fz="xs" c="dimmed">
-                Checked Items
-              </Text>
-              <Button
-                onClick={clearCheckedProducts}
-                variant="outline"
-                size="compact-xs"
-                radius="xl"
-              >
-                Clear
-              </Button>
-            </Group>
-          </motion.div>
-
-          {checkeditems?.map((item) => (
-            <motion.div
-              key={item.name}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              layout
-            >
-              <ProductCheckbox
-                name={item.name}
-                shoppingItem={item}
-                showCurrency
-                onClick={() => setProduct(product)}
-                onCheck={() =>
-                  toggleShoppingItem({
-                    id: item.name,
-                    checked: false,
-                  })
-                }
-                checked={item.checked}
-              />
+          <AnimatePresence>
+            <motion.div layout>
+              <Group px="xs" pb="xs" justify="space-between">
+                <Text fw={500} fz="xs" c="dimmed">
+                  Checked Items
+                </Text>
+                <Button
+                  onClick={clearCheckedProducts}
+                  variant="outline"
+                  size="compact-xs"
+                  radius="xl"
+                >
+                  Clear
+                </Button>
+              </Group>
             </motion.div>
-          ))}
+
+            {checkeditems?.map((item) => (
+              <motion.div
+                key={item.name}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                layout
+              >
+                <ProductCheckbox
+                  name={item.name}
+                  shoppingItem={item}
+                  showCurrency
+                  onClick={() => setShoppingItem(item)}
+                  onCheck={() =>
+                    toggleShoppingItem({
+                      id: item.id,
+                      checked: false,
+                    })
+                  }
+                  checked={item.checked}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </Stack>
       </RenderIf>
 
       <Product.modal
-        opened={!!product}
-        initialFocus={product?.initialfocus}
-        onClose={() => setProduct(undefined)}
-        title="Product Details"
+        opened={!!shoppingItem}
+        shoppingItem={shoppingItem}
+        onClose={() => setShoppingItem(undefined)}
+        title={`${shoppingItem?.name} - ${shoppingItem?.id}`}
       />
     </Box>
   );

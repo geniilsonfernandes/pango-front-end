@@ -1,5 +1,6 @@
 import React from 'react';
 import { IconTrash } from '@tabler/icons-react';
+import * as z from 'zod';
 import {
   ActionIcon,
   Button,
@@ -15,9 +16,14 @@ import {
   TextInput,
   Tooltip,
 } from '@mantine/core';
+import { useForm, zodResolver } from '@mantine/form';
+import { notifications } from '@mantine/notifications';
+// import { useForm } from 'react-hook-form';
 import { categories } from '@/dummyData';
 import { useUpdateShoppingItem } from '@/hooks/mutation/useUpdateShoppingItem';
-import { Product as ProductType } from '@/models/Product';
+import { ShoppingItem } from '@/service/api';
+
+// import { useForm } from 'react-hook-form';
 
 // type ProductModalProps<T> = {
 //   component?: ComponentType<T>;
@@ -30,31 +36,127 @@ import { Product as ProductType } from '@/models/Product';
 // };
 
 export type FormProps = {
+  shoppingItem?: ShoppingItem;
   initialFocus?: 'name' | 'category' | 'quantity' | 'unit';
   onCancel?: () => void;
 };
 
+const shoppingItemSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  category: z.string(),
+  quantity: z.number(),
+  price: z.number().optional(),
+  unit: z.string().optional(),
+});
+
 const Form: React.FC<FormProps> = ({ onCancel, shoppingItem }) => {
-  const { mutate: updateItem } = useUpdateShoppingItem();
+  const { mutate: updateItem, isLoading } = useUpdateShoppingItem();
+
+  const form = useForm({
+    mode: 'uncontrolled',
+
+    initialValues: {
+      name: shoppingItem?.name || '',
+      category: shoppingItem?.category || '',
+      quantity: shoppingItem?.quantity || 0,
+      unit: shoppingItem?.unit || '',
+      price: shoppingItem?.price || 0,
+    },
+    validate: zodResolver(shoppingItemSchema),
+  });
+
   return (
-    <>
+    <form
+      onSubmit={form.onSubmit((values) => {
+        if (!shoppingItem?.id) {
+          notifications.show({
+            title: 'Error',
+            message: 'Item not found',
+            color: 'red',
+          });
+          return;
+        }
+        updateItem(
+          {
+            id: shoppingItem?.id,
+            data: values,
+          },
+          {
+            onSuccess: () => {
+              notifications.show({
+                title: 'Success',
+                message: 'Item updated successfully',
+                color: 'green',
+              });
+              onCancel?.();
+            },
+            onError: (error) => {
+              notifications.show({
+                title: 'Error',
+                message: "Can't update item",
+                color: 'red',
+              });
+            },
+          }
+        );
+      })}
+    >
       <Grid gutter="sm">
         <Grid.Col span={12}>
-          <TextInput label="Name" placeholder="ex: Rice" />
+          <TextInput
+            label="Name"
+            placeholder="ex: Rice"
+            {...form.getInputProps('name')}
+            error={form.errors.name}
+          />
         </Grid.Col>
         <Grid.Col span={12}>
           <Select
             label="Category"
             placeholder="Pick category"
+            {...form.getInputProps('category')}
+            error={form.errors.category}
             data={categories.map((item) => ({ label: item.name, value: item.name }))}
           />
         </Grid.Col>
+
         <Grid.Col span={6}>
-          <NumberInput label="Quantity" placeholder="ex: 2" />
+          <NumberInput
+            label="Quantity"
+            placeholder="ex: 2"
+            {...form.getInputProps('quantity')}
+            error={form.errors.quantity}
+          />
         </Grid.Col>
         <Grid.Col span={6}>
-          <TextInput label="Unit" placeholder="ex: kg" />
+          <TextInput
+            label="Unit"
+            placeholder="ex: kg"
+            {...form.getInputProps('unit')}
+            error={form.errors.unit}
+          />
         </Grid.Col>
+        <Grid.Col span={6}>
+          <NumberInput
+            label="Price"
+            prefix="R$ "
+            thousandSeparator=","
+            defaultValue={1_000_000}
+            {...form.getInputProps('price')}
+            error={form.errors.price}
+          />
+        </Grid.Col>
+        {/* <Grid.Col span={4}>
+          <NumberInput
+            label="Total"
+            prefix="R$ "
+            thousandSeparator=","
+            defaultValue={1_000_000}
+            {...form.getInputProps('price')}
+            error={form.errors.price}
+            disabled
+          />
+        </Grid.Col> */}
       </Grid>
       <Divider my="md" />
       <Group mt="lg" justify="space-between">
@@ -67,27 +169,29 @@ const Form: React.FC<FormProps> = ({ onCancel, shoppingItem }) => {
           <Button variant="outline" color="gray" onClick={onCancel}>
             Cancel
           </Button>
-          <Button>Save</Button>
+          <Button type="submit" loading={isLoading}>
+            Save
+          </Button>
         </Group>
       </Group>
-    </>
+    </form>
   );
 };
 
-const Root = () => {
-  return <Form />;
+const Root = ({ shoppingItem }: { shoppingItem?: ShoppingItem }) => {
+  return <Form shoppingItem={shoppingItem} />;
 };
 
 type ModalFormProps = {
-  product?: ProductType;
+  shoppingItem?: ShoppingItem;
   initialFocus?: 'name' | 'category' | 'quantity' | 'unit';
 } & ModalProps;
-const ModalForm: React.FC<ModalFormProps> = (props) => {
+const ModalForm: React.FC<ModalFormProps> = ({ shoppingItem, ...props }) => {
   return (
     <Modal {...props}>
       <Form
         initialFocus={props.initialFocus}
-        product={props.product}
+        shoppingItem={shoppingItem}
         onCancel={() => {
           props.onClose?.();
         }}
@@ -97,15 +201,15 @@ const ModalForm: React.FC<ModalFormProps> = (props) => {
 };
 
 type DrawerFormProps = {
-  product?: ProductType;
+  shoppingItem?: ShoppingItem;
   initialFocus?: 'name' | 'category' | 'quantity' | 'unit';
 } & DrawerProps;
-const DrawerForm: React.FC<DrawerFormProps> = (props) => {
+const DrawerForm: React.FC<DrawerFormProps> = ({ shoppingItem, ...props }) => {
   return (
     <Drawer {...props}>
       <Form
         initialFocus={props.initialFocus}
-        product={props.product}
+        shoppingItem={shoppingItem}
         onCancel={() => {
           props.onClose?.();
         }}

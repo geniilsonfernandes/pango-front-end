@@ -2,11 +2,11 @@ import axios from 'axios';
 
 
 export type ShoppingItem = {
-  id: string | number;
+  id: string;
   listId?: number;
   name: string;
   category: string;
-  quantity?: number;
+  quantity: number;
   unit?: string;
   price?: number;
   checked?: boolean;
@@ -21,7 +21,6 @@ class ShoppingListAPI {
   constructor(baseURL: string) {
     this.baseURL = baseURL;
   }
-
 
   // List all items
   async list(): Promise<ShoppingItem[]> {
@@ -52,18 +51,15 @@ class ShoppingListAPI {
 
   // Update an existing item
   async update(id: string | number, updatedItem: Partial<ShoppingItem>): Promise<ShoppingItem> {
-    const existingItems = await this.list();
-    const existingItem = existingItems.find((i) => i.name === id);
+    try {
+      const response = await axios.patch(`${this.baseURL}/shoppingList/${id}`, {
+        ...updatedItem,
+      });
 
-    if (!existingItem) {
-      throw new Error(`Item with ID ${id} not found`);
+      return response.data;
+    } catch (error) {
+      throw new Error(`Failed to update item: ${error}`);
     }
-    const updatedItemWithId = {
-      ...updatedItem,
-    };
-
-    const response = await axios.patch(`${this.baseURL}/shoppingList/${id}`, updatedItemWithId);
-    return response.data;
   }
 
   async incrementQuantity(id: string | number): Promise<ShoppingItem> {

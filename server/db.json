@@ -29,68 +29,84 @@
   ],
   "shoppingList": [
     {
-      "id": "Chocolate Cookies",
-      "name": "Chocolate Cookies",
-      "category": "Snacks",
+      "id": "540269942",
+      "name": "Rice2",
+      "category": "Basic Foods",
       "quantity": 1,
+      "listId": 1,
       "checked": false,
-      "createdAt": "2024-12-27T15:14:39.802Z"
+      "createdAt": "2024-12-27T19:44:39.014Z",
+      "unit": "",
+      "price": 0
     },
     {
-      "id": "Milk",
-      "name": "Milk",
-      "category": "Dairy",
+      "id": "665977987",
+      "name": "Beans",
+      "category": "Basic Foods",
       "quantity": 1,
+      "listId": 1,
       "checked": false,
-      "createdAt": "2024-12-27T15:15:00.315Z"
+      "createdAt": "2024-12-27T20:02:29.542Z"
     },
     {
-      "id": "Wheat Flour",
-      "name": "Wheat Flour",
-      "category": "Bakery",
-      "quantity": 2,
+      "id": "391656287",
+      "name": "Pasta",
+      "category": "Basic Foods",
+      "quantity": 1,
+      "listId": 1,
       "checked": false,
-      "createdAt": "2024-12-27T15:15:21.054Z"
+      "createdAt": "2024-12-27T20:02:46.247Z"
     },
     {
-      "id": "Olive Oil",
-      "name": "Olive Oil",
+      "id": "907320849",
+      "name": "Salt",
       "category": "Oils and Spices",
       "quantity": 1,
-      "checked": false,
-      "createdAt": "2024-12-27T15:15:21.272Z"
+      "listId": 1,
+      "checked": true,
+      "createdAt": "2024-12-27T20:13:06.276Z"
     },
     {
-      "id": "Black Beans",
-      "name": "Black Beans",
-      "category": "Basic Foods",
+      "id": "681739872",
+      "name": "Pepper",
+      "category": "Oils and Spices",
       "quantity": 1,
-      "checked": false,
-      "createdAt": "2024-12-27T15:15:21.303Z"
+      "listId": 1,
+      "checked": true,
+      "createdAt": "2024-12-27T20:13:48.459Z"
     },
     {
-      "id": "Rice",
-      "name": "Rice",
-      "category": "Basic Foods",
+      "id": "794261923",
+      "name": "Oil 22",
+      "category": "Oils and Spices",
       "quantity": 1,
-      "checked": false,
-      "createdAt": "2024-12-27T15:15:21.357Z"
+      "listId": 1,
+      "checked": true,
+      "createdAt": "2024-12-27T20:13:49.973Z",
+      "unit": "",
+      "price": 0
     },
     {
-      "id": "Soda Cola",
-      "name": "Soda Cola",
-      "category": "Beverages",
+      "id": "889332118",
+      "name": "Bread 3",
+      "category": "Bakery",
       "quantity": 1,
-      "checked": false,
-      "createdAt": "2024-12-27T15:15:21.420Z"
+      "listId": 1,
+      "checked": true,
+      "createdAt": "2024-12-27T20:13:51.341Z",
+      "unit": "",
+      "price": 0
     },
     {
-      "id": "Chicken",
-      "name": "Chicken",
-      "category": "Meats",
-      "quantity": 1,
-      "checked": false,
-      "createdAt": "2024-12-27T15:15:21.525Z"
+      "id": "921451848",
+      "name": "Sugar edited",
+      "category": "Bakery",
+      "quantity": 3,
+      "listId": 1,
+      "checked": true,
+      "createdAt": "2024-12-27T20:13:52.441Z",
+      "unit": "",
+      "price": 5
     }
   ]
 }
