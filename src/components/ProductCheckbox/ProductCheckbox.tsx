@@ -55,7 +55,7 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
           />
         </Tooltip>
         <Title order={3} fz="sm" fw={500}>
-          {product?.name || name}
+          {name}
         </Title>
       </Group>
       <Group gap="xs">

@@ -11,61 +11,86 @@
       "email": "maria@email.com"
     }
   ],
-  "shoppingList": [
+  "lists": [
     {
       "id": "1",
-      "userId": 1,
+      "name": "List 1",
+      "userId": "1",
+      "budget": 100,
+      "code": "def3vg"
+    },
+    {
+      "id": "2",
+      "name": "List 2",
+      "userId": "2",
+      "budget": 100,
+      "code": "2ds3f"
+    }
+  ],
+  "shoppingList": [
+    {
+      "id": "Chocolate Cookies",
+      "name": "Chocolate Cookies",
+      "category": "Snacks",
+      "quantity": 1,
+      "checked": false,
+      "createdAt": "2024-12-27T15:14:39.802Z"
+    },
+    {
+      "id": "Milk",
+      "name": "Milk",
+      "category": "Dairy",
+      "quantity": 1,
+      "checked": false,
+      "createdAt": "2024-12-27T15:15:00.315Z"
+    },
+    {
+      "id": "Wheat Flour",
+      "name": "Wheat Flour",
+      "category": "Bakery",
+      "quantity": 2,
+      "checked": false,
+      "createdAt": "2024-12-27T15:15:21.054Z"
+    },
+    {
+      "id": "Olive Oil",
+      "name": "Olive Oil",
+      "category": "Oils and Spices",
+      "quantity": 1,
+      "checked": false,
+      "createdAt": "2024-12-27T15:15:21.272Z"
+    },
+    {
+      "id": "Black Beans",
       "name": "Black Beans",
       "category": "Basic Foods",
       "quantity": 1,
-      "price": 50,
       "checked": false,
-      "createdAt": "2024-12-26T10:00:00.000Z"
+      "createdAt": "2024-12-27T15:15:21.303Z"
     },
     {
-      "id": "5",
-      "userId": 2,
-      "name": "Chicken",
-      "category": "Meat",
-      "price": 35.9,
-      "quantity": 2,
+      "id": "Rice",
+      "name": "Rice",
+      "category": "Basic Foods",
+      "quantity": 1,
       "checked": false,
-      "createdAt": "2024-12-26T10:20:00.000Z"
+      "createdAt": "2024-12-27T15:15:21.357Z"
     },
     {
-      "id": 0.931247782724727,
-      "name": "Wheat Flour",
-      "category": "Bakery"
-    },
-    {
-      "id": 0.6289966560091926,
-      "name": "Wheat Flour",
-      "category": "Bakery",
-      "quantity": 1
-    },
-    {
-      "id": 0.9086483369263283,
+      "id": "Soda Cola",
       "name": "Soda Cola",
       "category": "Beverages",
-      "quantity": 1
+      "quantity": 1,
+      "checked": false,
+      "createdAt": "2024-12-27T15:15:21.420Z"
     },
     {
-      "id": 0.7805160880915185,
-      "name": "Black Beans",
-      "category": "Basic Foods",
-      "quantity": 1
-    },
-    {
-      "id": 0.3134398392446085,
-      "name": "Wheat Flour",
-      "category": "Bakery",
-      "quantity": 1
-    },
-    {
-      "id": 0.2536690899271268,
-      "name": "Wheat Flour",
-      "category": "Bakery",
-      "quantity": 1
+      "id": "Chicken",
+      "name": "Chicken",
+      "category": "Meats",
+      "quantity": 1,
+      "checked": false,
+      "createdAt": "2024-12-27T15:15:21.525Z"
     }
   ]
 }

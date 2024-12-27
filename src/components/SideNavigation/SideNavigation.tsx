@@ -19,7 +19,7 @@ export const SideNavigation: React.FC<SideNavigationProps> = () => {
   return (
     <Paper
       component="aside"
-      w={350}
+      w={250}
       h="100%"
       style={{ position: 'relative' }}
       withBorder

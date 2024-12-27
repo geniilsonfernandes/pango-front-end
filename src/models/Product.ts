@@ -2,7 +2,7 @@
 export interface Product {
   checked?: boolean;
   id: string | number;
-  quantity?: number;
+  quantity: number;
   unit?: string;
   price?: number;
   name: string;

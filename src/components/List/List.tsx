@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Box, Button, Center, Group, Loader, Paper, rem, Stack, Text } from '@mantine/core';
+import { useToggleShoppingItem } from '@/hooks/mutation/useToggleShoppingItem';
 import { useShoppingList } from '@/hooks/queries/useShoppingList';
 import { Product as ProductType } from '@/models/Product';
 import { useListStore } from '@/store/listStore';
@@ -15,6 +16,7 @@ type ProductSelectionProps = {
 
 export const List = () => {
   const { data, isLoading } = useShoppingList();
+  const { mutate: toggleShoppingItem } = useToggleShoppingItem();
   const {
     list: { products },
     onCheckProduct,
@@ -22,6 +24,7 @@ export const List = () => {
   } = useListStore();
 
   const [product, setProduct] = useState<ProductSelectionProps>();
+
   const uncheckedProducts = useMemo(() => {
     if (!data) return [];
     return data.filter((product) => !product.checked);
@@ -66,7 +69,12 @@ export const List = () => {
                   product={product}
                   showCurrency
                   onClick={() => setProduct(product)}
-                  onCheck={() => onCheckProduct(product.name)}
+                  onCheck={() =>
+                    toggleShoppingItem({
+                      id: product.name,
+                      checked: true,
+                    })
+                  }
                   onPriceClick={() => setProduct({ ...product, initialfocus: 'quantity' })}
                   checked={product.checked}
                 />
@@ -106,7 +114,12 @@ export const List = () => {
                 product={product}
                 showCurrency
                 onClick={() => setProduct(product)}
-                onCheck={() => onCheckProduct(product.name)}
+                onCheck={() =>
+                  toggleShoppingItem({
+                    id: product.name,
+                    checked: false,
+                  })
+                }
                 checked={product.checked}
               />
             </motion.div>

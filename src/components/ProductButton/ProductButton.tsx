@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconMinus, IconPlus, IconTrash } from '@tabler/icons-react';
 import { ActionIcon, Button, ButtonVariant, Flex, ThemeIcon } from '@mantine/core';
-import { Product } from '@/models/Product';
+import { ShoppingItem } from '@/service/api';
 
 /**
  * Props for the ProductButton component.
@@ -30,7 +30,7 @@ export type ProductButtonProps = {
   /**
    * An optional Product object containing product details.
    */
-  product?: Omit<Product, 'id'>;
+  product?: Omit<ShoppingItem, 'id'>;
 
   /**
    * The variant of the button.

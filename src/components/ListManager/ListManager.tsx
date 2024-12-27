@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react';
 import { IconSearch, IconX } from '@tabler/icons-react';
 import { ActionIcon, Button, Group, Paper, Stack, TextInput } from '@mantine/core';
-import { useDebouncedCallback, useListState, useToggle } from '@mantine/hooks';
+import { useDebouncedCallback, useToggle } from '@mantine/hooks';
 import { products as mockProducts } from '@/dummyData';
-import { useAddItem, useShoppingList } from '@/hooks/queries/useShoppingList';
+import { useAddShoppingItem } from '@/hooks/mutation/useAddShoppingItem';
+import { useDeleteShoppingItem } from '@/hooks/mutation/useDeleteShoppingItem';
+import { useUpdateShoppingItem } from '@/hooks/mutation/useUpdateShoppingItem';
+import { useShoppingList } from '@/hooks/queries/useShoppingList';
 import { Product } from '@/models/Product';
-import { useListStore } from '@/store/listStore';
 import { filterItems, findProductByName } from '@/utils/filterProducts';
 import { ProductButton } from '../ProductButton/ProductButton';
 import { RenderIf } from '../RenderIf/RenderIf';
@@ -13,20 +15,13 @@ import { RenderIf } from '../RenderIf/RenderIf';
 const tabsOptions = ['Popular', 'Favorites', 'Recent'];
 
 export const ListManager = () => {
-  const {
-    addProduct,
-    onRemoveProduct,
-    onDecrementProduct,
-    recentProducts,
-    favoriteProducts,
-    list: { products },
-  } = useListStore();
-  const { mutate, isLoading } = useAddItem();
-  const { data } = useShoppingList();
+  const { mutate: addItem } = useAddShoppingItem();
+  const { mutate: deleteItem } = useDeleteShoppingItem();
+  const { mutate: updateItem } = useUpdateShoppingItem();
+  const { data: products } = useShoppingList();
 
   const [tab, toggleTab] = useToggle(tabsOptions);
   const [queryValue, setQueryValue] = useState('');
-  const [values, handlers] = useListState<{ name: string }>();
 
   const filteredProducts = useMemo(
     () =>
@@ -38,35 +33,54 @@ export const ListManager = () => {
     [queryValue]
   );
 
-  const isItemCheckboxChecked = (name: string) => findProductByName(data || [], name);
+  const isItemCheckboxChecked = (name: string) => findProductByName(products || [], name);
 
   const handleSearch = useDebouncedCallback((query: string) => {
     console.log(query);
+  }, 500);
+  const handleAddItem = useDebouncedCallback((product: Product) => {
+    addItem({
+      name: product.name,
+      category: product.category,
+      id: product.name,
+      // code: product.name,
+      quantity: 1,
+    });
   }, 500);
 
   const renderProducts = (list: Product[]) => {
     if (list.length === 0) {
       return null;
     }
+
     return (
       <>
-        {list.map((product) => (
-          <ProductButton
-            key={product.name}
-            name={product.name}
-            product={isItemCheckboxChecked(product.name)}
-            onClick={() => {
-              mutate({
-                name: product.name,
-                category: product.category,
-                id: Math.random(),
-                quantity: 1,
-              });
-            }}
-            onRemove={() => onRemoveProduct(product.name)}
-            onDecrement={() => onDecrementProduct(product.name)}
-          />
-        ))}
+        {list.map((product) => {
+          const isChecked = isItemCheckboxChecked(product.name);
+          return (
+            <ProductButton
+              key={product.name}
+              name={product.name}
+              product={isChecked}
+              onClick={() => {
+                if (!isChecked) {
+                  handleAddItem(product);
+                }
+              }}
+              onRemove={() => deleteItem(product.name)}
+              onIncrement={() => {
+                if (isChecked && isChecked.quantity) {
+                  updateItem({ id: product.name, data: { quantity: isChecked.quantity + 1 } });
+                }
+              }}
+              onDecrement={() => {
+                if (isChecked && isChecked.quantity) {
+                  updateItem({ id: product.name, data: { quantity: isChecked.quantity - 1 } });
+                }
+              }}
+            />
+          );
+        })}
       </>
     );
   };
@@ -109,9 +123,9 @@ export const ListManager = () => {
             name={queryValue}
             variant="outline"
             product={isItemCheckboxChecked(queryValue)}
-            onClick={() => addProduct(queryValue, 'custom')}
-            onRemove={() => onRemoveProduct(queryValue)}
-            onDecrement={() => onDecrementProduct(queryValue)}
+            // onClick={() => addProduct(queryValue, 'custom')}
+            // onRemove={() => onRemoveProduct(queryValue)}
+            // onDecrement={() => onDecrementProduct(queryValue)}
           />
         )}
         {renderProducts(filteredProducts)}
@@ -132,8 +146,8 @@ export const ListManager = () => {
           ))}
         </Group>
         <RenderIf condition={tab === tabsOptions[0]}>{renderProducts(mockProducts)}</RenderIf>
-        <RenderIf condition={tab === tabsOptions[1]}>{renderProducts(favoriteProducts)}</RenderIf>
-        <RenderIf condition={tab === tabsOptions[2]}>{renderProducts(recentProducts)}</RenderIf>
+        {/* <RenderIf condition={tab === tabsOptions[1]}>{renderProducts(favoriteProducts)}</RenderIf>
+        <RenderIf condition={tab === tabsOptions[2]}>{renderProducts(recentProducts)}</RenderIf> */}
       </Stack>
     </Paper>
   );

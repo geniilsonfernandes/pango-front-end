@@ -4,13 +4,14 @@ export const products = [
     name: 'Rice',
     category: 'Basic Foods',
     price: 5.99,
-
+    quantity: 0,
     code: 'BF001',
   },
   {
     id: 2,
     name: 'Black Beans',
     category: 'Basic Foods',
+    quantity: 0,
     price: 7.49,
     code: 'BF002',
   },
@@ -18,6 +19,7 @@ export const products = [
     id: 3,
     name: 'Olive Oil',
     category: 'Oils and Spices',
+    quantity: 0,
     price: 19.99,
     code: 'OS001',
   },
@@ -26,7 +28,7 @@ export const products = [
     name: 'Wheat Flour',
     category: 'Bakery',
     price: 4.89,
-
+    quantity: 0,
     code: 'BK001',
   },
   {
@@ -34,7 +36,7 @@ export const products = [
     name: 'Milk',
     category: 'Dairy',
     price: 4.29,
-
+    quantity: 0,
     code: 'DA001',
   },
   {
@@ -42,7 +44,7 @@ export const products = [
     name: 'Chocolate Cookies',
     category: 'Snacks',
     price: 2.99,
-
+    quantity: 0,
     code: 'SN001',
   },
   {
@@ -50,6 +52,7 @@ export const products = [
     name: 'Soda Cola',
     category: 'Beverages',
     price: 6.49,
+    quantity: 0,
     code: 'BE001',
   },
   {
@@ -57,6 +60,7 @@ export const products = [
     name: 'Chicken',
     category: 'Meats',
     price: 15.99,
+    quantity: 0,
     code: 'ME001',
   },
   {
@@ -64,7 +68,7 @@ export const products = [
     name: 'Tomato',
     category: 'Fruits and Vegetables',
     price: 8.99,
-
+    quantity: 0,
     code: 'FV001',
   },
   {
@@ -72,6 +76,7 @@ export const products = [
     name: 'Toilet Paper',
     category: 'Hygiene',
     price: 12.99,
+    quantity: 0,
     code: 'HY001',
   },
 ];
