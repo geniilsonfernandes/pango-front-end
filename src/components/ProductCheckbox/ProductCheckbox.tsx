@@ -1,13 +1,14 @@
 import React, { useMemo } from 'react';
 import { Button, Card, Checkbox, CheckboxProps, Group, Text, Title, Tooltip } from '@mantine/core';
-import { Product } from '@/models/Product';
+import { ShoppingItem } from '@/service/api';
 import { CurrencyMode, formatCurrency } from '@/utils/formatCurrency';
 import { RenderIf } from '../RenderIf/RenderIf';
 import classes from './ProductCheckbox.module.css';
 
 export type ProductCheckboxProps = {
   name: string;
-  product?: Omit<Product, 'id'>;
+  shoppingItem?: ShoppingItem;
+
   currency?: CurrencyMode;
   showCurrency?: boolean;
   onCheck?: () => void;
@@ -20,7 +21,7 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
   checked,
   opacity,
   name,
-  product,
+  shoppingItem,
   currency = 'br',
   showCurrency = false,
   onPriceClick,
@@ -28,18 +29,18 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
   onClick,
 }) => {
   const value = useMemo(() => {
-    if (product) {
-      return formatCurrency((product.quantity || 0) * (product.price || 0), currency);
+    if (shoppingItem) {
+      return formatCurrency((shoppingItem.quantity || 0) * (shoppingItem.price || 0), currency);
     }
     return 0;
-  }, [currency, product]);
+  }, [currency, shoppingItem]);
 
   const quantity = useMemo(() => {
-    if (product) {
-      return `${product.quantity} ${product?.unit || ''}`;
+    if (shoppingItem) {
+      return `${shoppingItem.quantity} ${shoppingItem?.unit || ''}`;
     }
     return 0;
-  }, [product]);
+  }, [shoppingItem]);
 
   return (
     <Card opacity={opacity} className={classes.card} onClick={onClick}>

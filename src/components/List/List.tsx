@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { Box, Button, Center, Group, Loader, Paper, rem, Stack, Text } from '@mantine/core';
 import { useToggleShoppingItem } from '@/hooks/mutation/useToggleShoppingItem';
 import { useShoppingList } from '@/hooks/queries/useShoppingList';
-import { Product as ProductType } from '@/models/Product';
+import { ShoppingItem } from '@/service/api';
 import { useListStore } from '@/store/listStore';
 import { ListHeader } from '../ListHeader/ListHeader';
 import { ProductCheckbox } from '../ProductCheckbox/ProductCheckbox';
@@ -12,7 +12,7 @@ import { RenderIf } from '../RenderIf/RenderIf';
 
 type ProductSelectionProps = {
   initialfocus?: FormProps['initialFocus'];
-} & ProductType;
+} & ShoppingItem;
 
 export const List = () => {
   const { data, isLoading } = useShoppingList();
@@ -29,7 +29,7 @@ export const List = () => {
     if (!data) return [];
     return data.filter((product) => !product.checked);
   }, [data]);
-  const checkedProducts = useMemo(() => {
+  const checkeditems = useMemo(() => {
     if (!data) return [];
     return data.filter((product) => product.checked);
   }, [data]);
@@ -56,34 +56,34 @@ export const List = () => {
       >
         <Paper p="xs" component={Stack} gap="xs">
           <AnimatePresence>
-            {uncheckedProducts?.map((product) => (
+            {uncheckedProducts?.map((item) => (
               <motion.div
-                key={product.name}
+                key={item.name}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 layout
               >
                 <ProductCheckbox
-                  name={product.name}
-                  product={product}
+                  name={item.name}
+                  shoppingItem={product}
                   showCurrency
                   onClick={() => setProduct(product)}
                   onCheck={() =>
                     toggleShoppingItem({
-                      id: product.name,
+                      id: item.name,
                       checked: true,
                     })
                   }
-                  onPriceClick={() => setProduct({ ...product, initialfocus: 'quantity' })}
-                  checked={product.checked}
+                  onPriceClick={() => setProduct({ ...item, initialfocus: 'quantity' })}
+                  checked={item.checked}
                 />
               </motion.div>
             ))}
           </AnimatePresence>
         </Paper>
       </RenderIf>
-      <RenderIf condition={!!checkedProducts?.length}>
+      <RenderIf condition={!!checkeditems?.length}>
         <Stack pt="xs" px="sm" gap="xxs">
           <motion.div layout>
             <Group px="xs" pb="xs" justify="space-between">
@@ -101,26 +101,26 @@ export const List = () => {
             </Group>
           </motion.div>
 
-          {checkedProducts?.map((product) => (
+          {checkeditems?.map((item) => (
             <motion.div
-              key={product.name}
+              key={item.name}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               layout
             >
               <ProductCheckbox
-                name={product.name}
-                product={product}
+                name={item.name}
+                shoppingItem={item}
                 showCurrency
                 onClick={() => setProduct(product)}
                 onCheck={() =>
                   toggleShoppingItem({
-                    id: product.name,
+                    id: item.name,
                     checked: false,
                   })
                 }
-                checked={product.checked}
+                checked={item.checked}
               />
             </motion.div>
           ))}

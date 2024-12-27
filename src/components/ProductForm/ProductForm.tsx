@@ -16,6 +16,7 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { categories } from '@/dummyData';
+import { useUpdateShoppingItem } from '@/hooks/mutation/useUpdateShoppingItem';
 import { Product as ProductType } from '@/models/Product';
 
 // type ProductModalProps<T> = {
@@ -29,12 +30,12 @@ import { Product as ProductType } from '@/models/Product';
 // };
 
 export type FormProps = {
-  product?: ProductType;
   initialFocus?: 'name' | 'category' | 'quantity' | 'unit';
   onCancel?: () => void;
 };
 
-const Form: React.FC<FormProps> = ({ onCancel }) => {
+const Form: React.FC<FormProps> = ({ onCancel, shoppingItem }) => {
+  const { mutate: updateItem } = useUpdateShoppingItem();
   return (
     <>
       <Grid gutter="sm">
