@@ -38,13 +38,14 @@ export const ListManager = () => {
   const handleSearch = useDebouncedCallback((query: string) => {
     console.log(query);
   }, 500);
+
   const handleAddItem = useDebouncedCallback((product: Product) => {
     addItem({
+      id: product.name,
       name: product.name,
       category: product.category,
-      id: product.name,
-      // code: product.name,
       quantity: 1,
+      listId: 1,
     });
   }, 500);
 

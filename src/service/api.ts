@@ -1,8 +1,9 @@
 import axios from 'axios';
 
+
 export type ShoppingItem = {
   id: string | number;
-  userId?: number;
+  listId?: number;
   name: string;
   category: string;
   quantity?: number;
@@ -19,6 +20,7 @@ class ShoppingListAPI {
   constructor(baseURL: string) {
     this.baseURL = baseURL;
   }
+
 
   // List all items
   async list(): Promise<ShoppingItem[]> {
