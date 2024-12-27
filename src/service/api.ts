@@ -7,6 +7,7 @@ export type ShoppingItem = {
   name: string;
   category: string;
   quantity?: number;
+  unit?: string;
   price?: number;
   checked?: boolean;
   createdAt?: string;
