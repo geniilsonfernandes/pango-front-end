@@ -11,14 +11,7 @@ export const products = [
   { name: 'Milk', category: 'Dairy' },
   { name: 'Cheese', category: 'Dairy' },
   { name: 'Yogurt', category: 'Dairy' },
-  { name: 'Chips', category: 'Snacks' },
-  { name: 'Cookies', category: 'Snacks' },
-  { name: 'Crackers', category: 'Snacks' },
-  { name: 'Tea', category: 'Beverages' },
-  { name: 'Coffee', category: 'Beverages' },
-  { name: 'Orange Juice', category: 'Beverages' },
-  { name: 'Chicken', category: 'Meats' },
-  { name: 'Beef', category: 'Meats' },
+
 ];
 
 export type Product = {

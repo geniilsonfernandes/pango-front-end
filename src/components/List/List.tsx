@@ -4,24 +4,14 @@ import { Box, Button, Center, Group, Loader, Paper, rem, Stack, Text } from '@ma
 import { useToggleShoppingItem } from '@/hooks/mutation/useToggleShoppingItem';
 import { useShoppingList } from '@/hooks/queries/useShoppingList';
 import { ShoppingItem } from '@/service/api';
-import { useListStore } from '@/store/listStore';
 import { ListHeader } from '../ListHeader/ListHeader';
 import { ProductCheckbox } from '../ProductCheckbox/ProductCheckbox';
-import { FormProps, Product } from '../ProductForm/ProductForm';
+import { Product } from '../ProductForm/ProductForm';
 import { RenderIf } from '../RenderIf/RenderIf';
-
-type ProductSelectionProps = {
-  initialfocus?: FormProps['initialFocus'];
-} & ShoppingItem;
 
 export const List = () => {
   const { data, isLoading } = useShoppingList();
   const { mutate: toggleShoppingItem } = useToggleShoppingItem();
-  const {
-    list: { products },
-    onCheckProduct,
-    clearCheckedProducts,
-  } = useListStore();
 
   const [shoppingItem, setShoppingItem] = useState<ShoppingItem>();
 
@@ -36,10 +26,7 @@ export const List = () => {
 
   return (
     <Box flex={1}>
-      <ListHeader
-        listName={products[0]?.category || 'No category'}
-        createdAt={products[0]?.name || 'No name'}
-      />
+      <ListHeader listName="No category" createdAt="No name" />
       <RenderIf
         condition={!!uncheckedProducts?.length}
         isLoading={isLoading}
@@ -58,12 +45,10 @@ export const List = () => {
           <AnimatePresence>
             {uncheckedProducts?.map((item) => (
               <motion.div
-                key={item.name}
+                key={item.id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.2, delay: 0.2 }}
-                layout
               >
                 <ProductCheckbox
                   name={item.name}
@@ -86,30 +71,21 @@ export const List = () => {
       </RenderIf>
       <RenderIf condition={!!checkeditems?.length}>
         <Stack pt="xs" px="sm" gap="xxs">
+          <Group px="xs" pb="xs" justify="space-between">
+            <Text fw={500} fz="xs" c="dimmed">
+              Checked Items
+            </Text>
+            <Button variant="outline" size="compact-xs" radius="xl">
+              Clear
+            </Button>
+          </Group>
           <AnimatePresence>
-            <motion.div layout>
-              <Group px="xs" pb="xs" justify="space-between">
-                <Text fw={500} fz="xs" c="dimmed">
-                  Checked Items
-                </Text>
-                <Button
-                  onClick={clearCheckedProducts}
-                  variant="outline"
-                  size="compact-xs"
-                  radius="xl"
-                >
-                  Clear
-                </Button>
-              </Group>
-            </motion.div>
-
             {checkeditems?.map((item) => (
               <motion.div
-                key={item.name}
+                key={item.id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                layout
               >
                 <ProductCheckbox
                   name={item.name}
