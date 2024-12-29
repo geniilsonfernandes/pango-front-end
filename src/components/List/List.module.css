@@ -1,0 +1,15 @@
+.list {
+    background: red;
+    padding: var(--mantine-spacing-xxs);
+    border-radius: var(--mantine-radius-md);
+    background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--mantine-spacing-xxs);
+
+    /* Remove background logic */
+    &[data-no-background="true"] {
+        background: none;
+        background-color: transparent;
+    }
+}
