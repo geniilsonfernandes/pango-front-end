@@ -1,6 +1,7 @@
 import { QueryClient } from '@tanstack/react-query';
 import { AddShoppingItemInput } from '@/hooks/mutation/useAddShoppingItem';
 import { ToggleShoppingItemInput } from '@/hooks/mutation/useToggleShoppingItem';
+import { UpdateShoppingItemInput } from '@/hooks/mutation/useUpdateShoppingItem';
 import { shoppingListKeys } from '@/hooks/queries/useShoppingList';
 import { ShoppingItem } from '@/service/api';
 
@@ -20,6 +21,21 @@ export const toggleShoppingItemUpdate = (
   const optimisticUpdate = previousItems?.map((item) => {
     if (item.id === input.id) {
       return { ...item, checked: input.checked };
+    }
+    return item;
+  });
+  queryClient.setQueryData(shoppingListKeys.list(), optimisticUpdate);
+  return { previousItems };
+};
+
+export const shoppingItemOptimisticUpdate = (
+  queryClient: QueryClient,
+  input: UpdateShoppingItemInput
+) => {
+  const previousItems = queryClient.getQueryData<ShoppingItem[]>(shoppingListKeys.list());
+  const optimisticUpdate = previousItems?.map((item) => {
+    if (item.id === input.id) {
+      return { ...item, ...input };
     }
     return item;
   });
