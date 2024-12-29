@@ -1,5 +1,4 @@
 .list {
-    background: red;
     padding: var(--mantine-spacing-xxs);
     border-radius: var(--mantine-radius-md);
     background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
