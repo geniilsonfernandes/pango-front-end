@@ -50,7 +50,7 @@ const shoppingItemSchema = z.object({
 });
 
 const Form: React.FC<FormProps> = ({ onCancel, shoppingItem }) => {
-  const { mutate: updateItem, isLoading } = useUpdateShoppingItem();
+  const { mutate: updateItem, status, isLoading } = useUpdateShoppingItem();
 
   const form = useForm({
     mode: 'uncontrolled',
@@ -65,42 +65,31 @@ const Form: React.FC<FormProps> = ({ onCancel, shoppingItem }) => {
     validate: zodResolver(shoppingItemSchema),
   });
 
+  const handleUpdate = (values: typeof form.values) => {
+    if (!shoppingItem?.id) {
+      notifications.show({
+        title: 'Error',
+        message: 'Item not found',
+        color: 'red',
+      });
+      return;
+    }
+    updateItem({
+      id: shoppingItem?.id,
+      data: values,
+    });
+
+    notifications.show({
+      title: 'Success',
+      message: 'Item updated',
+      color: 'green',
+    });
+
+    onCancel?.();
+  };
+
   return (
-    <form
-      onSubmit={form.onSubmit((values) => {
-        if (!shoppingItem?.id) {
-          notifications.show({
-            title: 'Error',
-            message: 'Item not found',
-            color: 'red',
-          });
-          return;
-        }
-        updateItem(
-          {
-            id: shoppingItem?.id,
-            data: values,
-          },
-          {
-            onSuccess: () => {
-              notifications.show({
-                title: 'Success',
-                message: 'Item updated successfully',
-                color: 'green',
-              });
-              onCancel?.();
-            },
-            onError: (error) => {
-              notifications.show({
-                title: 'Error',
-                message: "Can't update item",
-                color: 'red',
-              });
-            },
-          }
-        );
-      })}
-    >
+    <form onSubmit={form.onSubmit(handleUpdate)}>
       <Grid gutter="sm">
         <Grid.Col span={12}>
           <TextInput

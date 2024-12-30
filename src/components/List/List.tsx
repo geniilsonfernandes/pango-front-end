@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
-import { AnimatePresence, HTMLMotionProps, motion } from 'motion/react';
-import { Button, Center, Group, Loader, rem, Stack, Text } from '@mantine/core';
+import { Button, Center, Group, Loader, Paper, rem, Stack, Text } from '@mantine/core';
 import { useToggleShoppingItem } from '@/hooks/mutation/useToggleShoppingItem';
 import { useShoppingList } from '@/hooks/queries/useShoppingList';
 import { ShoppingItem } from '@/service/api';
@@ -25,14 +24,9 @@ export const List = () => {
     return data.filter((product) => product.checked);
   }, [data]);
 
-  const animationsProps = {
-    transition: { duration: 0.2 },
-  } as HTMLMotionProps<'div'>;
-
   return (
     <Stack gap="xs" flex={1}>
       <ListHeader listName="No category" createdAt="No name" />
-
       <RenderIf
         condition={!!uncheckedProducts?.length}
         isLoading={isLoading}
@@ -47,65 +41,51 @@ export const List = () => {
           </Text>
         }
       >
-        <motion.div layout className={classes.list}>
-          <AnimatePresence>
-            {uncheckedProducts?.map((item) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                layout
-              >
-                <ProductCheckbox
-                  name={item.name}
-                  shoppingItem={item}
-                  showCurrency
-                  onClick={() => setShoppingItem(item)}
-                  onCheck={() =>
-                    toggleShoppingItem({
-                      id: item.id,
-                      checked: true,
-                    })
-                  }
-                  onPriceClick={() => setShoppingItem(item)}
-                  checked={item.checked}
-                />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+        <Paper className={classes.list}>
+          {uncheckedProducts?.map((item) => (
+            <ProductCheckbox
+              name={item.name}
+              shoppingItem={item}
+              showCurrency
+              onClick={() => setShoppingItem(item)}
+              onCheck={() =>
+                toggleShoppingItem({
+                  id: item.id,
+                  checked: true,
+                })
+              }
+              onPriceClick={() => setShoppingItem(item)}
+              checked={item.checked}
+            />
+          ))}
+        </Paper>
       </RenderIf>
       <RenderIf condition={!!checkeditems?.length}>
-        <AnimatePresence>
-          <motion.div className={classes.list} data-no-background layout>
-            <Group p="xs" justify="space-between">
-              <Text fw={500} fz="xs" c="dimmed">
-                Checked Items
-              </Text>
-              <Button variant="outline" size="compact-xs" radius="xl">
-                Clear
-              </Button>
-            </Group>
-            {checkeditems?.map((item) => (
-              <motion.div key={item.id} {...animationsProps} layout>
-                <ProductCheckbox
-                  name={item.name}
-                  shoppingItem={item}
-                  showCurrency
-                  onClick={() => setShoppingItem(item)}
-                  onCheck={() =>
-                    toggleShoppingItem({
-                      id: item.id,
-                      checked: false,
-                    })
-                  }
-                  checked={item.checked}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
-        </AnimatePresence>
+        <Paper className={classes.list} data-no-background>
+          <Group p="xs" justify="space-between">
+            <Text fw={500} fz="xs" c="dimmed">
+              Checked Items
+            </Text>
+            <Button variant="outline" size="compact-xs" radius="xl">
+              Clear
+            </Button>
+          </Group>
+          {checkeditems?.map((item) => (
+            <ProductCheckbox
+              name={item.name}
+              shoppingItem={item}
+              showCurrency
+              onClick={() => setShoppingItem(item)}
+              onCheck={() =>
+                toggleShoppingItem({
+                  id: item.id,
+                  checked: false,
+                })
+              }
+              checked={item.checked}
+            />
+          ))}
+        </Paper>
       </RenderIf>
       <Product.modal
         opened={!!shoppingItem}

@@ -104,7 +104,7 @@ export const ListManager = () => {
   };
 
   return (
-    <Paper p="sm" w={350}>
+    <Paper p="sm" w={350} h="calc(100vh - 80px)">
       <TextInput
         variant="filled"
         size="md"

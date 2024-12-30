@@ -20,7 +20,7 @@ export const SideNavigation: React.FC<SideNavigationProps> = () => {
     <Paper
       component="aside"
       w={250}
-      h="100%"
+      h="calc(100vh - 80px)"
       style={{ position: 'relative' }}
       withBorder
       shadow="md"

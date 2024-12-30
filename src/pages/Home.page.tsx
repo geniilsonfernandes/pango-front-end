@@ -11,17 +11,14 @@ export function HomePage() {
         backgroundColor: 'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8))',
       }}
       direction="column"
-      h="100vh"
       px="gr"
       gap="sm"
       py="xl"
     >
       <Flex gap="lg" flex={1}>
         <SideNavigation initialValue={0} step={1} />
-        <Flex flex={1} gap="md" p="md" bg="transparent">
-          <List />
-          <ListManager />
-        </Flex>
+        <List />
+        <ListManager />
       </Flex>
     </Flex>
   );
