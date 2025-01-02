@@ -5,12 +5,8 @@ import {
   ActionIcon,
   Button,
   Divider,
-  Drawer,
-  DrawerProps,
   Grid,
   Group,
-  Modal,
-  ModalProps,
   NumberInput,
   Select,
   TextInput,
@@ -49,7 +45,7 @@ const shoppingItemSchema = z.object({
   unit: z.string().optional(),
 });
 
-const Form: React.FC<FormProps> = ({ onCancel, shoppingItem }) => {
+export const ProductForm: React.FC<FormProps> = ({ onCancel, shoppingItem }) => {
   const { mutate: updateItem, status, isLoading } = useUpdateShoppingItem();
 
   const form = useForm({
@@ -166,48 +162,3 @@ const Form: React.FC<FormProps> = ({ onCancel, shoppingItem }) => {
     </form>
   );
 };
-
-const Root = ({ shoppingItem }: { shoppingItem?: ShoppingItem }) => {
-  return <Form shoppingItem={shoppingItem} />;
-};
-
-type ModalFormProps = {
-  shoppingItem?: ShoppingItem;
-  initialFocus?: 'name' | 'category' | 'quantity' | 'unit';
-} & ModalProps;
-const ModalForm: React.FC<ModalFormProps> = ({ shoppingItem, ...props }) => {
-  return (
-    <Modal {...props}>
-      <Form
-        initialFocus={props.initialFocus}
-        shoppingItem={shoppingItem}
-        onCancel={() => {
-          props.onClose?.();
-        }}
-      />
-    </Modal>
-  );
-};
-
-type DrawerFormProps = {
-  shoppingItem?: ShoppingItem;
-  initialFocus?: 'name' | 'category' | 'quantity' | 'unit';
-} & DrawerProps;
-const DrawerForm: React.FC<DrawerFormProps> = ({ shoppingItem, ...props }) => {
-  return (
-    <Drawer {...props}>
-      <Form
-        initialFocus={props.initialFocus}
-        shoppingItem={shoppingItem}
-        onCancel={() => {
-          props.onClose?.();
-        }}
-      />
-    </Drawer>
-  );
-};
-
-Root.modal = ModalForm;
-Root.drawer = DrawerForm;
-
-export const Product = Root;

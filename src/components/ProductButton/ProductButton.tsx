@@ -66,6 +66,7 @@ export const ProductButton: React.FC<ProductButtonProps> = ({
       color="gray"
       justify="space-between"
       size="xs"
+      fullWidth
       aria-selected={!!product?.quantity}
       aria-labelledby={name}
       aria-label={name}

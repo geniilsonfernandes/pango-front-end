@@ -11,9 +11,9 @@ export function HomePage() {
         backgroundColor: 'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8))',
       }}
       direction="column"
-      px="gr"
       gap="sm"
-      py="xl"
+      p="32"
+      mih="100vh"
     >
       <Flex gap="lg" flex={1}>
         <SideNavigation initialValue={0} step={1} />

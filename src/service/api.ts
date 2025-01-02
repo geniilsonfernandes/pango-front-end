@@ -13,7 +13,7 @@ export type ShoppingItem = {
   createdAt?: string;
 };
 
-export type CreateShoppingItem = Omit<ShoppingItem, 'createdAt' | 'checked' | 'userId'>;
+export type CreateShoppingItemDTO = Omit<ShoppingItem, 'createdAt' | 'checked' | 'userId'>;
 
 class ShoppingListAPI {
   private baseURL: string;
@@ -29,7 +29,7 @@ class ShoppingListAPI {
   }
 
   // Create or update an item (increment quantity if it already exists)
-  async create(item: CreateShoppingItem): Promise<ShoppingItem> {
+  async create(item: CreateShoppingItemDTO): Promise<ShoppingItem> {
     const existingItems = await this.list();
     const existingItem = existingItems.find(
       (i) => i.name === item.name && i.category === item.category

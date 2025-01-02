@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { IconSearch, IconX } from '@tabler/icons-react';
-import { ActionIcon, Button, Group, Paper, Stack, TextInput } from '@mantine/core';
+import { ActionIcon, Button, Group, Paper, ScrollArea, Stack, TextInput } from '@mantine/core';
 import { useDebouncedCallback, useToggle } from '@mantine/hooks';
 import { products as mockProducts, type Product } from '@/dummyData';
 import { useAddShoppingItem } from '@/hooks/mutation/useAddShoppingItem';
@@ -34,7 +34,16 @@ export const ListManager = () => {
     [queryValue]
   );
 
+  const showInputToCreateProduct = useMemo(() => {
+    return (
+      !filteredProducts.some(
+        (product) => product.name.toLowerCase() === queryValue.toLowerCase()
+      ) && queryValue
+    );
+  }, [queryValue, filteredProducts]);
+
   const isItemSelected = (name: string) => findProductByName(products || [], name);
+  const queryValueHasMatchInProducts = isItemSelected(queryValue);
 
   const handleSearch = useDebouncedCallback((query: string) => {
     console.log(query);
@@ -51,14 +60,18 @@ export const ListManager = () => {
   }, 500);
 
   const itemIncrement = (item?: ShoppingItem) => {
-    if (!item) return;
+    if (!item) {
+      return;
+    }
     const quantity = item.quantity + 1;
 
     updateItem({ id: item.id, data: { quantity } });
   };
 
   const itemDecrement = (item?: ShoppingItem) => {
-    if (!item) return;
+    if (!item) {
+      return;
+    }
     const quantity = item.quantity - 1;
 
     if (quantity === 0) {
@@ -69,8 +82,10 @@ export const ListManager = () => {
     updateItem({ id: item.id, data: { quantity } });
   };
 
-  const itemDelete = (item?: ShoppingItem) => {
-    if (!item) return;
+  const handleRemoveItem = (item?: ShoppingItem) => {
+    if (!item) {
+      return;
+    }
     deleteItem(item.id);
   };
 
@@ -93,7 +108,7 @@ export const ListManager = () => {
                   handleAddItem(product);
                 }
               }}
-              onRemove={() => itemDelete(itemSelected)}
+              onRemove={() => handleRemoveItem(itemSelected)}
               onIncrement={() => itemIncrement(itemSelected)}
               onDecrement={() => itemDecrement(itemSelected)}
             />
@@ -104,7 +119,15 @@ export const ListManager = () => {
   };
 
   return (
-    <Paper p="sm" w={350} h="calc(100vh - 80px)">
+    <Paper
+      p="sm"
+      w={350}
+      h="calc(100vh - 64px)"
+      style={{
+        position: 'sticky',
+        top: 32,
+      }}
+    >
       <TextInput
         variant="filled"
         size="md"
@@ -130,27 +153,8 @@ export const ListManager = () => {
         }}
       />
 
-      <Stack gap="xxs" mt="xs" display={queryValue ? 'flex' : 'none'}>
-        <Group gap="xs" my="xs">
-          <Button size="compact-xs" disabled c="dimmed" fw={600}>
-            Results
-          </Button>
-        </Group>
-        {filteredProducts.length < 4 && (
-          <ProductButton
-            name={queryValue}
-            variant="outline"
-            product={isItemSelected(queryValue)}
-            // onClick={() => addProduct(queryValue, 'custom')}
-            // onRemove={() => onRemoveProduct(queryValue)}
-            // onDecrement={() => onDecrementProduct(queryValue)}
-          />
-        )}
-        {renderProducts(filteredProducts)}
-      </Stack>
-
-      <Stack gap="xxs" mt="xs" display={queryValue ? 'none' : 'flex'}>
-        <Group gap="xs" my="xs">
+      <Stack gap="xs" mt="sm">
+        <Group gap="xs">
           {tabsOptions.map((label) => (
             <Button
               key={label}
@@ -163,9 +167,27 @@ export const ListManager = () => {
             </Button>
           ))}
         </Group>
-        <RenderIf condition={tab === tabsOptions[0]}>{renderProducts(mockProducts)}</RenderIf>
-        {/* <RenderIf condition={tab === tabsOptions[1]}>{renderProducts(favoriteProducts)}</RenderIf>
-        <RenderIf condition={tab === tabsOptions[2]}>{renderProducts(recentProducts)}</RenderIf> */}
+        <RenderIf condition={tab === tabsOptions[0]}>
+          <ScrollArea
+            h="calc(100vh - 184px)"
+            offsetScrollbars
+            scrollbarSize={8}
+            scrollHideDelay={500}
+          >
+            {showInputToCreateProduct && (
+              <ProductButton
+                name={queryValue}
+                variant="outline"
+                product={queryValueHasMatchInProducts}
+                onClick={() => handleAddItem({ name: queryValue, category: 'Custom' })}
+                onRemove={() => handleRemoveItem(queryValueHasMatchInProducts)}
+                onDecrement={() => itemDecrement(queryValueHasMatchInProducts)}
+                onIncrement={() => itemIncrement(queryValueHasMatchInProducts)}
+              />
+            )}
+            {renderProducts(filteredProducts)}
+          </ScrollArea>
+        </RenderIf>
       </Stack>
     </Paper>
   );

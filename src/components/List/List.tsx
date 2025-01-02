@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
-import { Button, Center, Group, Loader, Paper, rem, Stack, Text } from '@mantine/core';
+import { Button, Center, Group, Loader, Modal, Paper, rem, Stack, Text } from '@mantine/core';
 import { useToggleShoppingItem } from '@/hooks/mutation/useToggleShoppingItem';
 import { useShoppingList } from '@/hooks/queries/useShoppingList';
 import { ShoppingItem } from '@/service/api';
 import { ListHeader } from '../ListHeader/ListHeader';
 import { ProductCheckbox } from '../ProductCheckbox/ProductCheckbox';
-import { Product } from '../ProductForm/ProductForm';
+import { ProductForm } from '../ProductForm/ProductForm';
 import { RenderIf } from '../RenderIf/RenderIf';
 import classes from './List.module.css';
 
@@ -16,11 +16,15 @@ export const List = () => {
   const [shoppingItem, setShoppingItem] = useState<ShoppingItem>();
 
   const uncheckedProducts = useMemo(() => {
-    if (!data) return [];
+    if (!data) {
+      return [];
+    }
     return data.filter((product) => !product.checked);
   }, [data]);
   const checkeditems = useMemo(() => {
-    if (!data) return [];
+    if (!data) {
+      return [];
+    }
     return data.filter((product) => product.checked);
   }, [data]);
 
@@ -87,12 +91,14 @@ export const List = () => {
           ))}
         </Paper>
       </RenderIf>
-      <Product.modal
+
+      <Modal
         opened={!!shoppingItem}
-        shoppingItem={shoppingItem}
         onClose={() => setShoppingItem(undefined)}
         title={`${shoppingItem?.name} - ${shoppingItem?.id}`}
-      />
+      >
+        <ProductForm shoppingItem={shoppingItem} />
+      </Modal>
     </Stack>
   );
 };

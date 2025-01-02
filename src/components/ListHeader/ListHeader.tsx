@@ -1,83 +1,41 @@
-import {
-  IconCircleX,
-  IconCopy,
-  IconCurrencyDollar,
-  IconEdit,
-  IconMenu,
-  IconPrinter,
-  IconShare,
-  IconTrash,
-} from '@tabler/icons-react';
-import { ActionIcon, Avatar, AvatarGroup, Box, Flex, Group, Menu, rem, Title } from '@mantine/core';
+import { Box, Flex, Stack, Text, Title } from '@mantine/core';
+import { ListActions } from '../ListActions/ListActions';
+import { ListStats } from '../ListStats/ListStats';
 
 type ListHeaderProps = {
   listName: string;
   createdAt: string;
 };
 
+// Subcomponent: HeaderDetails
+const HeaderDetails: React.FC<{ listName: string; createdAt: string }> = ({
+  listName,
+  createdAt,
+}) => (
+  <Box>
+    <Title order={1} fz="xl">
+      {listName}
+    </Title>
+    <Text fz="xs" fw={400} c="dimmed">
+      {createdAt}
+    </Text>
+  </Box>
+);
+
 export const ListHeader: React.FC<ListHeaderProps> = ({ createdAt, listName }) => {
   return (
-    <Flex justify="space-between" align="center" my="lg" px="md">
-      <Box>
-        <Title order={1} fz="xl">
-          {listName}
-        </Title>
-        <Title order={3} fz="xs" fw={400} c="dimmed">
-          {createdAt}
-        </Title>
-      </Box>
-      <Group gap="xs">
-        <AvatarGroup>
-          <Avatar
-            size="sm"
-            src="https://images.unsplash.com/photo-1612838320302-47e0f8e0d7a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80"
-          />
-          <Avatar
-            size="sm"
-            src="https://images.unsplash.com/photo-1612838320302-47e0f8e0d7a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80"
-          />
-        </AvatarGroup>
-        <Menu shadow="md" width={200}>
-          <Menu.Target>
-            <ActionIcon variant="subtle" color="gray">
-              <IconMenu size={18} stroke={1.5} />
-            </ActionIcon>
-          </Menu.Target>
-          <Menu.Dropdown>
-            <Menu.Label>List</Menu.Label>
-            <Menu.Item leftSection={<IconEdit style={{ width: rem(14), height: rem(14) }} />}>
-              Rename
-            </Menu.Item>
-            <Menu.Item leftSection={<IconShare style={{ width: rem(14), height: rem(14) }} />}>
-              Share
-            </Menu.Item>
-
-            <Menu.Item leftSection={<IconPrinter style={{ width: rem(14), height: rem(14) }} />}>
-              print
-            </Menu.Item>
-            <Menu.Item leftSection={<IconCopy style={{ width: rem(14), height: rem(14) }} />}>
-              Make a copy
-            </Menu.Item>
-
-            <Menu.Label>Settings</Menu.Label>
-            <Menu.Item
-              leftSection={<IconCurrencyDollar style={{ width: rem(14), height: rem(14) }} />}
-            >
-              Show prices
-            </Menu.Item>
-            <Menu.Item leftSection={<IconCircleX style={{ width: rem(14), height: rem(14) }} />}>
-              Clear list
-            </Menu.Item>
-
-            <Menu.Item
-              color="red"
-              leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
-            >
-              Delete list
-            </Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-      </Group>
-    </Flex>
+    <Stack gap="md" mb="md">
+      <Flex justify="space-between" align="center">
+        <HeaderDetails listName={listName} createdAt={createdAt} />
+        <ListActions />
+      </Flex>
+      <ListStats
+        totalItems="10 / 100"
+        budget="$5,431 / $10,000"
+        checked="$5,431"
+        unchecked="$4,569"
+        progress={50}
+      />
+    </Stack>
   );
 };
