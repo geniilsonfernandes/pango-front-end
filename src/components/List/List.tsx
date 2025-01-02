@@ -50,6 +50,7 @@ export const List = () => {
             <ProductCheckbox
               name={item.name}
               shoppingItem={item}
+              key={item.id}
               showCurrency
               onClick={() => setShoppingItem(item)}
               onCheck={() =>
@@ -77,6 +78,7 @@ export const List = () => {
           {checkeditems?.map((item) => (
             <ProductCheckbox
               name={item.name}
+              key={item.id}
               shoppingItem={item}
               showCurrency
               onClick={() => setShoppingItem(item)}
