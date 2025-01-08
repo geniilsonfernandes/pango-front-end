@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { IconTrash } from '@tabler/icons-react';
 import * as z from 'zod';
 import {
@@ -16,6 +16,7 @@ import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 // import { useForm } from 'react-hook-form';
 import { categories } from '@/dummyData';
+import { useDeleteShoppingItem } from '@/hooks/mutation/useDeleteShoppingItem';
 import { useUpdateShoppingItem } from '@/hooks/mutation/useUpdateShoppingItem';
 import { ShoppingItem } from '@/service/api';
 
@@ -47,6 +48,7 @@ const shoppingItemSchema = z.object({
 
 export const ProductForm: React.FC<FormProps> = ({ onCancel, shoppingItem }) => {
   const { mutate: updateItem, isLoading } = useUpdateShoppingItem();
+  const { mutate: deleteItem } = useDeleteShoppingItem();
 
   const form = useForm({
     mode: 'uncontrolled',
@@ -83,6 +85,21 @@ export const ProductForm: React.FC<FormProps> = ({ onCancel, shoppingItem }) => 
 
     onCancel?.();
   };
+
+  const handleRemoveItem = useCallback(
+    (item?: ShoppingItem) => {
+      if (item) {
+        deleteItem(item.id);
+        onCancel?.();
+        notifications.show({
+          title: 'Success',
+          message: 'Item deleted',
+          color: 'green',
+        });
+      }
+    },
+    [deleteItem]
+  );
 
   return (
     <form onSubmit={form.onSubmit(handleUpdate)}>
@@ -146,7 +163,12 @@ export const ProductForm: React.FC<FormProps> = ({ onCancel, shoppingItem }) => 
       <Divider my="md" />
       <Group mt="lg" justify="space-between">
         <Tooltip label="Remove">
-          <ActionIcon color="red" variant="outline" size="lg" onClick={() => console.log('remove')}>
+          <ActionIcon
+            color="red"
+            variant="outline"
+            size="lg"
+            onClick={() => handleRemoveItem(shoppingItem)}
+          >
             <IconTrash size={16} stroke={1.5} />
           </ActionIcon>
         </Tooltip>

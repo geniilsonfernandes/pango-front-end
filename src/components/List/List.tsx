@@ -12,6 +12,7 @@ import classes from './List.module.css';
 export const List = () => {
   const { showPrice } = useListHeaderStore();
   const { data, isLoading } = useShoppingList();
+
   const { mutate: toggleShoppingItem } = useToggleShoppingItem();
 
   const [shoppingItem, setShoppingItem] = useState<ShoppingItem>();
