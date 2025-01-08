@@ -29,10 +29,10 @@ class ShoppingListAPI {
   }
 
   // Create or update an item (increment quantity if it already exists)
-  async create(item: CreateShoppingItemDTO): Promise<ShoppingItem> {
+  async create(data: CreateShoppingItemDTO): Promise<ShoppingItem> {
     const existingItems = await this.list();
     const existingItem = existingItems.find(
-      (i) => i.name === item.name && i.category === item.category
+      (i) => i.name === data.name && i.category === data.category
     );
 
     if (existingItem) {
@@ -40,13 +40,21 @@ class ShoppingListAPI {
     }
 
     const response = await axios.post(`${this.baseURL}/shoppingList`, {
-      ...item,
-      quantity: item.quantity || 1,
+      ...data,
+      quantity: data.quantity || 1,
       checked: false,
       createdAt: new Date().toISOString(),
     });
 
     return response.data;
+  }
+
+  async createMany(data: CreateShoppingItemDTO[]): Promise<ShoppingItem[]> {
+    data.forEach((item) => {
+      this.create(item);
+    });
+
+    return data;
   }
 
   // Update an existing item

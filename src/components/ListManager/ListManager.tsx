@@ -1,116 +1,145 @@
-import { useMemo, useState } from 'react';
-import { IconSearch, IconX } from '@tabler/icons-react';
-import { ActionIcon, Button, Group, Paper, ScrollArea, Stack, TextInput } from '@mantine/core';
-import { useDebouncedCallback, useToggle } from '@mantine/hooks';
-import { products as mockProducts, type Product } from '@/dummyData';
+import { useCallback, useState } from 'react';
+import { matchSorter, rankings } from 'match-sorter';
+import { Paper, ScrollArea, Stack, Tabs } from '@mantine/core';
+import { useDebouncedCallback, useDebouncedValue } from '@mantine/hooks';
+import { type Product } from '@/dummyData';
 import { useAddShoppingItem } from '@/hooks/mutation/useAddShoppingItem';
 import { useDeleteShoppingItem } from '@/hooks/mutation/useDeleteShoppingItem';
 import { useUpdateShoppingItem } from '@/hooks/mutation/useUpdateShoppingItem';
+import { useProducts } from '@/hooks/queries/useProducts';
 import { useShoppingList } from '@/hooks/queries/useShoppingList';
-import { ShoppingItem } from '@/service/api';
-import { filterItems, findProductByName } from '@/utils/filterProducts';
+import { useRecentsProducts } from '@/hooks/useRecentsProducts';
+import { CreateShoppingItemDTO, ShoppingItem } from '@/service/api';
 import { generateNumericId } from '@/utils/generateNumericId';
 import { ProductButton } from '../ProductButton/ProductButton';
-import { RenderIf } from '../RenderIf/RenderIf';
-
-const tabsOptions = ['Popular', 'Favorites', 'Recent'];
+import { ProductSearchInput } from '../ProductSearchInput/ProductSearchInput';
 
 export const ListManager = () => {
+  const [queryValue, setQueryValue] = useState('');
   const { mutate: addItem } = useAddShoppingItem();
   const { mutate: deleteItem } = useDeleteShoppingItem();
   const { mutate: updateItem } = useUpdateShoppingItem();
-  const { data: products } = useShoppingList();
+  const { addToRecents, recents } = useRecentsProducts();
+  const [items, setItems] = useState<CreateShoppingItemDTO[]>([]);
 
-  const [tab, toggleTab] = useToggle(tabsOptions);
-  const [queryValue, setQueryValue] = useState('');
+  const handleAddMultipleItems = useDebouncedCallback(() => {
+    items.forEach((product) => {
+      addToRecents(product);
+      addItem(product);
+    });
 
-  const filteredProducts = useMemo(
-    () =>
-      filterItems<Product>({
-        items: mockProducts,
-        query: queryValue,
-        keys: ['name'],
-      }),
-    [queryValue]
-  );
+    setItems([]);
+  }, 800);
 
-  const showInputToCreateProduct = useMemo(() => {
-    return (
-      !filteredProducts.some(
-        (product) => product.name.toLowerCase() === queryValue.toLowerCase()
-      ) && queryValue
-    );
-  }, [queryValue, filteredProducts]);
-
-  const isItemSelected = (name: string) => findProductByName(products || [], name);
-  const queryValueHasMatchInProducts = isItemSelected(queryValue);
-
-  const handleSearch = useDebouncedCallback((query: string) => {
-    console.log(query);
-  }, 500);
-
-  const handleAddItem = useDebouncedCallback((product: Product) => {
-    addItem({
+  const handleAddItem = (product: Product) => {
+    const existingItem = items.find((item) => item.name === product.name);
+    if (existingItem) {
+      return;
+    }
+    const newProduct = {
       id: generateNumericId().toString(),
       name: product.name,
       category: product.category,
       quantity: 1,
       listId: 1,
-    });
-  }, 500);
-
-  const itemIncrement = (item?: ShoppingItem) => {
-    if (!item) {
-      return;
-    }
-    const quantity = item.quantity + 1;
-
-    updateItem({ id: item.id, data: { quantity } });
+    };
+    setItems((prevItems) => [...prevItems, newProduct]);
+    handleAddMultipleItems();
   };
 
-  const itemDecrement = (item?: ShoppingItem) => {
-    if (!item) {
-      return;
+  const handleIncrement = useCallback((item?: ShoppingItem) => {
+    if (item) {
+      updateItem({ id: item.id, data: { quantity: item.quantity + 1 } });
     }
-    const quantity = item.quantity - 1;
+  }, []);
 
-    if (quantity === 0) {
-      deleteItem(item.id);
-      return;
-    }
+  const handleDecrement = useCallback(
+    (item?: ShoppingItem) => {
+      if (item) {
+        const newQuantity = item.quantity - 1;
+        newQuantity === 0
+          ? deleteItem(item.id)
+          : updateItem({ id: item.id, data: { quantity: newQuantity } });
+      }
+    },
+    [deleteItem, updateItem]
+  );
 
-    updateItem({ id: item.id, data: { quantity } });
-  };
+  const handleRemoveItem = useCallback(
+    (item?: ShoppingItem) => {
+      if (item) {
+        deleteItem(item.id);
+      }
+    },
+    [deleteItem]
+  );
+  const { data: selectedList } = useShoppingList();
+  const [queryDebounced] = useDebouncedValue(queryValue, 800);
+  const { data: products, isLoading: isLoadingProducts } = useProducts(queryDebounced);
 
-  const handleRemoveItem = (item?: ShoppingItem) => {
-    if (!item) {
-      return;
-    }
-    deleteItem(item.id);
-  };
+  const findProductInSelectedList = useCallback(
+    (name: string) =>
+      matchSorter(selectedList || [], name, { keys: ['name'], threshold: rankings.EQUAL })[0],
+    [selectedList]
+  );
 
-  const renderProducts = (list: Product[]) => {
-    if (list.length === 0) {
-      return null;
-    }
+  const findProductInProductList = useCallback(
+    (name: string) =>
+      matchSorter(products || [], name, { keys: ['name'], threshold: rankings.EQUAL })[0],
+    [products]
+  );
+
+  const inputToCreateProduct = () => {
+    const queryValueHasMatchInProductsSelected = findProductInSelectedList(queryValue);
+    const queryValueHasMatchInProducts = findProductInProductList(queryValue);
 
     return (
       <>
+        {!queryValueHasMatchInProducts && (
+          <ProductButton
+            name={queryValue}
+            variant="outline"
+            product={queryValueHasMatchInProductsSelected}
+            onClick={() => {
+              if (!queryValueHasMatchInProductsSelected) {
+                handleAddItem({
+                  name: queryValue,
+                  category: 'other',
+                });
+              } else {
+                handleIncrement(queryValueHasMatchInProductsSelected);
+              }
+            }}
+            onRemove={() => handleRemoveItem(queryValueHasMatchInProductsSelected)}
+            onDecrement={() => handleDecrement(queryValueHasMatchInProductsSelected)}
+            onIncrement={() => handleIncrement(queryValueHasMatchInProductsSelected)}
+          />
+        )}
+      </>
+    );
+  };
+
+  const renderProducts = (list: Product[]) => {
+    return (
+      <>
         {list.map((product) => {
-          const itemSelected = isItemSelected(product.name);
+          const itemSelected = findProductInSelectedList(product.name);
           return (
             <ProductButton
+              isLoading={items.some((item) => item.name === product.name)}
               key={product.name}
               name={product.name}
               product={itemSelected}
               onClick={() => {
                 if (!itemSelected) {
                   handleAddItem(product);
+                } else {
+                  handleIncrement(itemSelected);
                 }
               }}
               onRemove={() => handleRemoveItem(itemSelected)}
-              onIncrement={() => itemIncrement(itemSelected)}
-              onDecrement={() => itemDecrement(itemSelected)}
+              onIncrement={() => handleIncrement(itemSelected)}
+              onDecrement={() => handleDecrement(itemSelected)}
             />
           );
         })}
@@ -128,67 +157,59 @@ export const ListManager = () => {
         top: 32,
       }}
     >
-      <TextInput
-        variant="filled"
-        size="md"
-        placeholder="Search for products"
-        rightSectionWidth={42}
-        leftSection={<IconSearch size={18} stroke={1.5} />}
-        rightSection={
-          <ActionIcon
-            style={{ opacity: queryValue ? 1 : 0 }}
-            variant="light"
-            color="gray"
-            size="xs"
-            radius="xl"
-            onClick={() => setQueryValue('')}
-          >
-            <IconX size={18} stroke={1.5} />
-          </ActionIcon>
-        }
-        value={queryValue}
-        onChange={(e) => {
-          handleSearch(e.target.value);
-          setQueryValue(e.target.value);
-        }}
+      <ProductSearchInput
+        queryValue={queryValue}
+        setQueryValue={setQueryValue}
+        isLoading={isLoadingProducts}
       />
 
-      <Stack gap="xs" mt="sm">
-        <Group gap="xs">
-          {tabsOptions.map((label) => (
-            <Button
-              key={label}
-              size="compact-xs"
-              radius="xl"
-              variant={label === tab ? 'filled' : 'outline'}
-              onClick={() => toggleTab(label)}
-            >
-              {label}
-            </Button>
-          ))}
-        </Group>
-        <RenderIf condition={tab === tabsOptions[0]}>
-          <ScrollArea
-            h="calc(100vh - 184px)"
-            offsetScrollbars
-            scrollbarSize={8}
-            scrollHideDelay={500}
-          >
-            {showInputToCreateProduct && (
-              <ProductButton
-                name={queryValue}
-                variant="outline"
-                product={queryValueHasMatchInProducts}
-                onClick={() => handleAddItem({ name: queryValue, category: 'Custom' })}
-                onRemove={() => handleRemoveItem(queryValueHasMatchInProducts)}
-                onDecrement={() => itemDecrement(queryValueHasMatchInProducts)}
-                onIncrement={() => itemIncrement(queryValueHasMatchInProducts)}
-              />
-            )}
-            {renderProducts(filteredProducts)}
-          </ScrollArea>
-        </RenderIf>
-      </Stack>
+      {queryValue && (
+        <Stack gap="xxs" mt="xs">
+          <Tabs variant="pills" defaultValue="Results">
+            <Tabs.List>
+              <Tabs.Tab fz="sm" px="xs" py="xs" value="Results">
+                Results
+              </Tabs.Tab>
+            </Tabs.List>
+            <Tabs.Panel value="Results">
+              <ScrollArea h="calc(100vh - 184px)" offsetScrollbars>
+                <Stack gap="xxs" mt="xs">
+                  {inputToCreateProduct()}
+                  {renderProducts(products || [])}
+                </Stack>
+              </ScrollArea>
+            </Tabs.Panel>
+          </Tabs>
+        </Stack>
+      )}
+      {!queryValue && (
+        <Stack gap="xxs" mt="xs">
+          <Tabs variant="pills" defaultValue="Products">
+            <Tabs.List>
+              <Tabs.Tab fz="sm" px="xs" py="xs" value="Products">
+                Products
+              </Tabs.Tab>
+              <Tabs.Tab fz="sm" px="xs" py="xs" value="Recents">
+                Recents
+              </Tabs.Tab>
+            </Tabs.List>
+            <Tabs.Panel value="Products">
+              <ScrollArea h="calc(100vh - 184px)" offsetScrollbars>
+                <Stack gap="xxs" mt="xs">
+                  {renderProducts(products || [])}
+                </Stack>
+              </ScrollArea>
+            </Tabs.Panel>
+            <Tabs.Panel value="Recents">
+              <ScrollArea h="calc(100vh - 184px)" offsetScrollbars>
+                <Stack gap="xxs" mt="xs">
+                  {renderProducts(recents || [])}
+                </Stack>
+              </ScrollArea>
+            </Tabs.Panel>
+          </Tabs>
+        </Stack>
+      )}
     </Paper>
   );
 };

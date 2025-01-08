@@ -64,8 +64,10 @@ export const ProductButton: React.FC<ProductButtonProps> = ({
     <Button
       variant={variant}
       color="gray"
+      px="xxs"
       justify="space-between"
       size="xs"
+      radius="md"
       fullWidth
       aria-selected={!!product?.quantity}
       aria-labelledby={name}
@@ -77,12 +79,12 @@ export const ProductButton: React.FC<ProductButtonProps> = ({
           onClick={onIncrement}
           aria-label="increment-button"
           role="button"
-          size="xs"
+          size="sm"
           radius="sm"
           variant={product ? 'filled' : 'subtle'}
           color={product ? 'green' : 'gray'}
         >
-          <IconPlus size={14} />
+          <IconPlus size={16} />
         </ActionIcon>
       }
       rightSection={
@@ -93,30 +95,33 @@ export const ProductButton: React.FC<ProductButtonProps> = ({
               component="span"
               role="button"
               aria-label="decrement-button"
-              size={14}
+              size="sm"
+              radius="sm"
+              variant="light"
               onClick={(e) => {
                 e.stopPropagation();
                 onDecrement?.();
               }}
             >
-              <IconMinus />
+              <IconMinus size={16} />
             </ActionIcon>
           </Flex>
         ) : (
           <ThemeIcon
-            display={product ? 'block' : 'none'}
-            component="span"
+            display={product ? 'flex' : 'none'}
+            component="div"
             aria-label="remove-button"
             role="button"
             onClick={(e) => {
               e.stopPropagation();
               onRemove?.();
             }}
-            size={14}
-            variant="subtle"
+            size="sm"
+            radius="sm"
+            variant="light"
             color="red"
           >
-            <IconTrash size={14} />
+            <IconTrash size={16} />
           </ThemeIcon>
         )
       }

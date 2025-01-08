@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { format } from 'date-fns';
 import { Button, Center, Group, Loader, Modal, Paper, rem, Stack, Text } from '@mantine/core';
 import { useToggleShoppingItem } from '@/hooks/mutation/useToggleShoppingItem';
 import { useShoppingList } from '@/hooks/queries/useShoppingList';
@@ -10,7 +11,7 @@ import { RenderIf } from '../RenderIf/RenderIf';
 import classes from './List.module.css';
 
 export const List = () => {
-  const { data, isLoading } = useShoppingList();
+  const { data, isLoading, dataUpdatedAt, isFetching } = useShoppingList();
   const { mutate: toggleShoppingItem } = useToggleShoppingItem();
 
   const [shoppingItem, setShoppingItem] = useState<ShoppingItem>();
@@ -46,6 +47,7 @@ export const List = () => {
         }
       >
         <Paper className={classes.list}>
+          <Text> {format(dataUpdatedAt || new Date(), 'dd/MM/yyyy HH:mm:ss')}</Text>
           {uncheckedProducts?.map((item) => (
             <ProductCheckbox
               name={item.name}
@@ -75,6 +77,7 @@ export const List = () => {
               Clear
             </Button>
           </Group>
+
           {checkeditems?.map((item) => (
             <ProductCheckbox
               name={item.name}
