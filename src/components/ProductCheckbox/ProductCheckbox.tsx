@@ -8,9 +8,8 @@ import classes from './ProductCheckbox.module.css';
 export type ProductCheckboxProps = {
   name: string;
   shoppingItem?: ShoppingItem;
-
   currency?: CurrencyMode;
-  showCurrency?: boolean;
+  showPrice?: boolean;
   onCheck?: () => void;
   checked?: boolean;
   onPriceClick?: () => void;
@@ -23,7 +22,7 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
   name,
   shoppingItem,
   currency = 'br',
-  showCurrency = false,
+  showPrice = false,
   onPriceClick,
   onCheck,
   onClick,
@@ -63,7 +62,7 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
         <Text c="gray" fz="xs">
           {quantity}
         </Text>
-        <RenderIf condition={showCurrency}>
+        <RenderIf condition={showPrice}>
           <Button
             c="gray"
             fz="xs"

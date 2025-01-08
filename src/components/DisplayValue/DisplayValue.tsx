@@ -1,7 +1,8 @@
 import { Box, rem, Text } from '@mantine/core';
 
+
 type DisplayValueProps = {
-  value: string | number;
+  value?: string | number;
   label: string;
 } & React.HTMLAttributes<HTMLDivElement>;
 

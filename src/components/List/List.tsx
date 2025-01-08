@@ -1,17 +1,17 @@
 import { useMemo, useState } from 'react';
-import { format } from 'date-fns';
 import { Button, Center, Group, Loader, Modal, Paper, rem, Stack, Text } from '@mantine/core';
 import { useToggleShoppingItem } from '@/hooks/mutation/useToggleShoppingItem';
 import { useShoppingList } from '@/hooks/queries/useShoppingList';
 import { ShoppingItem } from '@/service/api';
-import { ListHeader } from '../ListHeader/ListHeader';
+import { ListHeader, useListHeaderStore } from '../ListHeader/ListHeader';
 import { ProductCheckbox } from '../ProductCheckbox/ProductCheckbox';
 import { ProductForm } from '../ProductForm/ProductForm';
 import { RenderIf } from '../RenderIf/RenderIf';
 import classes from './List.module.css';
 
 export const List = () => {
-  const { data, isLoading, dataUpdatedAt, isFetching } = useShoppingList();
+  const { showPrice } = useListHeaderStore();
+  const { data, isLoading } = useShoppingList();
   const { mutate: toggleShoppingItem } = useToggleShoppingItem();
 
   const [shoppingItem, setShoppingItem] = useState<ShoppingItem>();
@@ -31,7 +31,7 @@ export const List = () => {
 
   return (
     <Stack gap="xs" flex={1}>
-      <ListHeader listName="No category" createdAt="No name" />
+      <ListHeader listName="No category" createdAt="No name" data={data} />
       <RenderIf
         condition={!!uncheckedProducts?.length}
         isLoading={isLoading}
@@ -47,13 +47,12 @@ export const List = () => {
         }
       >
         <Paper className={classes.list}>
-          <Text> {format(dataUpdatedAt || new Date(), 'dd/MM/yyyy HH:mm:ss')}</Text>
           {uncheckedProducts?.map((item) => (
             <ProductCheckbox
               name={item.name}
               shoppingItem={item}
               key={item.id}
-              showCurrency
+              showPrice={showPrice}
               onClick={() => setShoppingItem(item)}
               onCheck={() =>
                 toggleShoppingItem({
@@ -83,7 +82,7 @@ export const List = () => {
               name={item.name}
               key={item.id}
               shoppingItem={item}
-              showCurrency
+              showPrice={showPrice}
               onClick={() => setShoppingItem(item)}
               onCheck={() =>
                 toggleShoppingItem({
@@ -102,7 +101,7 @@ export const List = () => {
         onClose={() => setShoppingItem(undefined)}
         title={`${shoppingItem?.name} - ${shoppingItem?.id}`}
       >
-        <ProductForm shoppingItem={shoppingItem} />
+        <ProductForm shoppingItem={shoppingItem} onCancel={() => setShoppingItem(undefined)} />
       </Modal>
     </Stack>
   );

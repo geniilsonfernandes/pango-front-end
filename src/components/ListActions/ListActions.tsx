@@ -9,55 +9,62 @@ import {
   IconTrash,
 } from '@tabler/icons-react';
 import { ActionIcon, Avatar, AvatarGroup, Group, Menu, rem } from '@mantine/core';
+import { useListHeaderStore } from '../ListHeader/ListHeader';
 
 // Subcomponent: UserActions
-export const ListActions: React.FC = () => (
-  <Group gap="xs">
-    <AvatarGroup>
-      <Avatar
-        size="sm"
-        src="https://images.unsplash.com/photo-1612838320302-47e0f8e0d7a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80"
-      />
-      <Avatar
-        size="sm"
-        src="https://images.unsplash.com/photo-1612838320302-47e0f8e0d7a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80"
-      />
-    </AvatarGroup>
-    <Menu shadow="md" width={200}>
-      <Menu.Target>
-        <ActionIcon variant="subtle" color="gray">
-          <IconMenu size={18} stroke={1.5} />
-        </ActionIcon>
-      </Menu.Target>
-      <Menu.Dropdown>
-        <Menu.Label>List</Menu.Label>
-        <Menu.Item leftSection={<IconEdit style={{ width: rem(14), height: rem(14) }} />}>
-          Rename
-        </Menu.Item>
-        <Menu.Item leftSection={<IconShare style={{ width: rem(14), height: rem(14) }} />}>
-          Share
-        </Menu.Item>
-        <Menu.Item leftSection={<IconPrinter style={{ width: rem(14), height: rem(14) }} />}>
-          Print
-        </Menu.Item>
-        <Menu.Item leftSection={<IconCopy style={{ width: rem(14), height: rem(14) }} />}>
-          Make a copy
-        </Menu.Item>
+export const ListActions: React.FC = () => {
+  const { setShowPrice, showPrice } = useListHeaderStore();
+  return (
+    <Group gap="xs">
+      <AvatarGroup>
+        <Avatar
+          size="sm"
+          src="https://images.unsplash.com/photo-1612838320302-47e0f8e0d7a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80"
+        />
+        <Avatar
+          size="sm"
+          src="https://images.unsplash.com/photo-1612838320302-47e0f8e0d7a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80"
+        />
+      </AvatarGroup>
+      <Menu shadow="md" width={200}>
+        <Menu.Target>
+          <ActionIcon variant="subtle" color="gray">
+            <IconMenu size={18} stroke={1.5} />
+          </ActionIcon>
+        </Menu.Target>
+        <Menu.Dropdown>
+          <Menu.Label>List</Menu.Label>
+          <Menu.Item leftSection={<IconEdit style={{ width: rem(14), height: rem(14) }} />}>
+            Rename
+          </Menu.Item>
+          <Menu.Item leftSection={<IconShare style={{ width: rem(14), height: rem(14) }} />}>
+            Share
+          </Menu.Item>
+          <Menu.Item leftSection={<IconPrinter style={{ width: rem(14), height: rem(14) }} />}>
+            Print
+          </Menu.Item>
+          <Menu.Item leftSection={<IconCopy style={{ width: rem(14), height: rem(14) }} />}>
+            Make a copy
+          </Menu.Item>
 
-        <Menu.Label>Settings</Menu.Label>
-        <Menu.Item leftSection={<IconCurrencyDollar style={{ width: rem(14), height: rem(14) }} />}>
-          Show prices
-        </Menu.Item>
-        <Menu.Item leftSection={<IconCircleX style={{ width: rem(14), height: rem(14) }} />}>
-          Clear list
-        </Menu.Item>
-        <Menu.Item
-          color="red"
-          leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
-        >
-          Delete list
-        </Menu.Item>
-      </Menu.Dropdown>
-    </Menu>
-  </Group>
-);
+          <Menu.Label>Settings</Menu.Label>
+          <Menu.Item
+            leftSection={<IconCurrencyDollar style={{ width: rem(14), height: rem(14) }} />}
+            onClick={() => setShowPrice(!showPrice)}
+          >
+            {showPrice ? 'Hide' : 'Show'} prices
+          </Menu.Item>
+          <Menu.Item leftSection={<IconCircleX style={{ width: rem(14), height: rem(14) }} />}>
+            Clear list
+          </Menu.Item>
+          <Menu.Item
+            color="red"
+            leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
+          >
+            Delete list
+          </Menu.Item>
+        </Menu.Dropdown>
+      </Menu>
+    </Group>
+  );
+};

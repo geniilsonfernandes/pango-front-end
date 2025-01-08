@@ -46,7 +46,7 @@ const shoppingItemSchema = z.object({
 });
 
 export const ProductForm: React.FC<FormProps> = ({ onCancel, shoppingItem }) => {
-  const { mutate: updateItem, status, isLoading } = useUpdateShoppingItem();
+  const { mutate: updateItem, isLoading } = useUpdateShoppingItem();
 
   const form = useForm({
     mode: 'uncontrolled',

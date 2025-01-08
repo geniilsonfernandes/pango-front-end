@@ -2,15 +2,15 @@ import { Flex, Progress } from '@mantine/core';
 import { DisplayValue } from '../DisplayValue/DisplayValue';
 
 type ListStatsProps = {
-  totalItems: string;
-  budget: string;
-  checked: string;
-  unchecked: string;
+  totalItems?: string;
+  budget?: string;
+  checked?: string;
+  unchecked?: string;
   progress: number;
 };
 
 export const ListStats: React.FC<ListStatsProps> = ({
-  totalItems,
+  totalItems = '0 / 0',
   budget,
   checked,
   unchecked,
