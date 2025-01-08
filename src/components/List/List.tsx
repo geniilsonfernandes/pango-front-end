@@ -77,7 +77,6 @@ export const List = () => {
               Clear
             </Button>
           </Group>
-
           {checkeditems?.map((item) => (
             <ProductCheckbox
               name={item.name}
