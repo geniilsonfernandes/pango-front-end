@@ -172,8 +172,8 @@ export const ListManager = () => {
               </Tabs.Tab>
             </Tabs.List>
             <Tabs.Panel value="Results">
-              <ScrollArea h="calc(100vh - 184px)" offsetScrollbars>
-                <Stack gap="xxs" mt="xs">
+              <ScrollArea h="calc(100vh - 184px)" offsetScrollbars mt="xs">
+                <Stack gap="xxs">
                   {inputToCreateProduct()}
                   {renderProducts(products || [])}
                 </Stack>
@@ -194,17 +194,13 @@ export const ListManager = () => {
               </Tabs.Tab>
             </Tabs.List>
             <Tabs.Panel value="Products">
-              <ScrollArea h="calc(100vh - 184px)" offsetScrollbars>
-                <Stack gap="xxs" mt="xs">
-                  {renderProducts(products || [])}
-                </Stack>
+              <ScrollArea h="calc(100vh - 184px)" offsetScrollbars mt="xs">
+                <Stack gap="xxs">{renderProducts(products || [])}</Stack>
               </ScrollArea>
             </Tabs.Panel>
             <Tabs.Panel value="Recents">
-              <ScrollArea h="calc(100vh - 184px)" offsetScrollbars>
-                <Stack gap="xxs" mt="xs">
-                  {renderProducts(recents || [])}
-                </Stack>
+              <ScrollArea h="calc(100vh - 184px)" offsetScrollbars mt="xs">
+                <Stack gap="xxs">{renderProducts(recents || [])}</Stack>
               </ScrollArea>
             </Tabs.Panel>
           </Tabs>

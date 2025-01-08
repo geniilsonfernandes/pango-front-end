@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Button, Card, Checkbox, CheckboxProps, Group, Text, Title, Tooltip } from '@mantine/core';
+import { useDebouncedCallback } from '@mantine/hooks';
 import { ShoppingItem } from '@/service/api';
 import { CurrencyMode, formatCurrency } from '@/utils/formatCurrency';
-import { RenderIf } from '../RenderIf/RenderIf';
 import classes from './ProductCheckbox.module.css';
 
 export type ProductCheckboxProps = {
@@ -27,6 +27,8 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
   onCheck,
   onClick,
 }) => {
+  const [check, setCheck] = useState(checked);
+
   const value = useMemo(() => {
     if (shoppingItem) {
       return formatCurrency((shoppingItem.quantity || 0) * (shoppingItem.price || 0), currency);
@@ -34,23 +36,26 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
     return 0;
   }, [currency, shoppingItem]);
 
-  const quantity = useMemo(() => {
-    if (shoppingItem) {
-      return `${shoppingItem.quantity} ${shoppingItem?.unit || ''}`;
-    }
-    return 0;
-  }, [shoppingItem]);
+  const handleSearch = useDebouncedCallback(() => {
+    onCheck?.();
+  }, 500);
+
+  const handleCheck = () => {
+    setCheck(!check);
+    handleSearch();
+  };
 
   return (
     <Card opacity={opacity} className={classes.card} onClick={onClick}>
       <Group gap="xs">
         <Tooltip label={checked ? 'Remove' : 'Add'}>
           <Checkbox
-            checked={checked}
+            radius="md"
+            checked={check}
             onClick={(e) => e.stopPropagation()}
             onChange={(e) => {
               e.stopPropagation();
-              onCheck?.();
+              handleCheck();
             }}
           />
         </Tooltip>
@@ -59,10 +64,24 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
         </Title>
       </Group>
       <Group gap="xs">
-        <Text c="gray" fz="xs">
-          {quantity}
+        <Text c="dimmed" fz="xs" pl="xs" fw={500}>
+          {shoppingItem?.quantity}
         </Text>
-        <RenderIf condition={showPrice}>
+        {shoppingItem?.unit && (
+          <Button
+            c="gray"
+            fz="xs"
+            fw="bolder"
+            size="compact-xs"
+            variant="light"
+            color="gray"
+            radius="sm"
+            onClick={onPriceClick}
+          >
+            {shoppingItem?.unit}
+          </Button>
+        )}
+        {showPrice && (
           <Button
             c="gray"
             fz="xs"
@@ -75,7 +94,7 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
           >
             {value}
           </Button>
-        </RenderIf>
+        )}
       </Group>
     </Card>
   );
