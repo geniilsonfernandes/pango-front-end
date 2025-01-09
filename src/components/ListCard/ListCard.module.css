@@ -1,0 +1,9 @@
+.card{
+    cursor: pointer;
+    width: 100%;
+    padding: var(--mantine-spacing-md);
+
+    @mixin hover {
+    background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
+  }
+}
