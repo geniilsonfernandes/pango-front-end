@@ -17,6 +17,7 @@ export function HomePage() {
     >
       <Flex gap="lg" flex={1}>
         <SideNavigation initialValue={0} step={1} />
+
         <List />
         <ListManager />
       </Flex>

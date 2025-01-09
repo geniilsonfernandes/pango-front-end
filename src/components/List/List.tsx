@@ -12,9 +12,7 @@ import classes from './List.module.css';
 export const List = () => {
   const { showPrice } = useListHeaderStore();
   const { data, isLoading } = useShoppingList();
-
   const { mutate: toggleShoppingItem } = useToggleShoppingItem();
-
   const [shoppingItem, setShoppingItem] = useState<ShoppingItem>();
 
   const uncheckedProducts = useMemo(() => {
@@ -31,7 +29,7 @@ export const List = () => {
   }, [data]);
 
   return (
-    <Stack gap="xs" flex={1}>
+    <Stack gap="xs" flex={1} component={Paper} p="lg">
       <ListHeader listName="No category" createdAt="No name" data={data} />
       <RenderIf
         condition={!!uncheckedProducts?.length}
