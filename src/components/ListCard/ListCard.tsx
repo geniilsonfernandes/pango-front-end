@@ -13,11 +13,11 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { List } from '../ListForm/ListForm';
+import { ListDTO } from '@/service/api';
 import classes from './ListCard.module.css';
 
 type ListCardProps = {
-  data?: List;
+  data?: ListDTO;
   onEdit?: () => void;
   onDelete?: () => void;
   onShare?: () => void;
@@ -38,7 +38,7 @@ export const ListCard: React.FC<ListCardProps> = ({
   ...props
 }) => {
   const status = useMemo(() => {
-    if (!data) {
+    if (!data?.items?.length) {
       return {
         checked: 0,
         checkedPrice: 0,
@@ -47,7 +47,7 @@ export const ListCard: React.FC<ListCardProps> = ({
         total: 0,
       };
     }
-    return data.items?.reduce(
+    return data?.items?.reduce(
       (acc, cur) => {
         const price = (cur?.price || 0) * (cur.quantity || 1);
         return {
@@ -75,7 +75,7 @@ export const ListCard: React.FC<ListCardProps> = ({
             {data?.name}
           </Title>
           <Text size="xs" c="dimmed" fz="xs">
-            {status.unchecked} / {data?.items?.length} items
+            {status?.unchecked || 0} / {data?.items?.length || 0} items
           </Text>
         </Box>
 
@@ -117,7 +117,7 @@ export const ListCard: React.FC<ListCardProps> = ({
           </Menu>
         </Group>
       </Flex>
-      <Progress value={(status.checked / status.total) * 100} mt="xs" />
+      <Progress value={(status?.checked / status?.total) * 100} mt="xs" />
     </Card>
   );
 };

@@ -16,12 +16,12 @@ import {
 import { DateInput } from '@mantine/dates';
 import { useForm, zodResolver } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
-import { notifications } from '@mantine/notifications';
-import { ShoppingItem } from '@/service/api';
+import { ListDTO } from '@/service/api';
+import { useCreateList, useDeleteList, useUpdateList } from '@/service/mutation/useListMutations';
 
 const ListFormSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  badge: z.string(),
+  budget: z.number(),
   date: z
     .date()
     .optional()
@@ -29,28 +29,30 @@ const ListFormSchema = z.object({
   description: z.string().optional(),
 });
 
-export type List = {
-  id: string;
-  name: string;
-  badge: string;
-  date: string;
-  description: string;
-  items: ShoppingItem[];
-};
-
 type ListFormProps = {
-  data?: List;
+  data?: ListDTO;
   onCancel?: () => void;
 };
 
 export const ListForm: React.FC<ListFormProps> = ({ onCancel, data }) => {
+  const { mutate: createList, isLoading: isCreating } = useCreateList({
+    onSuccess: () => {
+      onCancel?.();
+    },
+  });
+  const { mutate: updateList, isLoading: isUpdating } = useUpdateList();
+  const { mutate: deleteList, isLoading: isDeleting } = useDeleteList({
+    onSuccess: () => {
+      onCancel?.();
+    },
+  });
   const [opened, { toggle }] = useDisclosure(false);
   const form = useForm({
     mode: 'uncontrolled',
 
     initialValues: {
       name: data?.name || '',
-      badge: data?.badge || '',
+      budget: data?.budget || '',
       date: dayjs(data?.date).toDate(),
       description: data?.description || '',
     },
@@ -58,18 +60,20 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, data }) => {
   });
 
   const handleCreate = (values: typeof form.values) => {
-    notifications.show({
-      title: 'Success',
-      message: JSON.stringify(ListFormSchema.parse(values)),
-      color: 'green',
-    });
+    if (data?.id) {
+      updateList({
+        id: data.id,
+        ...ListFormSchema.parse(values),
+      });
 
-    onCancel?.();
+      return;
+    }
+    createList(ListFormSchema.parse(values));
   };
 
   return (
     <form onSubmit={form.onSubmit(handleCreate)}>
-      <Grid>
+      <Grid opacity={isCreating || isDeleting ? 0.5 : 1}>
         <Grid.Col span={12}>
           <TextInput
             label="Name"
@@ -84,7 +88,7 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, data }) => {
             prefix="R$ "
             thousandSeparator=","
             defaultValue={1_000_000}
-            {...form.getInputProps('badge')}
+            {...form.getInputProps('budget')}
             error={form.errors.badge}
           />
         </Grid.Col>
@@ -121,7 +125,17 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, data }) => {
       <Divider my="md" />
       <Group mt="lg" justify="space-between">
         <Tooltip label="Remove">
-          <ActionIcon color="red" variant="outline" size="lg">
+          <ActionIcon
+            onClick={() => {
+              if (data?.id) {
+                deleteList(data.id);
+              }
+            }}
+            loading={isDeleting}
+            color="red"
+            variant="outline"
+            size="lg"
+          >
             <IconTrash size={16} stroke={1.5} />
           </ActionIcon>
         </Tooltip>
@@ -129,7 +143,9 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, data }) => {
           <Button variant="outline" color="gray" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit">Save</Button>
+          <Button type="submit" loading={isCreating || isUpdating}>
+            Save
+          </Button>
         </Group>
       </Group>
     </form>

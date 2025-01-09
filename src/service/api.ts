@@ -112,7 +112,45 @@ class ShoppingListAPI {
   async delete(id: string | number): Promise<void> {
     await axios.delete(`${this.baseURL}/shoppingList/${id}`);
   }
+
+  async createList(data: CreateListDTO): Promise<ListDTO> {
+    const response = await axios.post(`${this.baseURL}/lists`, data);
+
+    return response.data;
+  }
+
+  async getLists(): Promise<ListDTO[]> {
+    const response = await axios.get(`${this.baseURL}/lists`);
+
+    return response.data;
+  }
+
+  async deleteList(id: string): Promise<void> {
+    await axios.delete(`${this.baseURL}/lists/${id}`);
+  }
+
+  async updateList(id: string, data: CreateListDTO): Promise<ListDTO> {
+    const response = await axios.patch(`${this.baseURL}/lists/${id}`, data);
+
+    return response.data;
+  }
 }
+
+export type CreateListDTO = {
+  name: string;
+  budget?: number;
+  date?: string;
+  description?: string;
+};
+
+export type ListDTO = {
+  id: string;
+  name: string;
+  budget?: number;
+  date?: string;
+  description?: string;
+  items?: ShoppingItem[];
+};
 
 // Usage example
 export const shoppingAPI = new ShoppingListAPI('http://localhost:5555');

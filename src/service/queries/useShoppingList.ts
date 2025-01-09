@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { shoppingAPI } from '@/service/api';
 
 export const shoppingListKeys = {
-  all: () => ['shoppingList'],
+  all: () => ['items'],
   list: () => [...shoppingListKeys.all(), 'list'],
 };
 
@@ -10,9 +10,6 @@ export function useShoppingList() {
   return useQuery({
     queryKey: shoppingListKeys.list(),
     queryFn: () => shoppingAPI.list(),
-    // // Habilita o cache offline
-    // staleTime: Infinity,
-    // cacheTime: Infinity,
     refetchOnWindowFocus: false,
   });
 }
