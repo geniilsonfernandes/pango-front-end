@@ -40,6 +40,12 @@ const router = createBrowserRouter([
         ErrorBoundary: () => <h1>Algo deu errado</h1>,
         errorElement: <h1>Algo deu errado</h1>,
       },
+      {
+        path: '/shopping-lists/:id', // Outra página
+        element: <HomePage />,
+        ErrorBoundary: () => <h1>Algo deu errado</h1>,
+        errorElement: <h1>Algo deu errado</h1>,
+      },
     ],
   },
 ]);

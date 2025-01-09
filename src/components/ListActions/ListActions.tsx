@@ -14,6 +14,7 @@ import { useList } from '@/store/listStore';
 // Subcomponent: UserActions
 export const ListActions: React.FC = () => {
   const { setShowPrice, showPrice } = useList();
+
   return (
     <Group gap="xs">
       <AvatarGroup>
