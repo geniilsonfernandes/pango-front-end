@@ -42,17 +42,17 @@ export const ListCard = () => {
           <Menu shadow="md" position="left" width={200}>
             <Menu.Target>
               <ActionIcon ml="auto" variant="default">
-                <IconMenu size={16} stroke={1.5} />
+                <IconMenu size={16} />
               </ActionIcon>
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Label>Actions</Menu.Label>
-              <Menu.Item leftSection={<IconEdit width={14} height={14} />}>Edit</Menu.Item>
-              <Menu.Item leftSection={<IconTrash width={14} height={14} />} color="red">
+              <Menu.Item leftSection={<IconEdit size={14} />}>Edit</Menu.Item>
+              <Menu.Item leftSection={<IconTrash size={14} />} color="red">
                 Delete
               </Menu.Item>
               <Menu.Divider />
-              <Menu.Item leftSection={<IconShare width={14} height={14} />}>Shared</Menu.Item>
+              <Menu.Item leftSection={<IconShare size={14} />}>Shared</Menu.Item>
             </Menu.Dropdown>
           </Menu>
         </Group>
