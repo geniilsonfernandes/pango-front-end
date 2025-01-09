@@ -5,6 +5,7 @@ import {
   IconTrash,
   IconWorldSearch,
 } from '@tabler/icons-react';
+import { Link } from 'react-router-dom';
 import { ActionIcon, Badge, Box, Button, Divider, Paper, rem, Stack } from '@mantine/core';
 import { ColorSchemeToggle } from '../ColorSchemeToggle/ColorSchemeToggle';
 import { Logo } from '../Logo/Logo';
@@ -57,6 +58,8 @@ export const SideNavigation: React.FC<SideNavigationProps> = () => {
               justifyContent: 'space-between',
             },
           }}
+          component={Link}
+          to="/shopping-lists"
           px="xxs"
           leftSection={<IconClipboardList width={rem(14)} stroke={1} />}
         >

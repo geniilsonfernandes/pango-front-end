@@ -1098,6 +1098,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mantine/dates@npm:^7.15.3":
+  version: 7.15.3
+  resolution: "@mantine/dates@npm:7.15.3"
+  dependencies:
+    clsx: "npm:^2.1.1"
+  peerDependencies:
+    "@mantine/core": 7.15.3
+    "@mantine/hooks": 7.15.3
+    dayjs: ">=1.0.0"
+    react: ^18.x || ^19.x
+    react-dom: ^18.x || ^19.x
+  checksum: 10c0/d5709c0f5fc5f911d41683357da682c055a59cefd57f653f3556bef26d74efa63e4c180952b3b9f545e55b33822914f98b97fbbb8ce0cd0dd3445e9028b718ef
+  languageName: node
+  linkType: hard
+
 "@mantine/form@npm:^7.15.2":
   version: 7.15.2
   resolution: "@mantine/form@npm:7.15.2"
@@ -3548,7 +3563,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.11.10":
+"dayjs@npm:^1.11.10, dayjs@npm:^1.11.13":
   version: 1.11.13
   resolution: "dayjs@npm:1.11.13"
   checksum: 10c0/a3caf6ac8363c7dade9d1ee797848ddcf25c1ace68d9fe8678ecf8ba0675825430de5d793672ec87b24a69bf04a1544b176547b2539982275d5542a7955f35b7
@@ -6234,6 +6249,7 @@ __metadata:
     "@hookform/resolvers": "npm:^3.9.1"
     "@ianvs/prettier-plugin-sort-imports": "npm:^4.4.0"
     "@mantine/core": "npm:7.15.1"
+    "@mantine/dates": "npm:^7.15.3"
     "@mantine/form": "npm:^7.15.2"
     "@mantine/hooks": "npm:7.15.1"
     "@mantine/notifications": "npm:^7.15.1"
@@ -6263,6 +6279,7 @@ __metadata:
     "@vitest/ui": "npm:^2.1.8"
     axios: "npm:^1.7.9"
     date-fns: "npm:^4.1.0"
+    dayjs: "npm:^1.11.13"
     eslint: "npm:^9.15.0"
     eslint-config-mantine: "npm:^4.0.3"
     eslint-plugin-jsx-a11y: "npm:^6.10.2"
