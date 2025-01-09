@@ -1,11 +1,5 @@
 import dayjs from 'dayjs';
-
-import 'dayjs/locale/pt-br'; // Importa o locale em português do Brasil
-
 import { useState } from 'react';
-
-// Configurar o locale para pt-br
-dayjs.locale('pt-br');
 
 export type UseCalendarResult = {
   currentDate: dayjs.Dayjs;
