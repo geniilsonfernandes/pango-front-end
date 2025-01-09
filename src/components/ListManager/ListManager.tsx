@@ -150,7 +150,7 @@ export const ListManager = () => {
   return (
     <Paper
       p="sm"
-      w={350}
+      w={300}
       h="calc(100vh - 64px)"
       style={{
         position: 'sticky',
