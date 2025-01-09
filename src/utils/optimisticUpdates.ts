@@ -1,10 +1,12 @@
 import { QueryClient } from '@tanstack/react-query';
-import { AddShoppingItemInput } from '@/hooks/mutation/useAddShoppingItem';
-import { ToggleShoppingItemInput } from '@/hooks/mutation/useToggleShoppingItem';
-import { UpdateShoppingItemInput } from '@/hooks/mutation/useUpdateShoppingItem';
-import { productsKeys } from '@/hooks/queries/useProducts';
-import { shoppingListKeys } from '@/hooks/queries/useShoppingList';
 import { ShoppingItem } from '@/service/api';
+import {
+  AddShoppingItemInput,
+  ToggleShoppingItemInput,
+  UpdateShoppingItemInput,
+} from '@/service/mutation';
+import { productsKeys, shoppingListKeys } from '@/service/queries';
+
 
 export const addItemOptimisticUpdate = (queryClient: QueryClient, input: AddShoppingItemInput) => {
   const previousItems = queryClient.getQueryData<ShoppingItem[]>(shoppingListKeys.list());
