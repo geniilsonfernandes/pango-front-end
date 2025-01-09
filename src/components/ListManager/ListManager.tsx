@@ -2,14 +2,14 @@ import { useCallback, useState } from 'react';
 import { matchSorter, rankings } from 'match-sorter';
 import { Paper, ScrollArea, Stack, Tabs } from '@mantine/core';
 import { useDebouncedCallback, useDebouncedValue } from '@mantine/hooks';
-import { type Product } from '@/dummyData';
-import { useAddShoppingItem } from '@/hooks/mutation/useAddShoppingItem';
-import { useDeleteShoppingItem } from '@/hooks/mutation/useDeleteShoppingItem';
-import { useUpdateShoppingItem } from '@/hooks/mutation/useUpdateShoppingItem';
-import { useProducts } from '@/hooks/queries/useProducts';
-import { useShoppingList } from '@/hooks/queries/useShoppingList';
 import { useRecentsProducts } from '@/hooks/useRecentsProducts';
 import { CreateShoppingItemDTO, ShoppingItem } from '@/service/api';
+import {
+  useAddShoppingItem,
+  useDeleteShoppingItem,
+  useUpdateShoppingItem,
+} from '@/service/mutation';
+import { Product, useProducts, useShoppingList } from '@/service/queries';
 import { generateNumericId } from '@/utils/generateNumericId';
 import { ProductButton } from '../ProductButton/ProductButton';
 import { ProductSearchInput } from '../ProductSearchInput/ProductSearchInput';
@@ -20,6 +20,9 @@ export const ListManager = () => {
   const { mutate: deleteItem } = useDeleteShoppingItem();
   const { mutate: updateItem } = useUpdateShoppingItem();
   const { addToRecents, recents } = useRecentsProducts();
+  const { data: selectedList } = useShoppingList();
+  const [queryDebounced] = useDebouncedValue(queryValue, 800);
+  const { data: products, isLoading: isLoadingProducts } = useProducts(queryDebounced);
   const [items, setItems] = useState<CreateShoppingItemDTO[]>([]);
 
   const handleAddMultipleItems = useDebouncedCallback(() => {
@@ -73,9 +76,6 @@ export const ListManager = () => {
     },
     [deleteItem]
   );
-  const { data: selectedList } = useShoppingList();
-  const [queryDebounced] = useDebouncedValue(queryValue, 800);
-  const { data: products, isLoading: isLoadingProducts } = useProducts(queryDebounced);
 
   const findProductInSelectedList = useCallback(
     (name: string) =>

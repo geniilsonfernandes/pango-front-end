@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { matchSorter, rankings } from 'match-sorter';
-import { products, type Product } from '@/dummyData';
+import { products, type Product as ProductType } from '@/dummyData';
 
 export const productsKeys = {
   all: () => ['productsKeys'],
@@ -8,6 +8,8 @@ export const productsKeys = {
   search: (query: string) => [...productsKeys.list(), 'search', query],
   recent: () => [...productsKeys.list(), 'recent'],
 };
+
+export type Product = ProductType;
 
 const searchProducts = (query: string) => {
   if (query) {

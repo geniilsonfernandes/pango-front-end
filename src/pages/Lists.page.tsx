@@ -30,12 +30,6 @@ export const ListsPage = () => {
         <Grid.Col span={12}>
           <ListCard />
         </Grid.Col>
-        <Grid.Col span={12}>
-          <ListCard />
-        </Grid.Col>
-        <Grid.Col span={12}>
-          <ListCard />
-        </Grid.Col>
       </Grid>
     </Stack>
   );

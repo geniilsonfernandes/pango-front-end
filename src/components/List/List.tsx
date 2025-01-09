@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Button, Center, Group, Loader, Modal, Paper, rem, Stack, Text } from '@mantine/core';
-import { useToggleShoppingItem } from '@/hooks/mutation/useToggleShoppingItem';
-import { useShoppingList } from '@/hooks/queries/useShoppingList';
 import { ShoppingItem } from '@/service/api';
+import { useToggleShoppingItem } from '@/service/mutation/useToggleShoppingItem';
+import { useShoppingList } from '@/service/queries/useShoppingList';
 import { useList } from '@/store/listStore';
 import { ListHeader } from '../ListHeader/ListHeader';
 import { ProductCheckbox } from '../ProductCheckbox/ProductCheckbox';

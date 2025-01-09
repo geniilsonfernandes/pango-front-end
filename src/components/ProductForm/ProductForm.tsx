@@ -16,9 +16,8 @@ import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 // import { useForm } from 'react-hook-form';
 import { categories } from '@/dummyData';
-import { useDeleteShoppingItem } from '@/hooks/mutation/useDeleteShoppingItem';
-import { useUpdateShoppingItem } from '@/hooks/mutation/useUpdateShoppingItem';
 import { ShoppingItem } from '@/service/api';
+import { useDeleteShoppingItem, useUpdateShoppingItem } from '@/service/mutation';
 
 // import { useForm } from 'react-hook-form';
 

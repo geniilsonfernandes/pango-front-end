@@ -25,14 +25,20 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <AppWrapper />, // Wrapper para layout comum
+    ErrorBoundary: () => <h1>Algo deu errado</h1>,
+    errorElement: <h1>Algo deu errado</h1>,
     children: [
       {
         path: '/', // Rota inicial
         element: <HomePage />,
+        ErrorBoundary: () => <h1>Algo deu errado</h1>,
+        errorElement: <h1>Algo deu errado</h1>,
       },
       {
         path: '/shopping-lists', // Outra página
         element: <ListsPage />,
+        ErrorBoundary: () => <h1>Algo deu errado</h1>,
+        errorElement: <h1>Algo deu errado</h1>,
       },
     ],
   },
