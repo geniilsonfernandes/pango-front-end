@@ -3,14 +3,15 @@ import { Button, Center, Group, Loader, Modal, Paper, rem, Stack, Text } from '@
 import { useToggleShoppingItem } from '@/hooks/mutation/useToggleShoppingItem';
 import { useShoppingList } from '@/hooks/queries/useShoppingList';
 import { ShoppingItem } from '@/service/api';
-import { ListHeader, useListHeaderStore } from '../ListHeader/ListHeader';
+import { useList } from '@/store/listStore';
+import { ListHeader } from '../ListHeader/ListHeader';
 import { ProductCheckbox } from '../ProductCheckbox/ProductCheckbox';
 import { ProductForm } from '../ProductForm/ProductForm';
 import { RenderIf } from '../RenderIf/RenderIf';
 import classes from './List.module.css';
 
 export const List = () => {
-  const { showPrice } = useListHeaderStore();
+  const { showPrice } = useList();
   const { data, isLoading } = useShoppingList();
   const { mutate: toggleShoppingItem } = useToggleShoppingItem();
   const [shoppingItem, setShoppingItem] = useState<ShoppingItem>();

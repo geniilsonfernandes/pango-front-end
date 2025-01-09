@@ -1,27 +1,9 @@
 import { useMemo } from 'react';
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { Box, Flex, Progress, Stack, Text, Title } from '@mantine/core';
 import { ShoppingItem } from '@/service/api';
+import { useList } from '@/store/listStore';
 import { ListActions } from '../ListActions/ListActions';
 import { ListStats } from '../ListStats/ListStats';
-
-interface ListHeaderState {
-  showPrice: boolean;
-  setShowPrice: (showPrice: boolean) => void;
-}
-
-export const useListHeaderStore = create<ListHeaderState>()(
-  persist(
-    (set) => ({
-      showPrice: false,
-      setShowPrice: (showPrice) => set({ showPrice }),
-    }),
-    {
-      name: 'list-header-store', // Nome da chave no localStorage
-    }
-  )
-);
 
 type ListHeaderProps = {
   listName: string;
@@ -50,7 +32,7 @@ export const ListHeader: React.FC<ListHeaderProps> = ({
   data,
   budget = 300,
 }) => {
-  const { showPrice } = useListHeaderStore();
+  const { showPrice } = useList();
 
   const status = useMemo(() => {
     if (!data) {
