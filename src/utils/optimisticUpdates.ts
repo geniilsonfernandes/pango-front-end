@@ -1,12 +1,11 @@
 import { QueryClient } from '@tanstack/react-query';
-import { ShoppingItem } from '@/service/api';
+import { ListDTO, ShoppingItem } from '@/service/api';
 import {
   AddShoppingItemInput,
   ToggleShoppingItemInput,
   UpdateShoppingItemInput,
 } from '@/service/mutation';
 import { productsKeys, shoppingListKeys } from '@/service/queries';
-
 
 export const addItemOptimisticUpdate = (queryClient: QueryClient, input: AddShoppingItemInput) => {
   const previousItems = queryClient.getQueryData<ShoppingItem[]>(shoppingListKeys.list());
@@ -15,7 +14,7 @@ export const addItemOptimisticUpdate = (queryClient: QueryClient, input: AddShop
     queryClient.setQueryData(productsKeys.recent(), [...recentsItems, input]);
   }
   if (previousItems) {
-    queryClient.setQueryData(shoppingListKeys.list(), [...previousItems, input]);
+    queryClient.setQueryData(shoppingListKeys.all(), [...previousItems, input]);
   }
   return { previousItems };
 };
@@ -31,16 +30,18 @@ export const toggleShoppingItemUpdate = (
     }
     return item;
   });
-  queryClient.setQueryData(shoppingListKeys.list(), optimisticUpdate);
+  queryClient.setQueryData(shoppingListKeys.all(), optimisticUpdate);
   return { previousItems };
 };
 
 export const shoppingItemOptimisticUpdate = (
   queryClient: QueryClient,
-  input: UpdateShoppingItemInput
+  input: UpdateShoppingItemInput,
+  listId: string
 ) => {
-  const previousItems = queryClient.getQueryData<ShoppingItem[]>(shoppingListKeys.list());
-  const optimisticUpdate = previousItems?.map((item) => {
+  const previousItems = queryClient.getQueryData<ListDTO>(shoppingListKeys.getList(listId));
+
+  const listUpdate = previousItems?.items?.map((item) => {
     if (item.id === input.id) {
       return {
         ...item,
@@ -50,10 +51,13 @@ export const shoppingItemOptimisticUpdate = (
     }
     return item;
   });
-  queryClient.setQueryData(shoppingListKeys.list(), optimisticUpdate);
+  queryClient.setQueryData(shoppingListKeys.getList(listId), {
+    ...previousItems,
+    items: listUpdate,
+  });
   return { previousItems };
 };
 
-export const rollbackItems = (queryClient: QueryClient, previousItems: ShoppingItem[]) => {
-  queryClient.setQueryData(shoppingListKeys.list(), previousItems);
+export const rollbackItems = (queryClient: QueryClient, previousItems: ListDTO, listId: string) => {
+  queryClient.setQueryData(shoppingListKeys.getList(listId), previousItems);
 };

@@ -1,32 +1,40 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { CreateListDTO, shoppingAPI } from '@/service/api';
-import { listKeys } from '../queries/useLists';
+import { listQueryKeys } from '../queries/useLists';
 
 export type CreateListInput = CreateListDTO;
 type useHookProps = {
   onSuccess?: () => void;
 };
 
-export const useCreateList = ({ onSuccess }: useHookProps = {}) => {
-  const navigate = useNavigate();
+const successMessage = (message: string) => {
+  notifications.show({
+    title: 'Success',
+    message,
+    color: 'green',
+  });
+};
+
+const errorMessage = (message: string) => {
+  notifications.show({
+    title: 'Error',
+    message,
+    color: 'red',
+  });
+};
+
+export const useCreateList = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (input: CreateListInput) => shoppingAPI.createList(input),
-
-    // onMutate: async (input) => addItemOptimisticUpdate(queryClient, input),
-    // onError: (_error, _input, context) => rollbackItems(queryClient, context?.previousItems || []),
-    onSuccess: (data) => {
-      onSuccess?.();
-      queryClient.invalidateQueries(listKeys.list());
-      notifications.show({
-        title: 'Success',
-        message: 'List created',
-        color: 'green',
-      });
-      navigate(`/shopping-lists/${data.id}`);
+    onSuccess: () => {
+      queryClient.invalidateQueries(listQueryKeys.all());
+      successMessage('List created');
+    },
+    onError: () => {
+      errorMessage('Error creating list');
     },
   });
 };
@@ -37,12 +45,11 @@ export const useDeleteList = ({ onSuccess }: useHookProps = {}) => {
     mutationFn: (id: string) => shoppingAPI.deleteList(id),
     onSuccess: () => {
       onSuccess?.();
-      notifications.show({
-        title: 'Success',
-        message: 'List deleted',
-        color: 'green',
-      });
-      queryClient.invalidateQueries(listKeys.list());
+      successMessage('List deleted');
+      queryClient.invalidateQueries(listQueryKeys.all());
+    },
+    onError: () => {
+      errorMessage('Error deleting list');
     },
   });
 };
@@ -57,12 +64,11 @@ export const useUpdateList = ({ onSuccess }: useHookProps = {}) => {
     mutationFn: (input: UpdateListInput) => shoppingAPI.updateList(input.id, input),
     onSuccess: () => {
       onSuccess?.();
-      queryClient.invalidateQueries(listKeys.list());
-      notifications.show({
-        title: 'Success',
-        message: 'List updated',
-        color: 'green',
-      });
+      queryClient.invalidateQueries(listQueryKeys.all());
+      successMessage('List updated');
+    },
+    onError: () => {
+      errorMessage('Error updating list');
     },
   });
 };

@@ -22,7 +22,7 @@ const searchProducts = (query: string) => {
   return products;
 };
 
-export function useProducts(queryValue: string) {
+export function useProductsCatalog(queryValue: string) {
   return useQuery({
     queryKey: ['products', 'list', queryValue ?? 'all'],
     queryFn: () => searchProducts(queryValue),

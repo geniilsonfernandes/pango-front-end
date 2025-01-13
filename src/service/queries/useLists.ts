@@ -1,16 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
 import { shoppingAPI } from '@/service/api';
 
-export const listKeys = {
-  all: () => ['list'],
-  list: () => [...listKeys.all(), 'list'],
+export const listQueryKeys = {
+  all: () => ['lists'],
+  list: () => ['lists'],
+  getList: (id?: string) => ['list', id],
+  listItems: (id?: string) => ['listItems', id],
 };
 
 export function useLists() {
   return useQuery({
-    queryKey: listKeys.list(),
+    queryKey: listQueryKeys.list(),
     queryFn: () => shoppingAPI.getLists(),
-    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5, // 5 minutos antes de considerar os dados como "stale"
+    cacheTime: 1000 * 60 * 30, // Cache armazenado por 30 minutos
   });
 }
 

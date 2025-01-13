@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Flex, Grid, Modal, Stack, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { ListCard } from '@/components/ListCard/ListCard';
-import { ListForm } from '@/components/ListForm/ListForm';
+import { DeleteConfirmation, ListForm } from '@/components/ListForm/ListForm';
 import { MonthSelect } from '@/components/MonthSelect/MonthSelect';
 import { useCalendar } from '@/hooks/useCalendar';
 import { ListDTO } from '@/service/api';
+import { useDeleteList } from '@/service/mutation/useListMutations';
 import { useLists } from '@/service/queries/useLists';
 
 export const ListsPage = () => {
@@ -15,11 +16,18 @@ export const ListsPage = () => {
   const navigate = useNavigate();
   const { currentDate, setValue, nextMonth, previousMonth, formattedMonth } = useCalendar();
   const [listSelected, setListSelected] = useState<ListDTO>();
-  const [opened, { open, close }] = useDisclosure();
 
-  const handleClose = () => {
+  const [openedDelete, { open: openDelete, close: closeDelete }] = useDisclosure(false);
+  const [openedList, { open: openList, close: closeList }] = useDisclosure();
+  const { mutate: deleteList, isLoading: isDeleting } = useDeleteList({
+    onSuccess: () => {
+      closeDelete();
+    },
+  });
+
+  const handleCloseList = () => {
     setListSelected(undefined);
-    close();
+    closeList();
   };
 
   return (
@@ -36,7 +44,7 @@ export const ListsPage = () => {
         <Button
           variant="filled"
           leftSection={<IconPlus width={16} height={16} strokeWidth={1.5} />}
-          onClick={open}
+          onClick={openList}
         >
           Create a new list
         </Button>
@@ -51,10 +59,11 @@ export const ListsPage = () => {
               }}
               onEdit={() => {
                 setListSelected(item);
-                open();
+                openList();
               }}
               onDelete={() => {
-                console.log('delete');
+                setListSelected(item);
+                openDelete();
               }}
               onShare={() => {
                 console.log('share');
@@ -65,12 +74,22 @@ export const ListsPage = () => {
       </Grid>
 
       <Modal
-        opened={opened}
-        onClose={handleClose}
+        opened={openedList}
+        onClose={handleCloseList}
         title={listSelected ? 'Edit list' : 'Create list'}
       >
-        <ListForm onCancel={handleClose} data={listSelected} />
+        <ListForm onCancel={handleCloseList} data={listSelected} />
       </Modal>
+      <DeleteConfirmation
+        opened={openedDelete}
+        onClose={closeDelete}
+        isDeleting={isDeleting}
+        onDeleteList={() => {
+          if (listSelected?.id) {
+            deleteList(listSelected.id);
+          }
+        }}
+      />
     </Stack>
   );
 };

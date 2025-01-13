@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { IconTrash } from '@tabler/icons-react';
+import { useQueryClient } from '@tanstack/react-query';
 import * as z from 'zod';
 import {
   ActionIcon,
@@ -46,8 +47,9 @@ const shoppingItemSchema = z.object({
 });
 
 export const ProductForm: React.FC<FormProps> = ({ onCancel, shoppingItem }) => {
-  const { mutate: updateItem, isLoading } = useUpdateShoppingItem();
-  const { mutate: deleteItem } = useDeleteShoppingItem();
+  const queryClient = useQueryClient();
+  const { mutate: updateItem, isLoading } = useUpdateShoppingItem(shoppingItem?.listId || '');
+  const { mutate: deleteItem } = useDeleteShoppingItem(shoppingItem?.listId || '');
 
   const form = useForm({
     mode: 'uncontrolled',
@@ -103,6 +105,7 @@ export const ProductForm: React.FC<FormProps> = ({ onCancel, shoppingItem }) => 
   return (
     <form onSubmit={form.onSubmit(handleUpdate)}>
       <Grid gutter="sm">
+        {shoppingItem?.listId}
         <Grid.Col span={12}>
           <TextInput
             label="Name"

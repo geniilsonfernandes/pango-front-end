@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export type ShoppingItem = {
   id: string;
-  listId?: number;
+  listId?: string;
   name: string;
   category: string;
   quantity: number;
@@ -23,22 +23,16 @@ class ShoppingListAPI {
   }
 
   // List all items
-  async list(): Promise<ShoppingItem[]> {
+  async list(listId?: string): Promise<ShoppingItem[]> {
     const response = await axios.get(`${this.baseURL}/shoppingList`);
+    if (listId) {
+      return response.data.filter((item: ShoppingItem) => item.listId === listId);
+    }
     return response.data;
   }
 
   // Create or update an item (increment quantity if it already exists)
   async create(data: CreateShoppingItemDTO): Promise<ShoppingItem> {
-    const existingItems = await this.list();
-    const existingItem = existingItems.find(
-      (i) => i.name === data.name && i.category === data.category
-    );
-
-    if (existingItem) {
-      return this.incrementQuantity(existingItem.id);
-    }
-
     const response = await axios.post(`${this.baseURL}/shoppingList`, {
       ...data,
       quantity: data.quantity || 1,
@@ -57,8 +51,7 @@ class ShoppingListAPI {
     return data;
   }
 
-  // Update an existing item
-  async update(id: string | number, updatedItem: Partial<ShoppingItem>): Promise<ShoppingItem> {
+  async update(id: string | number, updatedItem: Partial<ShoppingItem>): Promise<void> {
     try {
       const response = await axios.patch(`${this.baseURL}/shoppingList/${id}`, {
         ...updatedItem,
@@ -70,7 +63,7 @@ class ShoppingListAPI {
     }
   }
 
-  async incrementQuantity(id: string | number): Promise<ShoppingItem> {
+  async incrementQuantity(id: string | number): Promise<void> {
     const existingItems = await this.list();
     const existingItem = existingItems.find((i) => i.name === id);
 
@@ -86,7 +79,7 @@ class ShoppingListAPI {
     return this.update(existingItem.id, updatedItem);
   }
 
-  async decrementQuantity(id: string | number): Promise<ShoppingItem> {
+  async decrementQuantity(id: string | number): Promise<void> {
     const existingItems = await this.list();
     const existingItem = existingItems.find((i) => i.name === id);
 
@@ -125,6 +118,19 @@ class ShoppingListAPI {
     return response.data;
   }
 
+  async getList(id?: string): Promise<ListDTO> {
+    if (!id) {
+      throw new Error('List ID is required');
+    }
+    const items = await this.list(id);
+    const list = await axios.get(`${this.baseURL}/lists/${id}`);
+
+    return {
+      ...list.data,
+      items,
+    };
+  }
+
   async deleteList(id: string): Promise<void> {
     await axios.delete(`${this.baseURL}/lists/${id}`);
   }
@@ -133,6 +139,15 @@ class ShoppingListAPI {
     const response = await axios.patch(`${this.baseURL}/lists/${id}`, data);
 
     return response.data;
+  }
+
+  async getlistItems(listId?: string): Promise<ShoppingItem[]> {
+    if (!listId) {
+      throw new Error('List ID is required');
+    }
+    const response = await axios.get(`${this.baseURL}/shoppingList`, { params: { listId } });
+
+    return response.data.filter((item: ShoppingItem) => item.listId === listId);
   }
 }
 

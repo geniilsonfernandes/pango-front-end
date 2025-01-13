@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import { IconChevronDown, IconChevronUp, IconTrash } from '@tabler/icons-react';
+import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import {
   ActionIcon,
@@ -8,6 +9,8 @@ import {
   Divider,
   Grid,
   Group,
+  Modal,
+  ModalProps,
   NumberInput,
   Textarea,
   TextInput,
@@ -19,9 +22,33 @@ import { useDisclosure } from '@mantine/hooks';
 import { ListDTO } from '@/service/api';
 import { useCreateList, useDeleteList, useUpdateList } from '@/service/mutation/useListMutations';
 
+type DeleteConfirmationProps = {
+  onDeleteList: () => void;
+  isDeleting: boolean;
+} & ModalProps;
+
+export const DeleteConfirmation: React.FC<DeleteConfirmationProps> = ({
+  onDeleteList,
+  opened,
+  isDeleting,
+  onClose,
+}) => (
+  <Modal opened={opened} onClose={onClose} title="Delete list">
+    Are you sure you want to delete this list?
+    <Group mt="lg" justify="flex-end" gap="xs">
+      <Button onClick={onClose} variant="default">
+        Cancel
+      </Button>
+      <Button onClick={onDeleteList} loading={isDeleting} color="red">
+        Delete
+      </Button>
+    </Group>
+  </Modal>
+);
+
 const ListFormSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  budget: z.number(),
+  budget: z.number().optional(),
   date: z
     .date()
     .optional()
@@ -35,24 +62,27 @@ type ListFormProps = {
 };
 
 export const ListForm: React.FC<ListFormProps> = ({ onCancel, data }) => {
-  const { mutate: createList, isLoading: isCreating } = useCreateList({
+  const navigate = useNavigate();
+  const [opened, { toggle }] = useDisclosure(false);
+  const [openedDelete, { open: openDelete, close: closeDelete }] = useDisclosure(false);
+  const { mutateAsync: createList, isLoading: isCreating } = useCreateList();
+  const { mutate: updateList, isLoading: isUpdating } = useUpdateList({
     onSuccess: () => {
       onCancel?.();
     },
   });
-  const { mutate: updateList, isLoading: isUpdating } = useUpdateList();
   const { mutate: deleteList, isLoading: isDeleting } = useDeleteList({
     onSuccess: () => {
       onCancel?.();
     },
   });
-  const [opened, { toggle }] = useDisclosure(false);
+
   const form = useForm({
     mode: 'uncontrolled',
 
     initialValues: {
       name: data?.name || '',
-      budget: data?.budget || '',
+      budget: data?.budget || 0,
       date: dayjs(data?.date).toDate(),
       description: data?.description || '',
     },
@@ -65,89 +95,93 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, data }) => {
         id: data.id,
         ...ListFormSchema.parse(values),
       });
-
+      onCancel?.();
       return;
     }
-    createList(ListFormSchema.parse(values));
+    createList(ListFormSchema.parse(values)).then((data) => {
+      navigate(`/shopping-lists/${data.id}`);
+    });
   };
 
   return (
-    <form onSubmit={form.onSubmit(handleCreate)}>
-      <Grid opacity={isCreating || isDeleting ? 0.5 : 1}>
-        <Grid.Col span={12}>
-          <TextInput
-            label="Name"
-            placeholder="ex: name of list"
-            {...form.getInputProps('name')}
-            error={form.errors.name}
-          />
-        </Grid.Col>
-        <Grid.Col span={12}>
-          <NumberInput
-            label="Budget"
-            prefix="R$ "
-            thousandSeparator=","
-            defaultValue={1_000_000}
-            {...form.getInputProps('budget')}
-            error={form.errors.badge}
-          />
-        </Grid.Col>
-        <Grid.Col span={12}>
-          <Button fullWidth variant="transparent" size="xs" onClick={toggle}>
-            {!opened ? (
-              <IconChevronDown size={16} stroke={1.5} />
-            ) : (
-              <IconChevronUp size={16} stroke={1.5} />
-            )}
-          </Button>
-          <Collapse in={opened}>
-            <Grid>
-              <Grid.Col span={12}>
-                <DateInput
-                  label="Date"
-                  placeholder="10/10/2023"
-                  {...form.getInputProps('date')}
-                  error={form.errors.date}
-                />
-              </Grid.Col>
-              <Grid.Col span={12}>
-                <Textarea
-                  label="Description"
-                  placeholder="ex: description of list"
-                  {...form.getInputProps('description')}
-                  error={form.errors.description}
-                />
-              </Grid.Col>
-            </Grid>
-          </Collapse>
-        </Grid.Col>
-      </Grid>
-      <Divider my="md" />
-      <Group mt="lg" justify="space-between">
-        <Tooltip label="Remove">
-          <ActionIcon
-            onClick={() => {
-              if (data?.id) {
-                deleteList(data.id);
-              }
-            }}
-            loading={isDeleting}
-            color="red"
-            variant="outline"
-            size="lg"
-          >
-            <IconTrash size={16} stroke={1.5} />
-          </ActionIcon>
-        </Tooltip>
-        <Group gap="xs">
-          <Button variant="outline" color="gray" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button type="submit" loading={isCreating || isUpdating}>
-            Save
-          </Button>
+    <>
+      <form onSubmit={form.onSubmit(handleCreate)}>
+        <Grid opacity={isCreating || isDeleting ? 0.5 : 1}>
+          <Grid.Col span={12}>
+            <TextInput
+              label="Name"
+              placeholder="ex: name of list"
+              {...form.getInputProps('name')}
+              error={form.errors.name}
+            />
+          </Grid.Col>
+          <Grid.Col span={12}>
+            <NumberInput
+              label="Budget"
+              prefix="R$ "
+              thousandSeparator=","
+              defaultValue={1_000_000}
+              {...form.getInputProps('budget')}
+              error={form.errors.budget}
+            />
+          </Grid.Col>
+          <Grid.Col span={12}>
+            <Button fullWidth variant="transparent" size="xs" onClick={toggle}>
+              {!opened ? (
+                <IconChevronDown size={16} stroke={1.5} />
+              ) : (
+                <IconChevronUp size={16} stroke={1.5} />
+              )}
+            </Button>
+            <Collapse in={opened}>
+              <Grid>
+                <Grid.Col span={12}>
+                  <DateInput
+                    label="Date"
+                    placeholder="10/10/2023"
+                    {...form.getInputProps('date')}
+                    error={form.errors.date}
+                  />
+                </Grid.Col>
+                <Grid.Col span={12}>
+                  <Textarea
+                    label="Description"
+                    placeholder="ex: description of list"
+                    {...form.getInputProps('description')}
+                    error={form.errors.description}
+                  />
+                </Grid.Col>
+              </Grid>
+            </Collapse>
+          </Grid.Col>
+        </Grid>
+        <Divider my="md" />
+        <Group mt="lg" justify="space-between">
+          <Tooltip label="Remove">
+            <ActionIcon onClick={openDelete} color="red" variant="outline" size="lg">
+              <IconTrash size={16} stroke={1.5} />
+            </ActionIcon>
+          </Tooltip>
+          <Group gap="xs">
+            <Button variant="default" color="gray" onClick={onCancel}>
+              Cancel
+            </Button>
+            <Button type="submit" loading={isCreating || isUpdating}>
+              Save
+            </Button>
+          </Group>
         </Group>
-      </Group>
-    </form>
+      </form>
+      <DeleteConfirmation
+        opened={openedDelete}
+        onClose={closeDelete}
+        isDeleting={isDeleting}
+        onDeleteList={() => {
+          if (data?.id) {
+            deleteList(data.id);
+          }
+        }}
+      />
+    </>
   );
 };

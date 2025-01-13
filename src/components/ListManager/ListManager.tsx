@@ -3,39 +3,44 @@ import { matchSorter, rankings } from 'match-sorter';
 import { Paper, ScrollArea, Stack, Tabs } from '@mantine/core';
 import { useDebouncedCallback, useDebouncedValue } from '@mantine/hooks';
 import { useRecentsProducts } from '@/hooks/useRecentsProducts';
-import { CreateShoppingItemDTO, ShoppingItem } from '@/service/api';
+import { CreateShoppingItemDTO, ListDTO, ShoppingItem } from '@/service/api';
 import {
   useAddShoppingItem,
   useDeleteShoppingItem,
   useUpdateShoppingItem,
 } from '@/service/mutation';
-import { Product, useProducts, useShoppingList } from '@/service/queries';
+import { Product, useProductsCatalog } from '@/service/queries';
 import { generateNumericId } from '@/utils/generateNumericId';
 import { ProductButton } from '../ProductButton/ProductButton';
 import { ProductSearchInput } from '../ProductSearchInput/ProductSearchInput';
 
-export const ListManager = () => {
+type ListManagerProps = {
+  list: ListDTO;
+  products: ShoppingItem[];
+};
+
+export const ListManager = ({ products, list }: ListManagerProps) => {
   const [queryValue, setQueryValue] = useState('');
-  const { mutate: addItem } = useAddShoppingItem();
-  const { mutate: deleteItem } = useDeleteShoppingItem();
-  const { mutate: updateItem } = useUpdateShoppingItem();
+  const { mutate: addItem } = useAddShoppingItem(list.id);
+  const { mutate: updateItem } = useUpdateShoppingItem(list.id);
+  const { mutate: deleteItem } = useDeleteShoppingItem(list.id);
   const { addToRecents, recents } = useRecentsProducts();
-  const { data: selectedList } = useShoppingList();
   const [queryDebounced] = useDebouncedValue(queryValue, 800);
-  const { data: products, isLoading: isLoadingProducts } = useProducts(queryDebounced);
-  const [items, setItems] = useState<CreateShoppingItemDTO[]>([]);
+  const { data: productsCatalog, isLoading: isLoadingProducts } =
+    useProductsCatalog(queryDebounced);
+  const [debouncedItems, setDebouncedItems] = useState<CreateShoppingItemDTO[]>([]);
 
   const handleAddMultipleItems = useDebouncedCallback(() => {
-    items.forEach((product) => {
+    debouncedItems.forEach((product) => {
       addToRecents(product);
       addItem(product);
     });
 
-    setItems([]);
+    setDebouncedItems([]);
   }, 800);
 
   const handleAddItem = (product: Product) => {
-    const existingItem = items.find((item) => item.name === product.name);
+    const existingItem = debouncedItems.find((item) => item.name === product.name);
     if (existingItem) {
       return;
     }
@@ -44,9 +49,9 @@ export const ListManager = () => {
       name: product.name,
       category: product.category,
       quantity: 1,
-      listId: 1,
+      listId: list.id,
     };
-    setItems((prevItems) => [...prevItems, newProduct]);
+    setDebouncedItems((prevItems) => [...prevItems, newProduct]);
     handleAddMultipleItems();
   };
 
@@ -79,8 +84,8 @@ export const ListManager = () => {
 
   const findProductInSelectedList = useCallback(
     (name: string) =>
-      matchSorter(selectedList || [], name, { keys: ['name'], threshold: rankings.EQUAL })[0],
-    [selectedList]
+      matchSorter(products || [], name, { keys: ['name'], threshold: rankings.EQUAL })[0],
+    [products]
   );
 
   const findProductInProductList = useCallback(
@@ -126,7 +131,7 @@ export const ListManager = () => {
           const itemSelected = findProductInSelectedList(product.name);
           return (
             <ProductButton
-              isLoading={items.some((item) => item.name === product.name)}
+              isLoading={debouncedItems.some((item) => item.name === product.name)}
               key={product.name}
               name={product.name}
               product={itemSelected}
@@ -175,7 +180,7 @@ export const ListManager = () => {
               <ScrollArea h="calc(100vh - 184px)" offsetScrollbars mt="xs">
                 <Stack gap="xxs">
                   {inputToCreateProduct()}
-                  {renderProducts(products || [])}
+                  {renderProducts(productsCatalog || [])}
                 </Stack>
               </ScrollArea>
             </Tabs.Panel>
@@ -195,7 +200,7 @@ export const ListManager = () => {
             </Tabs.List>
             <Tabs.Panel value="Products">
               <ScrollArea h="calc(100vh - 184px)" offsetScrollbars mt="xs">
-                <Stack gap="xxs">{renderProducts(products || [])}</Stack>
+                <Stack gap="xxs">{renderProducts(productsCatalog || [])}</Stack>
               </ScrollArea>
             </Tabs.Panel>
             <Tabs.Panel value="Recents">

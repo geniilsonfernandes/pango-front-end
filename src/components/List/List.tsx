@@ -1,72 +1,84 @@
 import { useMemo, useState } from 'react';
-import { Button, Center, Group, Loader, Modal, Paper, rem, Stack, Text } from '@mantine/core';
-import { ShoppingItem } from '@/service/api';
+import { AnimatePresence, motion } from 'motion/react';
+import { Button, Group, Modal, Paper, Stack, Text } from '@mantine/core';
+import { ListDTO, ShoppingItem } from '@/service/api';
 import { useToggleShoppingItem } from '@/service/mutation/useToggleShoppingItem';
-import { useShoppingList } from '@/service/queries/useShoppingList';
-import { useList } from '@/store/listStore';
+import { useListStore } from '@/store/listStore';
+import { calculateStatus } from '@/utils/calculateStatus';
+import { categorizeProducts } from '@/utils/categorizeShoppingItems';
 import { ListHeader } from '../ListHeader/ListHeader';
+import { ListStats } from '../ListStats/ListStats';
 import { ProductCheckbox } from '../ProductCheckbox/ProductCheckbox';
 import { ProductForm } from '../ProductForm/ProductForm';
 import { RenderIf } from '../RenderIf/RenderIf';
 import classes from './List.module.css';
 
-export const List = () => {
-  const { showPrice } = useList();
-  const { data, isLoading } = useShoppingList();
-  const { mutate: toggleShoppingItem } = useToggleShoppingItem();
-  const [shoppingItem, setShoppingItem] = useState<ShoppingItem>();
+type ListProps = {
+  list: ListDTO;
+  products: ShoppingItem[];
+};
 
-  const uncheckedProducts = useMemo(() => {
-    if (!data) {
-      return [];
-    }
-    return data.filter((product) => !product.checked);
-  }, [data]);
-  const checkeditems = useMemo(() => {
-    if (!data) {
-      return [];
-    }
-    return data.filter((product) => product.checked);
-  }, [data]);
+export const List: React.FC<ListProps> = ({ list, products }) => {
+  const [itemSelected, setItemSelected] = useState<ShoppingItem>();
+  const { mutate: toggleShoppingItem } = useToggleShoppingItem(list.id);
+  const { showPrice } = useListStore();
+
+  const categorizedProducts = useMemo(() => {
+    return categorizeProducts(products);
+  }, [products]);
+
+  const status = useMemo(() => {
+    return calculateStatus(products);
+  }, [products]);
 
   return (
-    <Stack gap="xs" flex={1} component={Paper} p="lg">
-      <ListHeader listName="No category" createdAt="No name" data={data} />
-      <RenderIf
-        condition={!!uncheckedProducts?.length}
-        isLoading={isLoading}
-        isLoadingFallback={
-          <Center p="md" h={rem(200)}>
-            <Loader size="sm" />
-          </Center>
-        }
-        fallback={
-          <Text fw={500} fz="xs" c="dimmed" p="md" ta="center">
-            No items yet
-          </Text>
-        }
-      >
-        <Paper className={classes.list}>
-          {uncheckedProducts?.map((item) => (
-            <ProductCheckbox
-              name={item.name}
-              shoppingItem={item}
-              key={item.id}
-              showPrice={showPrice}
-              onClick={() => setShoppingItem(item)}
-              onCheck={() =>
-                toggleShoppingItem({
-                  id: item.id,
-                  checked: true,
-                })
-              }
-              onPriceClick={() => setShoppingItem(item)}
-              checked={item.checked}
+    <Stack gap="md" flex={1} component={Paper} p="lg">
+      <ListHeader listName={list?.name || ''} />
+      <AnimatePresence>
+        {showPrice && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <ListStats
+              totalItems={`${status?.checked} / ${status?.total}`}
+              budget={`${list.budget}`}
+              checked={`${status?.checkedPrice}`}
+              unchecked={`${status?.uncheckedPrice}`}
+              progress={(status?.checked / status?.total) * 100}
             />
-          ))}
-        </Paper>
-      </RenderIf>
-      <RenderIf condition={!!checkeditems?.length}>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <Paper>
+        <AnimatePresence>
+          <Paper className={classes.list} data-no-background>
+            {categorizedProducts.unchecked?.map((item) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                layout
+              >
+                <ProductCheckbox
+                  name={item.name}
+                  shoppingItem={item}
+                  showPrice={showPrice}
+                  onClick={() => setItemSelected(item)}
+                  onCheck={() =>
+                    toggleShoppingItem({
+                      id: item.id,
+                      checked: true,
+                    })
+                  }
+                  onPriceClick={() => setItemSelected(item)}
+                  checked={item.checked}
+                />
+              </motion.div>
+            ))}
+          </Paper>
+        </AnimatePresence>
+      </Paper>
+      <RenderIf condition={!!categorizedProducts.checked}>
         <Paper className={classes.list} data-no-background>
           <Group p="xs" justify="space-between">
             <Text fw={500} fz="xs" c="dimmed">
@@ -76,13 +88,13 @@ export const List = () => {
               Clear
             </Button>
           </Group>
-          {checkeditems?.map((item) => (
+          {categorizedProducts.checked?.map((item) => (
             <ProductCheckbox
               name={item.name}
               key={item.id}
               shoppingItem={item}
               showPrice={showPrice}
-              onClick={() => setShoppingItem(item)}
+              onClick={() => setItemSelected(item)}
               onCheck={() =>
                 toggleShoppingItem({
                   id: item.id,
@@ -96,11 +108,11 @@ export const List = () => {
       </RenderIf>
 
       <Modal
-        opened={!!shoppingItem}
-        onClose={() => setShoppingItem(undefined)}
-        title={`${shoppingItem?.name} - ${shoppingItem?.id}`}
+        opened={!!itemSelected}
+        onClose={() => setItemSelected(undefined)}
+        title={`${itemSelected?.name} - ${itemSelected?.id}`}
       >
-        <ProductForm shoppingItem={shoppingItem} onCancel={() => setShoppingItem(undefined)} />
+        <ProductForm shoppingItem={itemSelected} onCancel={() => setItemSelected(undefined)} />
       </Modal>
     </Stack>
   );

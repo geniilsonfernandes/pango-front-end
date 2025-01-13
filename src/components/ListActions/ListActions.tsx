@@ -9,11 +9,11 @@ import {
   IconTrash,
 } from '@tabler/icons-react';
 import { ActionIcon, Avatar, AvatarGroup, Group, Menu, rem } from '@mantine/core';
-import { useList } from '@/store/listStore';
+import { useListStore } from '@/store/listStore';
 
 // Subcomponent: UserActions
 export const ListActions: React.FC = () => {
-  const { setShowPrice, showPrice } = useList();
+  const { setShowPrice, showPrice } = useListStore();
 
   return (
     <Group gap="xs">
