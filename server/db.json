@@ -13,177 +13,173 @@
   ],
   "lists": [
     {
-      "id": "1",
-      "name": "List 1",
-      "userId": "1",
-      "budget": 100,
-      "code": "def3vg"
+      "id": "9f50",
+      "name": "lista teste 2",
+      "budget": 0,
+      "date": "2025-01-10",
+      "description": ""
     },
     {
-      "id": "2",
-      "name": "List 2",
-      "userId": "2",
-      "budget": 100,
-      "code": "2ds3f"
+      "id": "1f0a",
+      "name": "lista teste 1",
+      "budget": 303,
+      "date": "2025-01-10",
+      "description": ""
+    },
+    {
+      "id": "241f",
+      "name": "lista 3",
+      "budget": 400,
+      "date": "2025-01-13",
+      "description": ""
     }
   ],
   "shoppingList": [
     {
-      "id": "793586769",
-      "name": "Rice3",
+      "id": "9669840829",
+      "name": "Pepper2",
+      "category": "Oils and Spices",
+      "quantity": 9,
+      "listId": "9f50",
+      "checked": true,
+      "createdAt": "2025-01-09T21:33:47.642Z"
+    },
+    {
+      "id": "359654688",
+      "name": "Rice",
+      "category": "Basic Foods",
+      "quantity": 2,
+      "listId": "1f0a",
+      "checked": true,
+      "createdAt": "2025-01-10T22:39:34.711Z"
+    },
+    {
+      "id": "149406422",
+      "name": "Beans",
       "category": "Basic Foods",
       "quantity": 1,
-      "listId": 1,
-      "checked": false,
-      "createdAt": "2025-01-08T15:15:25.620Z",
-      "unit": "",
-      "price": 7
+      "listId": "1f0a",
+      "checked": true,
+      "createdAt": "2025-01-10T22:39:34.713Z"
     },
     {
-      "id": "669620602",
-      "name": "Beans",
-      "category": "Meats",
-      "quantity": 9,
-      "listId": 1,
-      "checked": false,
-      "createdAt": "2025-01-08T15:15:25.620Z",
-      "unit": "lt",
-      "price": 4
-    },
-    {
-      "id": "852101889",
+      "id": "627404026",
       "name": "Pasta",
       "category": "Basic Foods",
       "quantity": 1,
-      "listId": 1,
+      "listId": "1f0a",
       "checked": false,
-      "createdAt": "2025-01-08T15:15:25.621Z"
+      "createdAt": "2025-01-10T22:39:34.714Z"
     },
     {
-      "id": "189784936",
+      "id": "355448884",
       "name": "Salt",
       "category": "Oils and Spices",
-      "quantity": 1,
-      "listId": 1,
+      "quantity": 44,
+      "listId": "1f0a",
       "checked": false,
-      "createdAt": "2025-01-08T15:49:14.362Z"
+      "createdAt": "2025-01-10T22:41:57.884Z",
+      "unit": "",
+      "price": 3
     },
     {
-      "id": "284227513",
+      "id": "680111369",
       "name": "Pepper",
       "category": "Oils and Spices",
       "quantity": 1,
-      "listId": 1,
+      "listId": "1f0a",
       "checked": false,
-      "createdAt": "2025-01-08T15:49:14.364Z"
+      "createdAt": "2025-01-10T22:42:01.417Z"
     },
     {
-      "id": "679306993",
+      "id": "835186453",
       "name": "Oil",
       "category": "Oils and Spices",
       "quantity": 1,
-      "listId": 1,
+      "listId": "1f0a",
       "checked": false,
-      "createdAt": "2025-01-08T15:49:14.364Z"
+      "createdAt": "2025-01-10T22:42:01.419Z"
     },
     {
-      "id": "508367585",
-      "name": "Bread flour",
-      "category": "Bakery",
-      "quantity": 1,
-      "listId": 1,
-      "checked": false,
-      "createdAt": "2025-01-08T15:49:14.382Z"
-    },
-    {
-      "id": "180450769",
+      "id": "871493508",
       "name": "Bread",
       "category": "Bakery",
       "quantity": 1,
-      "listId": 1,
+      "listId": "1f0a",
       "checked": false,
-      "createdAt": "2025-01-08T15:49:14.365Z"
+      "createdAt": "2025-01-10T22:42:01.419Z"
     },
     {
-      "id": "668338499",
-      "name": "Sugar",
+      "id": "373284620",
+      "name": "Bread flour",
       "category": "Bakery",
       "quantity": 1,
-      "listId": 1,
+      "listId": "1f0a",
       "checked": false,
-      "createdAt": "2025-01-08T15:49:14.385Z"
+      "createdAt": "2025-01-10T22:42:01.420Z"
     },
     {
-      "id": "795110780",
-      "name": "Butter",
+      "id": "850031741",
+      "name": "Beans",
+      "category": "Basic Foods",
+      "quantity": 1,
+      "listId": "241f",
+      "checked": false,
+      "createdAt": "2025-01-13T15:42:28.792Z"
+    },
+    {
+      "id": "566177026",
+      "name": "Rice",
+      "category": "Basic Foods",
+      "quantity": 1,
+      "listId": "241f",
+      "checked": false,
+      "createdAt": "2025-01-13T15:42:29.792Z"
+    },
+    {
+      "id": "562013652",
+      "name": "Pasta",
+      "category": "Basic Foods",
+      "quantity": 1,
+      "listId": "241f",
+      "checked": true,
+      "createdAt": "2025-01-13T15:42:38.608Z"
+    },
+    {
+      "id": "256166902",
+      "name": "Salt",
+      "category": "Oils and Spices",
+      "quantity": 1,
+      "listId": "241f",
+      "checked": false,
+      "createdAt": "2025-01-13T15:42:38.609Z"
+    },
+    {
+      "id": "527365142",
+      "name": "Pepper",
+      "category": "Oils and Spices",
+      "quantity": 1,
+      "listId": "241f",
+      "checked": false,
+      "createdAt": "2025-01-13T15:42:38.610Z"
+    },
+    {
+      "id": "605362280",
+      "name": "Bread",
       "category": "Bakery",
       "quantity": 1,
-      "listId": 1,
+      "listId": "241f",
       "checked": false,
-      "createdAt": "2025-01-08T15:49:14.386Z"
+      "createdAt": "2025-01-13T15:42:38.610Z"
     },
     {
-      "id": "656406657",
-      "name": "Cheese",
-      "category": "Dairy",
+      "id": "693106190",
+      "name": "Oil",
+      "category": "Oils and Spices",
       "quantity": 1,
-      "listId": 1,
-      "checked": false,
-      "createdAt": "2025-01-08T15:50:21.638Z"
-    },
-    {
-      "id": "260485619",
-      "name": "Chicken",
-      "category": "Meat",
-      "quantity": 1,
-      "listId": 1,
-      "checked": false,
-      "createdAt": "2025-01-08T15:50:21.639Z"
-    },
-    {
-      "id": "601686300",
-      "name": "Beef",
-      "category": "Meat",
-      "quantity": 1,
-      "listId": 1,
+      "listId": "241f",
       "checked": true,
-      "createdAt": "2025-01-08T15:50:21.639Z"
-    },
-    {
-      "id": "730473298",
-      "name": "Sausage",
-      "category": "Meat",
-      "quantity": 1,
-      "listId": 1,
-      "checked": true,
-      "createdAt": "2025-01-08T15:50:21.640Z"
-    },
-    {
-      "id": "559786277",
-      "name": "Lettuce",
-      "category": "Fruits and Vegetables",
-      "quantity": 1,
-      "listId": 1,
-      "checked": true,
-      "createdAt": "2025-01-08T15:50:23.373Z"
-    },
-    {
-      "id": "317083766",
-      "name": "Bananas",
-      "category": "Fruits and Vegetables",
-      "quantity": 1,
-      "listId": 1,
-      "checked": true,
-      "createdAt": "2025-01-08T15:50:26.084Z"
-    },
-    {
-      "id": "772514907",
-      "name": "Lamb",
-      "category": "Meat",
-      "quantity": 1,
-      "listId": 1,
-      "checked": true,
-      "createdAt": "2025-01-08T15:50:26.085Z"
+      "createdAt": "2025-01-13T15:42:38.610Z"
     }
   ]
 }
