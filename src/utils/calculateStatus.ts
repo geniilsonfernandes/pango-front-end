@@ -1,6 +1,9 @@
 interface Product {
   price?: number;
   quantity?: number;
+  name?: string;
+  unit?: string;
+  category?: string;
   checked?: boolean;
 }
 
@@ -10,6 +13,8 @@ interface Status {
   unchecked: number;
   uncheckedPrice: number;
   total: number;
+  uncheckedItems: Product[];
+  checkedItems: Product[];
 }
 
 export function calculateStatus(products?: Product[]): Status {
@@ -20,6 +25,8 @@ export function calculateStatus(products?: Product[]): Status {
       unchecked: 0,
       uncheckedPrice: 0,
       total: 0,
+      uncheckedItems: [],
+      checkedItems: [],
     };
   }
 
@@ -32,6 +39,8 @@ export function calculateStatus(products?: Product[]): Status {
         unchecked: acc.unchecked + (cur.checked ? 0 : 1),
         uncheckedPrice: acc.uncheckedPrice + (cur.checked ? 0 : price),
         total: acc.total + 1,
+        uncheckedItems: acc.uncheckedItems.concat(cur.checked ? [] : [cur]),
+        checkedItems: acc.checkedItems.concat(cur.checked ? [cur] : []),
       };
     },
     {
@@ -40,6 +49,8 @@ export function calculateStatus(products?: Product[]): Status {
       unchecked: 0,
       uncheckedPrice: 0,
       total: 0,
-    }
+      uncheckedItems: [],
+      checkedItems: [],
+    } as Status
   );
 }
