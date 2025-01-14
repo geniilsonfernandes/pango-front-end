@@ -16,6 +16,11 @@ export const ListStats: React.FC<ListStatsProps> = ({ list, products, currencyMo
     return calculateStatus(products);
   }, [products]);
 
+  const budget = list.budget || 0;
+  const checkedPrice = formatCurrency(status?.checkedPrice || 0, currencyMode);
+  const uncheckedPrice = formatCurrency(status?.uncheckedPrice || 0, currencyMode);
+  const budgetFormatted = formatCurrency(list.budget || 0, currencyMode);
+
   return (
     <Card p="sm">
       <Flex gap="lg" justify="space-between">
@@ -25,24 +30,18 @@ export const ListStats: React.FC<ListStatsProps> = ({ list, products, currencyMo
           aria-label="Total Items"
         />
         <Flex gap="lg" justify="flex-end" align="center">
-          <DisplayValue
-            value={formatCurrency(list.budget || 0, currencyMode)}
-            label="Budget"
-            aria-label="Budget"
-          />
-          <DisplayValue
-            value={formatCurrency(status?.checkedPrice || 0, currencyMode)}
-            label="Checked"
-            aria-label="Checked"
-          />
-          <DisplayValue
-            value={formatCurrency(status?.uncheckedPrice || 0, currencyMode)}
-            label="Unchecked"
-            aria-label="Unchecked"
-          />
+          <DisplayValue value={budgetFormatted} label="Budget" aria-label="Budget" />
+          <DisplayValue value={checkedPrice} label="Checked" aria-label="Checked" />
+          <DisplayValue value={uncheckedPrice} label="Unchecked" aria-label="Unchecked" />
         </Flex>
       </Flex>
-      <Progress mt="xs" value={(status?.checked / status?.total) * 100} size="xs" />
+      {status.checked} {budget}
+      <Progress
+        mt="xs"
+        value={(status?.checked / status?.total) * 100}
+        color={status.checkedPrice < budget ? 'green' : 'red'}
+        size="xs"
+      />
     </Card>
   );
 };
