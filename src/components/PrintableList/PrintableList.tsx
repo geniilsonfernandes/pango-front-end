@@ -1,10 +1,8 @@
-import { useMemo } from 'react';
 import { IconCheckbox } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Text, Title } from '@mantine/core';
 import { ListDTO, ShoppingItem } from '@/service/api';
 import { listQueryKeys } from '@/service/queries/useLists';
-import { calculateStatus } from '@/utils/calculateStatus';
 import { ListStats } from '../ListStats/ListStats';
 import { Logo } from '../Logo/Logo';
 import classes from './PrintableList.module.css';
@@ -73,8 +71,6 @@ export const PrintableList: React.FC<PrintableListProps> = ({
   const queryClient = useQueryClient();
   const listItems = queryClient.getQueryData(listQueryKeys.listItems(list.id)) as ShoppingItem[];
 
-  const status = useMemo(() => calculateStatus(list.items), [list]);
-
   const filterItems = (checked: boolean) =>
     listItems?.filter((item) => item.checked === checked) || [];
 
@@ -87,13 +83,7 @@ export const PrintableList: React.FC<PrintableListProps> = ({
 
       {showStatus && (
         <div className={classes.stats}>
-          <ListStats
-            totalItems={`${status.checked} / ${status.total}`}
-            budget={`${list.budget}`}
-            checked={`${status.checkedPrice}`}
-            unchecked={`${status.uncheckedPrice}`}
-            progress={(status.checked / status.total) * 100}
-          />
+          <ListStats list={list} products={listItems} currencyMode="br" />
         </div>
       )}
 

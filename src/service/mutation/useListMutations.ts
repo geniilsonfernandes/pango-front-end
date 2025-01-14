@@ -6,6 +6,7 @@ import { listQueryKeys } from '../queries/useLists';
 export type CreateListInput = CreateListDTO;
 type useHookProps = {
   onSuccess?: () => void;
+  queryKey?: string[];
 };
 
 const successMessage = (message: string) => {
@@ -58,12 +59,12 @@ type UpdateListInput = {
   id: string;
 } & CreateListInput;
 
-export const useUpdateList = ({ onSuccess }: useHookProps = {}) => {
+// TODO: add optimistic update
+export const useUpdateList = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: UpdateListInput) => shoppingAPI.updateList(input.id, input),
     onSuccess: () => {
-      onSuccess?.();
       queryClient.invalidateQueries(listQueryKeys.all());
       successMessage('List updated');
     },

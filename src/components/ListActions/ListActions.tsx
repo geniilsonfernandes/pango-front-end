@@ -1,5 +1,4 @@
 import {
-  IconCircleX,
   IconCopy,
   IconCurrencyDollar,
   IconEdit,
@@ -11,8 +10,20 @@ import {
 import { ActionIcon, Avatar, AvatarGroup, Group, Menu, rem } from '@mantine/core';
 import { useListStore } from '@/store/listStore';
 
-// Subcomponent: UserActions
-export const ListActions: React.FC = () => {
+type ListActionsProps = {
+  onDelete: () => void;
+  onEdit: () => void;
+  onShare: () => void;
+  onPrint: () => void;
+  onCopy: () => void;
+};
+export const ListActions: React.FC<ListActionsProps> = ({
+  onDelete,
+  onEdit,
+  onShare,
+  onPrint,
+  onCopy,
+}) => {
   const { setShowPrice, showPrice } = useListStore();
 
   return (
@@ -35,16 +46,28 @@ export const ListActions: React.FC = () => {
         </Menu.Target>
         <Menu.Dropdown>
           <Menu.Label>List</Menu.Label>
-          <Menu.Item leftSection={<IconEdit style={{ width: rem(14), height: rem(14) }} />}>
-            Rename
+          <Menu.Item
+            leftSection={<IconEdit style={{ width: rem(14), height: rem(14) }} />}
+            onClick={onEdit}
+          >
+            Edit
           </Menu.Item>
-          <Menu.Item leftSection={<IconShare style={{ width: rem(14), height: rem(14) }} />}>
+          <Menu.Item
+            leftSection={<IconShare style={{ width: rem(14), height: rem(14) }} />}
+            onClick={onShare}
+          >
             Share
           </Menu.Item>
-          <Menu.Item leftSection={<IconPrinter style={{ width: rem(14), height: rem(14) }} />}>
+          <Menu.Item
+            leftSection={<IconPrinter style={{ width: rem(14), height: rem(14) }} />}
+            onClick={onPrint}
+          >
             Print
           </Menu.Item>
-          <Menu.Item leftSection={<IconCopy style={{ width: rem(14), height: rem(14) }} />}>
+          <Menu.Item
+            leftSection={<IconCopy style={{ width: rem(14), height: rem(14) }} />}
+            onClick={onCopy}
+          >
             Make a copy
           </Menu.Item>
 
@@ -55,12 +78,11 @@ export const ListActions: React.FC = () => {
           >
             {showPrice ? 'Hide' : 'Show'} prices
           </Menu.Item>
-          <Menu.Item leftSection={<IconCircleX style={{ width: rem(14), height: rem(14) }} />}>
-            Clear list
-          </Menu.Item>
+
           <Menu.Item
             color="red"
             leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
+            onClick={onDelete}
           >
             Delete list
           </Menu.Item>

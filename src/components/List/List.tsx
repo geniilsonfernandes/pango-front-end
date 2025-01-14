@@ -4,7 +4,6 @@ import { Button, Group, Modal, Paper, Stack, Text } from '@mantine/core';
 import { ListDTO, ShoppingItem } from '@/service/api';
 import { useToggleShoppingItem } from '@/service/mutation/useToggleShoppingItem';
 import { useListStore } from '@/store/listStore';
-import { calculateStatus } from '@/utils/calculateStatus';
 import { categorizeProducts } from '@/utils/categorizeShoppingItems';
 import { ListHeader } from '../ListHeader/ListHeader';
 import { ListStats } from '../ListStats/ListStats';
@@ -27,23 +26,13 @@ export const List: React.FC<ListProps> = ({ list, products }) => {
     return categorizeProducts(products);
   }, [products]);
 
-  const status = useMemo(() => {
-    return calculateStatus(products);
-  }, [products]);
-
   return (
     <Stack gap="md" flex={1} component={Paper} p="lg">
-      <ListHeader listName={list?.name || ''} />
+      <ListHeader list={list} />
       <AnimatePresence>
         {showPrice && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <ListStats
-              totalItems={`${status?.checked} / ${status?.total}`}
-              budget={`${list.budget}`}
-              checked={`${status?.checkedPrice}`}
-              unchecked={`${status?.uncheckedPrice}`}
-              progress={(status?.checked / status?.total) * 100}
-            />
+            <ListStats list={list} products={products} />
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import { IconChevronDown, IconChevronUp, IconTrash } from '@tabler/icons-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import {
@@ -21,6 +22,7 @@ import { useForm, zodResolver } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { ListDTO } from '@/service/api';
 import { useCreateList, useDeleteList, useUpdateList } from '@/service/mutation/useListMutations';
+import { listQueryKeys } from '@/service/queries/useLists';
 
 type DeleteConfirmationProps = {
   onDeleteList: () => void;
@@ -59,29 +61,26 @@ const ListFormSchema = z.object({
 type ListFormProps = {
   data?: ListDTO;
   onCancel?: () => void;
+  isCopy?: boolean;
 };
 
-export const ListForm: React.FC<ListFormProps> = ({ onCancel, data }) => {
+export const ListForm: React.FC<ListFormProps> = ({ onCancel, data, isCopy }) => {
+  // Hooks
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [opened, { toggle }] = useDisclosure(false);
   const [openedDelete, { open: openDelete, close: closeDelete }] = useDisclosure(false);
-  const { mutateAsync: createList, isLoading: isCreating } = useCreateList();
-  const { mutate: updateList, isLoading: isUpdating } = useUpdateList({
-    onSuccess: () => {
-      onCancel?.();
-    },
-  });
-  const { mutate: deleteList, isLoading: isDeleting } = useDeleteList({
-    onSuccess: () => {
-      onCancel?.();
-    },
-  });
 
+  // Mutations
+  const { mutateAsync: createList, isLoading: isCreating } = useCreateList();
+  const { mutate: updateList, isLoading: isUpdating } = useUpdateList();
+  const { mutate: deleteList, isLoading: isDeleting } = useDeleteList();
+
+  // Form
   const form = useForm({
     mode: 'uncontrolled',
-
     initialValues: {
-      name: data?.name || '',
+      name: isCopy ? `Copy of ${data?.name}` : data?.name || '',
       budget: data?.budget || 0,
       date: dayjs(data?.date).toDate(),
       description: data?.description || '',
@@ -89,17 +88,27 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, data }) => {
     validate: zodResolver(ListFormSchema),
   });
 
+  // Handlers
   const handleCreate = (values: typeof form.values) => {
-    if (data?.id) {
-      updateList({
-        id: data.id,
-        ...ListFormSchema.parse(values),
-      });
-      onCancel?.();
+    if (data?.id && !isCopy) {
+      updateList(
+        {
+          id: data.id,
+          ...ListFormSchema.parse(values),
+        },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries(listQueryKeys.getList(data?.id));
+            onCancel?.();
+          },
+        }
+      );
       return;
     }
-    createList(ListFormSchema.parse(values)).then((data) => {
-      navigate(`/shopping-lists/${data.id}`);
+    createList(ListFormSchema.parse(values), {
+      onSuccess: (data) => {
+        navigate(`/shopping-lists/${data.id}`);
+      },
     });
   };
 
