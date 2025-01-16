@@ -5,8 +5,8 @@ import {
   IconTrash,
   IconWorldSearch,
 } from '@tabler/icons-react';
-import { Link } from 'react-router-dom';
-import { ActionIcon, Badge, Box, Button, Divider, Paper, rem, Stack } from '@mantine/core';
+import { NavLink } from 'react-router-dom';
+import { ActionIcon, Box, Button, Divider, Paper, rem, Stack } from '@mantine/core';
 import { ColorSchemeToggle } from '../ColorSchemeToggle/ColorSchemeToggle';
 import { Logo } from '../Logo/Logo';
 import { UserButton } from '../UserButton/UserButton';
@@ -48,40 +48,49 @@ export const SideNavigation: React.FC<SideNavigationProps> = () => {
         <Box p="xs">
           <Logo />
         </Box>
-        <Button
-          variant="subtle"
-          color="gray"
-          styles={{
-            label: {
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'space-between',
-            },
-          }}
-          component={Link}
-          to="/shopping-lists"
-          px="xxs"
-          leftSection={<IconClipboardList width={rem(14)} stroke={1} />}
-        >
-          Shopping lists
-          <Badge variant="filled" radius="xl">
-            3
-          </Badge>
-        </Button>
+        <NavLink to="/shopping-lists" style={{ width: '100%', textDecoration: 'none' }}>
+          {({ isActive }) => (
+            <Button
+              variant={isActive ? 'filled' : 'subtle'}
+              fullWidth
+              styles={{
+                label: {
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                },
+              }}
+              component="span"
+              px="xxs"
+              aria-current={isActive ? 'page' : undefined}
+              leftSection={<IconClipboardList width={rem(14)} stroke={1} />}
+            >
+              Shopping lists
+            </Button>
+          )}
+        </NavLink>
+        <NavLink to="/explore" style={{ width: '100%', textDecoration: 'none' }}>
+          {({ isActive }) => (
+            <Button
+              variant={isActive ? 'filled' : 'subtle'}
+              fullWidth
+              styles={{
+                label: {
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                },
+              }}
+              component="span"
+              px="xxs"
+              aria-current={isActive ? 'page' : undefined}
+              leftSection={<IconWorldSearch width={rem(14)} stroke={1} />}
+            >
+              Explore
+            </Button>
+          )}
+        </NavLink>
 
-        <Button
-          variant="subtle"
-          color="gray"
-          styles={{
-            label: {
-              width: '100%',
-            },
-          }}
-          px="xxs"
-          leftSection={<IconWorldSearch width={rem(14)} stroke={1} />}
-        >
-          Explore
-        </Button>
         <Divider my="md" />
         <Button
           variant="subtle"
