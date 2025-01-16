@@ -22,7 +22,7 @@ export const ListStats: React.FC<ListStatsProps> = ({ list, products, currencyMo
   const budgetFormatted = formatCurrency(list.budget || 0, currencyMode);
 
   return (
-    <Card p="sm">
+    <Card p="sm" bg="light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-6))">
       <Flex gap="lg" justify="space-between">
         <DisplayValue
           value={` ${status?.checked} / ${status?.total}`}
@@ -35,7 +35,6 @@ export const ListStats: React.FC<ListStatsProps> = ({ list, products, currencyMo
           <DisplayValue value={uncheckedPrice} label="Unchecked" aria-label="Unchecked" />
         </Flex>
       </Flex>
-      {status.checked} {budget}
       <Progress
         mt="xs"
         value={(status?.checked / status?.total) * 100}

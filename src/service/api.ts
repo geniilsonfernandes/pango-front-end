@@ -15,6 +15,9 @@ export type ShoppingItem = {
 
 export type CreateShoppingItemDTO = Omit<ShoppingItem, 'createdAt' | 'checked' | 'userId'>;
 
+
+
+
 class ShoppingListAPI {
   private baseURL: string;
 
@@ -106,12 +109,6 @@ class ShoppingListAPI {
     await axios.delete(`${this.baseURL}/shoppingList/${id}`);
   }
 
-  async createList(data: CreateListDTO): Promise<ListDTO> {
-    const response = await axios.post(`${this.baseURL}/lists`, data);
-
-    return response.data;
-  }
-
   async getLists(): Promise<ListDTO[]> {
     const response = await axios.get(`${this.baseURL}/lists`);
 
@@ -135,12 +132,6 @@ class ShoppingListAPI {
     await axios.delete(`${this.baseURL}/lists/${id}`);
   }
 
-  async updateList(id: string, data: CreateListDTO): Promise<ListDTO> {
-    const response = await axios.patch(`${this.baseURL}/lists/${id}`, data);
-
-    return response.data;
-  }
-
   async getlistItems(listId?: string): Promise<ShoppingItem[]> {
     if (!listId) {
       throw new Error('List ID is required');
@@ -148,6 +139,24 @@ class ShoppingListAPI {
     const response = await axios.get(`${this.baseURL}/shoppingList`, { params: { listId } });
 
     return response.data.filter((item: ShoppingItem) => item.listId === listId);
+  }
+
+  // refactor
+
+  async createList(data: CreateListDTO): Promise<ListDTO> {
+    const response = await axios.post<ListDTO>(`${this.baseURL}/lists`, data);
+    const list = response.data;
+    list.items = [];
+    return response.data;
+  }
+
+  async updateList(id: string, data: CreateListDTO): Promise<ListDTO> {
+    const response = await axios.patch(`${this.baseURL}/lists/${id}`, data);
+
+    const list = response.data;
+    list.items = [];
+
+    return response.data;
   }
 }
 
@@ -166,6 +175,8 @@ export type ListDTO = {
   description?: string;
   items?: ShoppingItem[];
 };
+
+
 
 // Usage example
 export const shoppingAPI = new ShoppingListAPI('http://localhost:5555');

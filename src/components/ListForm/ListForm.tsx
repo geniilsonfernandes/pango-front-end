@@ -21,8 +21,12 @@ import { DateInput } from '@mantine/dates';
 import { useForm, zodResolver } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { ListDTO } from '@/service/api';
-import { useCreateList, useDeleteList, useUpdateList } from '@/service/mutation/useListMutations';
-import { listQueryKeys } from '@/service/queries/useLists';
+import {
+  listQueryKeys,
+  useCreateList,
+  useDeleteList,
+  useUpdateList,
+} from '@/service/queries/useList';
 
 type DeleteConfirmationProps = {
   onDeleteList: () => void;
@@ -59,20 +63,20 @@ const ListFormSchema = z.object({
 });
 
 type ListFormProps = {
-  data?: ListDTO;
+  list?: ListDTO;
   onCancel?: () => void;
   isCopy?: boolean;
 };
 
-export const ListForm: React.FC<ListFormProps> = ({ onCancel, data, isCopy }) => {
+export const ListForm: React.FC<ListFormProps> = ({ onCancel, list, isCopy }) => {
   // Hooks
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const [opened, { toggle }] = useDisclosure(false);
+  const [openedOptions, { toggle: toggleOptions }] = useDisclosure(false);
   const [openedDelete, { open: openDelete, close: closeDelete }] = useDisclosure(false);
 
   // Mutations
-  const { mutateAsync: createList, isLoading: isCreating } = useCreateList();
+  const { mutate: createList, isLoading: isCreating } = useCreateList();
   const { mutate: updateList, isLoading: isUpdating } = useUpdateList();
   const { mutate: deleteList, isLoading: isDeleting } = useDeleteList();
 
@@ -80,36 +84,41 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, data, isCopy }) =>
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
-      name: isCopy ? `Copy of ${data?.name}` : data?.name || '',
-      budget: data?.budget || 0,
-      date: dayjs(data?.date).toDate(),
-      description: data?.description || '',
+      name: isCopy ? `Copy of ${list?.name}` : list?.name || '',
+      budget: list?.budget || 0,
+      date: dayjs(list?.date).toDate(),
+      description: list?.description || '',
     },
     validate: zodResolver(ListFormSchema),
   });
 
   // Handlers
   const handleCreate = (values: typeof form.values) => {
-    if (data?.id && !isCopy) {
-      updateList(
-        {
-          id: data.id,
-          ...ListFormSchema.parse(values),
+    if (list?.id && !isCopy) {
+      updateList({
+        id: list.id,
+        ...ListFormSchema.parse(values),
+      });
+    } else {
+      createList(ListFormSchema.parse(values), {
+        onSuccess: (data) => {
+          navigate(`/shopping-lists/${data.id}`);
         },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries(listQueryKeys.getList(data?.id));
-            onCancel?.();
-          },
-        }
-      );
-      return;
+      });
     }
-    createList(ListFormSchema.parse(values), {
-      onSuccess: (data) => {
-        navigate(`/shopping-lists/${data.id}`);
-      },
-    });
+
+    onCancel?.();
+  };
+
+  const handleDelete = () => {
+    if (list?.id) {
+      deleteList(list.id, {
+        onSuccess: () => {
+          queryClient.invalidateQueries(listQueryKeys.getList(list?.id));
+          onCancel?.();
+        },
+      });
+    }
   };
 
   return (
@@ -135,14 +144,14 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, data, isCopy }) =>
             />
           </Grid.Col>
           <Grid.Col span={12}>
-            <Button fullWidth variant="transparent" size="xs" onClick={toggle}>
-              {!opened ? (
+            <Button fullWidth variant="transparent" size="xs" onClick={toggleOptions}>
+              {!openedOptions ? (
                 <IconChevronDown size={16} stroke={1.5} />
               ) : (
                 <IconChevronUp size={16} stroke={1.5} />
               )}
             </Button>
-            <Collapse in={opened}>
+            <Collapse in={openedOptions}>
               <Grid>
                 <Grid.Col span={12}>
                   <DateInput
@@ -185,11 +194,7 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, data, isCopy }) =>
         opened={openedDelete}
         onClose={closeDelete}
         isDeleting={isDeleting}
-        onDeleteList={() => {
-          if (data?.id) {
-            deleteList(data.id);
-          }
-        }}
+        onDeleteList={handleDelete}
       />
     </>
   );

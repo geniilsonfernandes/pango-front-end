@@ -4,7 +4,7 @@ import { Card, Center, Loader, rem } from '@mantine/core';
 import { List } from '@/components/List/List';
 import { ListManager } from '@/components/ListManager/ListManager';
 import { ListDTO, shoppingAPI } from '@/service/api';
-import { listQueryKeys } from '@/service/queries/useLists';
+import { listQueryKeys } from '@/service/queries/useList';
 
 type Params = {
   id: string;

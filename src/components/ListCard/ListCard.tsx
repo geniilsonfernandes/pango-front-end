@@ -14,10 +14,11 @@ import {
   Title,
 } from '@mantine/core';
 import { ListDTO } from '@/service/api';
+import { calculateStatus } from '@/utils/calculateStatus';
 import classes from './ListCard.module.css';
 
 type ListCardProps = {
-  data?: ListDTO;
+  list?: ListDTO;
   onEdit?: () => void;
   onDelete?: () => void;
   onShare?: () => void;
@@ -31,51 +32,26 @@ function stopPropagation(callback?: () => void) {
 }
 
 export const ListCard: React.FC<ListCardProps> = ({
-  data,
+  list,
   onEdit,
   onDelete,
   onShare,
   ...props
 }) => {
+  const { items } = list || {};
   const status = useMemo(() => {
-    if (!data?.items?.length) {
-      return {
-        checked: 0,
-        checkedPrice: 0,
-        unchecked: 0,
-        uncheckedPrice: 0,
-        total: 0,
-      };
-    }
-    return data?.items?.reduce(
-      (acc, cur) => {
-        const price = (cur?.price || 0) * (cur.quantity || 1);
-        return {
-          checked: acc.checked + (cur.checked ? 1 : 0),
-          checkedPrice: acc.checkedPrice + (cur.checked ? price : 0),
-          unchecked: acc.unchecked + (cur.checked ? 0 : 1),
-          uncheckedPrice: acc.uncheckedPrice + (cur.checked ? 0 : price || 0),
-          total: acc.total + 1,
-        };
-      },
-      {
-        checked: 0,
-        checkedPrice: 0,
-        unchecked: 0,
-        uncheckedPrice: 0,
-        total: 0,
-      }
-    );
-  }, [data]);
+    return calculateStatus(items || []);
+  }, [items]);
+
   return (
     <Card className={classes.card} {...props}>
       <Flex align="center" justify="space-between">
         <Box>
           <Title order={3} fz="h5">
-            {data?.name}
+            {list?.name}
           </Title>
           <Text size="xs" c="dimmed" fz="xs">
-            {status?.unchecked || 0} / {data?.items?.length || 0} items
+            {status?.checked || 0} / {items?.length || 0} items
           </Text>
         </Box>
 

@@ -23,7 +23,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { ListDTO } from '@/service/api';
-import { useDeleteList } from '@/service/mutation/useListMutations';
+import { useDeleteList } from '@/service/queries/useList';
 import { ListActions } from '../ListActions/ListActions';
 import { DeleteConfirmation, ListForm } from '../ListForm/ListForm';
 import { PrintableList } from '../PrintableList/PrintableList';
@@ -81,10 +81,10 @@ export const ListHeader: React.FC<ListHeaderProps> = ({ list }) => {
       />
 
       <Modal opened={opened} onClose={close} title={`Edit ${list.name}`}>
-        <ListForm data={list} onCancel={close} />
+        <ListForm list={list} onCancel={close} />
       </Modal>
       <Modal opened={openedCopy} onClose={closeCopy} title={`Copy ${list.name}`}>
-        <ListForm data={list} onCancel={closeCopy} isCopy />
+        <ListForm list={list} onCancel={closeCopy} isCopy />
       </Modal>
       <Modal opened={openedPrint} onClose={closePrint} title={`Print ${list.name}`}>
         <Checkbox.Group

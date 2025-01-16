@@ -3,6 +3,9 @@
     grid-template-columns: 1fr;
     gap: var(--mantine-spacing-xxs);
 
+    border-radius: var(--mantine-radius-md);
+
+
     /* Remove background logic */
     &[data-no-background="true"] {
         background: none;

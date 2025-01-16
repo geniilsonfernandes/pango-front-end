@@ -2,16 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 import { matchSorter, rankings } from 'match-sorter';
 import { products, type Product as ProductType } from '@/dummyData';
 
-export const productsKeys = {
-  all: () => ['productsKeys'],
-  list: () => [...productsKeys.all(), 'list'],
-  search: (query: string) => [...productsKeys.list(), 'search', query],
-  recent: () => [...productsKeys.list(), 'recent'],
+export const catalogQueryKeys = {
+  base: () => ['catalog'],
+  list: () => [...catalogQueryKeys.base(), 'list'],
+  search: (query: string) => [...catalogQueryKeys.base(), query],
 };
 
 export type Product = ProductType;
 
-const searchProducts = (query: string) => {
+const catalogQueryFn = (query: string) => {
   if (query) {
     return matchSorter<Product>(products || [], query, {
       keys: ['name'],
@@ -24,7 +23,7 @@ const searchProducts = (query: string) => {
 
 export function useProductsCatalog(queryValue: string) {
   return useQuery({
-    queryKey: ['products', 'list', queryValue ?? 'all'],
-    queryFn: () => searchProducts(queryValue),
+    queryKey: catalogQueryKeys.search(queryValue),
+    queryFn: () => catalogQueryFn(queryValue),
   });
 }

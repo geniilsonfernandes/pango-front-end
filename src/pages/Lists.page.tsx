@@ -8,26 +8,32 @@ import { DeleteConfirmation, ListForm } from '@/components/ListForm/ListForm';
 import { MonthSelect } from '@/components/MonthSelect/MonthSelect';
 import { useCalendar } from '@/hooks/useCalendar';
 import { ListDTO } from '@/service/api';
-import { useDeleteList } from '@/service/mutation/useListMutations';
-import { useLists } from '@/service/queries/useLists';
+import { useDeleteList, useList } from '@/service/queries/useList';
 
 export const ListsPage = () => {
-  const { data } = useLists();
+  const { data } = useList();
   const navigate = useNavigate();
   const { currentDate, setValue, nextMonth, previousMonth, formattedMonth } = useCalendar();
   const [listSelected, setListSelected] = useState<ListDTO>();
 
-  const [openedDelete, { open: openDelete, close: closeDelete }] = useDisclosure(false);
-  const [openedList, { open: openList, close: closeList }] = useDisclosure();
-  const { mutate: deleteList, isLoading: isDeleting } = useDeleteList({
-    onSuccess: () => {
-      closeDelete();
-    },
-  });
+  const [openedDelete, { open: openDeleteModal, close: closeDeleteModal }] = useDisclosure(false);
+  const [openedList, { open: openListModal, close: closeListModal }] = useDisclosure();
 
+  // Mutations
+  const { mutate: deleteList, isLoading: isDeleting } = useDeleteList();
+
+  // Handles
   const handleCloseList = () => {
     setListSelected(undefined);
-    closeList();
+    closeListModal();
+  };
+
+  const handleDelete = () => {
+    if (listSelected?.id) {
+      setListSelected(undefined);
+      deleteList(listSelected.id);
+      closeDeleteModal();
+    }
   };
 
   return (
@@ -44,26 +50,26 @@ export const ListsPage = () => {
         <Button
           variant="filled"
           leftSection={<IconPlus width={16} height={16} strokeWidth={1.5} />}
-          onClick={openList}
+          onClick={openListModal}
         >
           Create a new list
         </Button>
       </Flex>
       <Grid>
-        {data?.map((item) => (
-          <Grid.Col key={item.id} span={6}>
+        {data?.map((list) => (
+          <Grid.Col key={list.id} span={6}>
             <ListCard
-              data={item}
+              list={list}
               onClick={() => {
-                navigate(`/shopping-lists/${item.id}`);
+                navigate(`/shopping-lists/${list.id}`);
               }}
               onEdit={() => {
-                setListSelected(item);
-                openList();
+                setListSelected(list);
+                openListModal();
               }}
               onDelete={() => {
-                setListSelected(item);
-                openDelete();
+                setListSelected(list);
+                openDeleteModal();
               }}
               onShare={() => {
                 console.log('share');
@@ -73,22 +79,14 @@ export const ListsPage = () => {
         ))}
       </Grid>
 
-      <Modal
-        opened={openedList}
-        onClose={handleCloseList}
-        title={listSelected ? 'Edit list' : 'Create list'}
-      >
-        <ListForm onCancel={handleCloseList} data={listSelected} />
+      <Modal opened={openedList} onClose={handleCloseList} title="Create a new list">
+        <ListForm list={listSelected} onCancel={handleCloseList} />
       </Modal>
       <DeleteConfirmation
         opened={openedDelete}
-        onClose={closeDelete}
+        onClose={closeDeleteModal}
         isDeleting={isDeleting}
-        onDeleteList={() => {
-          if (listSelected?.id) {
-            deleteList(listSelected.id);
-          }
-        }}
+        onDeleteList={handleDelete}
       />
     </Stack>
   );

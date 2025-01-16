@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { shoppingAPI } from '@/service/api';
-import { listQueryKeys } from '../queries/useLists';
+import { listQueryKeys } from '../queries/useList';
 
 type Input = string;
 
