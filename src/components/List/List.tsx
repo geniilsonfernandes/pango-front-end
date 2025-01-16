@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Button, Group, Modal, Paper, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Modal, Paper, Stack, Text } from '@mantine/core';
 import { useWindowScroll } from '@mantine/hooks';
 import { ListDTO, ShoppingItem } from '@/service/api';
-import { useCheckListProduct } from '@/service/queries/useList';
+import { useCheckListProduct } from '@/service/queries/list';
 import { useListStore } from '@/store/listStore';
 import { categorizeProducts } from '@/utils/categorizeShoppingItems';
 import { ListHeader } from '../ListHeader/ListHeader';
@@ -18,9 +18,47 @@ type ListProps = {
   products: ShoppingItem[];
 };
 
-export const List: React.FC<ListProps> = ({ list, products }) => {
+export const Header: React.FC<ListProps> = ({ list, products }) => {
   const { showPrice } = useListStore();
   const [scroll] = useWindowScroll();
+  return (
+    <Box
+      pt="md"
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 10,
+        backgroundColor: 'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8))',
+      }}
+    >
+      <Stack
+        gap="md"
+        component={Paper}
+        p="sm"
+        style={{
+          borderBottomRightRadius: 0,
+          borderBottomLeftRadius: 0,
+          borderBottom:
+            scroll.y > 0
+              ? '1px solid light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5))'
+              : '',
+        }}
+      >
+        <ListHeader list={list} />
+        <AnimatePresence>
+          {showPrice && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <ListStats list={list} products={products} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Stack>
+    </Box>
+  );
+};
+
+export const List: React.FC<ListProps> = ({ list, products }) => {
+  const { showPrice } = useListStore();
   const [productSelected, setProductSelected] = useState<ShoppingItem>();
 
   // mutations
@@ -39,32 +77,7 @@ export const List: React.FC<ListProps> = ({ list, products }) => {
   }, [products]);
 
   return (
-    <Stack flex={1} gap={0}>
-      <Stack
-        gap="md"
-        component={Paper}
-        p="sm"
-        style={{
-          position: 'sticky',
-          top: 32,
-          zIndex: 10,
-          borderBottomRightRadius: 0,
-          borderBottomLeftRadius: 0,
-          borderBottom:
-            scroll.y > 0
-              ? '1px solid light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5))'
-              : '',
-        }}
-      >
-        <ListHeader list={list} />
-        <AnimatePresence>
-          {showPrice && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <ListStats list={list} products={products} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </Stack>
+    <>
       <Stack
         gap="md"
         flex={1}
@@ -138,6 +151,6 @@ export const List: React.FC<ListProps> = ({ list, products }) => {
       >
         <ProductForm product={productSelected} onCancel={() => setProductSelected(undefined)} />
       </Modal>
-    </Stack>
+    </>
   );
 };

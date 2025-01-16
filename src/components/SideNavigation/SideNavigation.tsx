@@ -20,9 +20,9 @@ export const SideNavigation: React.FC<SideNavigationProps> = () => {
   return (
     <Paper
       component="aside"
-      w={300}
-      h="calc(100vh - 64px)"
-      style={{ position: 'sticky', top: 32 }}
+      pos="relative"
+      w="100%"
+      h="100%"
       withBorder
       shadow="md"
       aria-expanded
@@ -48,7 +48,7 @@ export const SideNavigation: React.FC<SideNavigationProps> = () => {
         <Box p="xs">
           <Logo />
         </Box>
-        <NavLink to="/shopping-lists" style={{ width: '100%', textDecoration: 'none' }}>
+        <NavLink to="/" style={{ width: '100%', textDecoration: 'none' }}>
           {({ isActive }) => (
             <Button
               variant={isActive ? 'filled' : 'subtle'}

@@ -4,7 +4,7 @@ import { Paper, ScrollArea, Stack, Tabs } from '@mantine/core';
 import { useDebouncedCallback, useDebouncedValue } from '@mantine/hooks';
 import { useRecentsProducts } from '@/hooks/useRecentsProducts';
 import { CreateShoppingItemDTO, ListDTO, ShoppingItem } from '@/service/api';
-import { useAddProduct, useDeleteProduct, useUpdateProduct } from '@/service/queries/useList';
+import { useAddProduct, useDeleteProduct, useUpdateProduct } from '@/service/queries/list';
 import { CatalogProduct, useProductsCatalog } from '@/service/queries/useProductsCatalog';
 import { generateNumericId } from '@/utils/generateNumericId';
 import { ProductButton } from '../ProductButton/ProductButton';
@@ -14,6 +14,8 @@ type ListManagerProps = {
   list: ListDTO;
   products: ShoppingItem[];
 };
+
+const SIZE = 'calc(100vh - 154px)';
 
 export const ListManager = ({ products, list }: ListManagerProps) => {
   const [queryValue, setQueryValue] = useState('');
@@ -154,15 +156,7 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
   };
 
   return (
-    <Paper
-      p="sm"
-      w={300}
-      h="calc(100vh - 64px)"
-      style={{
-        position: 'sticky',
-        top: 32,
-      }}
-    >
+    <Paper p="sm" w="100%" h="100%">
       <ProductSearchInput
         queryValue={queryValue}
         setQueryValue={setQueryValue}
@@ -178,7 +172,7 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
               </Tabs.Tab>
             </Tabs.List>
             <Tabs.Panel value="Results">
-              <ScrollArea h="calc(100vh - 184px)" offsetScrollbars mt="xs">
+              <ScrollArea h={SIZE} offsetScrollbars mt="xs">
                 <Stack gap="xxs">
                   {inputToCreateProduct()}
                   {renderProducts(productsCatalog || [])}
@@ -200,12 +194,12 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
               </Tabs.Tab>
             </Tabs.List>
             <Tabs.Panel value="Products">
-              <ScrollArea h="calc(100vh - 184px)" offsetScrollbars mt="xs">
+              <ScrollArea h={SIZE} offsetScrollbars mt="xs">
                 <Stack gap="xxs">{renderProducts(productsCatalog || [])}</Stack>
               </ScrollArea>
             </Tabs.Panel>
             <Tabs.Panel value="Recents">
-              <ScrollArea h="calc(100vh - 184px)" offsetScrollbars mt="xs">
+              <ScrollArea h={SIZE} offsetScrollbars mt="xs">
                 <Stack gap="xxs">{renderProducts(recents || [])}</Stack>
               </ScrollArea>
             </Tabs.Panel>

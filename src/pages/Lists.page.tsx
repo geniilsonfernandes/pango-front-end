@@ -8,7 +8,7 @@ import { DeleteConfirmation, ListForm } from '@/components/ListForm/ListForm';
 import { MonthSelect } from '@/components/MonthSelect/MonthSelect';
 import { useCalendar } from '@/hooks/useCalendar';
 import { ListDTO } from '@/service/api';
-import { useDeleteList, useList } from '@/service/queries/useList';
+import { useDeleteList, useList } from '@/service/queries/list';
 
 export const ListsPage = () => {
   const { data } = useList();

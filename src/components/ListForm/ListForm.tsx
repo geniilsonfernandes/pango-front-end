@@ -21,12 +21,7 @@ import { DateInput } from '@mantine/dates';
 import { useForm, zodResolver } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { ListDTO } from '@/service/api';
-import {
-  listQueryKeys,
-  useCreateList,
-  useDeleteList,
-  useUpdateList,
-} from '@/service/queries/useList';
+import { listQueryKeys, useCreateList, useDeleteList, useUpdateList } from '@/service/queries/list';
 
 type DeleteConfirmationProps = {
   onDeleteList: () => void;

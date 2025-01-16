@@ -23,7 +23,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { ListDTO } from '@/service/api';
-import { useDeleteList } from '@/service/queries/useList';
+import { useDeleteList } from '@/service/queries/list';
 import { ListActions } from '../ListActions/ListActions';
 import { DeleteConfirmation, ListForm } from '../ListForm/ListForm';
 import { PrintableList } from '../PrintableList/PrintableList';
@@ -51,7 +51,7 @@ export const ListHeader: React.FC<ListHeaderProps> = ({ list }) => {
       deleteList(list.id, {
         onSuccess: () => {
           closeDelete();
-          navigate('/shopping-lists');
+          navigate('/');
         },
       });
     }

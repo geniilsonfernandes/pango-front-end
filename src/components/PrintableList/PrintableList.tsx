@@ -2,7 +2,7 @@ import { IconCheckbox } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Text, Title } from '@mantine/core';
 import { ListDTO, ShoppingItem } from '@/service/api';
-import { listQueryKeys } from '@/service/queries/useList';
+import { listQueryKeys } from '@/service/queries/list';
 import { ListStats } from '../ListStats/ListStats';
 import { Logo } from '../Logo/Logo';
 import classes from './PrintableList.module.css';

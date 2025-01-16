@@ -17,7 +17,7 @@ import { notifications } from '@mantine/notifications';
 // import { useForm } from 'react-hook-form';
 import { categories } from '@/dummyData';
 import { ShoppingItem } from '@/service/api';
-import { useDeleteProduct, useUpdateProduct } from '@/service/queries/useList';
+import { useDeleteProduct, useUpdateProduct } from '@/service/queries/list';
 
 // import { useForm } from 'react-hook-form';
 

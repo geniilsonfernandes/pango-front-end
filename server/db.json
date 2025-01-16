@@ -13,16 +13,9 @@
   ],
   "lists": [
     {
-      "id": "6662",
-      "name": "lista 2",
-      "budget": 0,
-      "date": "2025-01-16",
-      "description": ""
-    },
-    {
       "id": "9474",
       "name": "Copy of lista 2",
-      "budget": 0,
+      "budget": 10,
       "date": "2025-01-16",
       "description": ""
     }
@@ -355,7 +348,7 @@
       "category": "Basic Foods",
       "quantity": 1,
       "listId": "9474",
-      "checked": false,
+      "checked": true,
       "createdAt": "2025-01-16T21:15:33.923Z"
     },
     {
@@ -364,10 +357,10 @@
       "category": "Basic Foods",
       "quantity": 2,
       "listId": "9474",
-      "checked": true,
+      "checked": false,
       "createdAt": "2025-01-16T21:15:33.924Z",
       "unit": "",
-      "price": 0
+      "price": 8
     },
     {
       "id": "217944113",
@@ -395,7 +388,7 @@
       "category": "Oils and Spices",
       "quantity": 4,
       "listId": "9474",
-      "checked": false,
+      "checked": true,
       "createdAt": "2025-01-16T21:15:56.115Z",
       "unit": "",
       "price": 0
@@ -440,10 +433,172 @@
       "id": "312278301",
       "name": "Eggs",
       "category": "Dairy",
-      "quantity": 1,
+      "quantity": 2,
       "listId": "9474",
       "checked": false,
       "createdAt": "2025-01-16T21:47:02.272Z"
+    },
+    {
+      "id": "327846521",
+      "name": "Rice",
+      "category": "Basic Foods",
+      "quantity": 1,
+      "listId": null,
+      "checked": false,
+      "createdAt": "2025-01-16T22:12:47.140Z"
+    },
+    {
+      "id": "568202684",
+      "name": "Beans",
+      "category": "Basic Foods",
+      "quantity": 1,
+      "listId": null,
+      "checked": false,
+      "createdAt": "2025-01-16T22:12:47.142Z"
+    },
+    {
+      "id": "856894071",
+      "name": "Pasta",
+      "category": "Basic Foods",
+      "quantity": 1,
+      "listId": null,
+      "checked": true,
+      "createdAt": "2025-01-16T22:12:47.142Z"
+    },
+    {
+      "id": "987542070",
+      "name": "Salt",
+      "category": "Oils and Spices",
+      "quantity": 1,
+      "listId": null,
+      "checked": false,
+      "createdAt": "2025-01-16T22:12:47.143Z"
+    },
+    {
+      "id": "783760621",
+      "name": "Pepper",
+      "category": "Oils and Spices",
+      "quantity": 1,
+      "listId": null,
+      "checked": true,
+      "createdAt": "2025-01-16T22:12:47.143Z"
+    },
+    {
+      "id": "555014094",
+      "name": "Bread",
+      "category": "Bakery",
+      "quantity": 1,
+      "listId": null,
+      "checked": false,
+      "createdAt": "2025-01-16T22:12:47.144Z"
+    },
+    {
+      "id": "568817966",
+      "name": "Butter",
+      "category": "Bakery",
+      "quantity": 1,
+      "listId": "9474",
+      "checked": false,
+      "createdAt": "2025-01-16T23:13:01.797Z"
+    },
+    {
+      "id": "494558836",
+      "name": "Cheese",
+      "category": "Dairy",
+      "quantity": 1,
+      "listId": "9474",
+      "checked": true,
+      "createdAt": "2025-01-16T23:13:01.798Z"
+    },
+    {
+      "id": "667567693",
+      "name": "Milk",
+      "category": "Dairy",
+      "quantity": 1,
+      "listId": "9474",
+      "checked": true,
+      "createdAt": "2025-01-16T23:13:01.798Z"
+    },
+    {
+      "id": "214800792",
+      "name": "Yogurt",
+      "category": "Dairy",
+      "quantity": 1,
+      "listId": "9474",
+      "checked": false,
+      "createdAt": "2025-01-16T23:13:01.798Z"
+    },
+    {
+      "id": "757755583",
+      "name": "Spinach",
+      "category": "Fruits and Vegetables",
+      "quantity": 1,
+      "listId": "9474",
+      "checked": true,
+      "createdAt": "2025-01-16T23:13:07.344Z"
+    },
+    {
+      "id": "216123878",
+      "name": "Garlic",
+      "category": "Oils and Spices",
+      "quantity": 1,
+      "listId": "9474",
+      "checked": false,
+      "createdAt": "2025-01-16T23:13:07.344Z"
+    },
+    {
+      "id": "600088974",
+      "name": "Onions",
+      "category": "Fruits and Vegetables",
+      "quantity": 1,
+      "listId": "9474",
+      "checked": false,
+      "createdAt": "2025-01-16T23:13:07.345Z"
+    },
+    {
+      "id": "839499883",
+      "name": "Tomatoes",
+      "category": "Fruits and Vegetables",
+      "quantity": 1,
+      "listId": "9474",
+      "checked": false,
+      "createdAt": "2025-01-16T23:13:07.345Z"
+    },
+    {
+      "id": "209575449",
+      "name": "Peppers",
+      "category": "Fruits and Vegetables",
+      "quantity": 1,
+      "listId": "9474",
+      "checked": false,
+      "createdAt": "2025-01-16T23:13:37.051Z"
+    },
+    {
+      "id": "467988086",
+      "name": "Cabbage",
+      "category": "Fruits and Vegetables",
+      "quantity": 1,
+      "listId": "9474",
+      "checked": false,
+      "createdAt": "2025-01-16T23:13:37.054Z"
+    },
+    {
+      "id": "638446693",
+      "name": "Pineapple",
+      "category": "Fruits and Vegetables",
+      "quantity": 1,
+      "listId": "9474",
+      "checked": true,
+      "createdAt": "2025-01-16T23:13:37.055Z"
+    },
+    {
+      "id": "297252632",
+      "name": "Mango",
+      "category": "Fruits and Vegetables",
+      "quantity": 1,
+      "listId": "9474",
+      "checked": true,
+      "createdAt": "2025-01-16T23:13:37.055Z"
     }
   ]
 }

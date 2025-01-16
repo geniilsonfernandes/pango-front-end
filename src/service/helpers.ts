@@ -1,10 +1,12 @@
 import { notifications } from '@mantine/notifications';
 
+
 export const successMessage = (message: string) => {
   notifications.show({
     title: 'Success',
     message,
     color: 'green',
+    position: 'bottom-left',
   });
 };
 
@@ -13,5 +15,6 @@ export const errorMessage = (message: string) => {
     title: 'Error',
     message,
     color: 'red',
+    position: 'bottom-left',
   });
 };
