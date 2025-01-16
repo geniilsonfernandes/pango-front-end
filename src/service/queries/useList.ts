@@ -1,5 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { CreateListDTO, shoppingAPI } from '@/service/api';
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
+import { CreateListDTO, CreateShoppingItemDTO, ListDTO, shoppingAPI } from '@/service/api';
 import { errorMessage, successMessage } from '../helpers';
 
 export const listQueryKeys = {
@@ -8,12 +8,15 @@ export const listQueryKeys = {
   listItems: (id?: string) => ['listItems', id],
 };
 
+const CACHE_TIME = 1000 * 60 * 30;
+const STALE_TIME = 1000 * 60 * 5;
+
 export function useList() {
   return useQuery({
     queryKey: listQueryKeys.list(),
     queryFn: () => shoppingAPI.getLists(),
-    staleTime: 1000 * 60 * 5,
-    cacheTime: 1000 * 60 * 30,
+    staleTime: STALE_TIME,
+    cacheTime: CACHE_TIME,
   });
 }
 
@@ -62,6 +65,98 @@ export const useUpdateList = () => {
     },
     onError: () => {
       errorMessage('Error updating list');
+    },
+  });
+};
+
+/// products of list
+
+export const useListItems = (listId?: string) => {
+  const queryClient = useQueryClient();
+
+  return useQueries({
+    queries: [
+      {
+        queryKey: listQueryKeys.getList(listId),
+        queryFn: () => shoppingAPI.getList(listId),
+        staleTime: STALE_TIME,
+        cacheTime: CACHE_TIME,
+        initialData: () => {
+          const shoppingList = queryClient.getQueryData(listQueryKeys.list()) as
+            | ListDTO[]
+            | undefined;
+
+          return shoppingList?.find((item) => item.id === listId);
+        },
+      },
+      {
+        queryKey: listQueryKeys.listItems(listId),
+        queryFn: () => shoppingAPI.getlistItems(listId),
+      },
+    ],
+  });
+};
+
+export type ToggleCheckListProductInput = { id: string; checked: boolean };
+
+export const useCheckListProduct = (listId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: ToggleCheckListProductInput) =>
+      shoppingAPI.toggleCheck(input.id, input.checked),
+    onSuccess: () => queryClient.invalidateQueries(listQueryKeys.listItems(listId)),
+    onError: () => {
+      errorMessage('Error updating product');
+    },
+  });
+};
+
+export type UpdateProductInput = { id: string; data: Partial<CreateShoppingItemDTO> };
+
+export const useUpdateProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: UpdateProductInput) => shoppingAPI.update(input.id, input.data),
+    onSuccess: (_data, variables) => {
+      successMessage('Product updated');
+      const listId = variables.data.listId;
+      queryClient.invalidateQueries(listQueryKeys.listItems(listId));
+    },
+    onError: () => {
+      errorMessage('Error updating product');
+    },
+  });
+};
+
+export type DeleteProductInput = { id: string; listId: string };
+
+export const useDeleteProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: DeleteProductInput) => shoppingAPI.delete(input.id),
+    onSuccess: (_data, variables) => {
+      successMessage('Product deleted');
+      const listId = variables.listId;
+      queryClient.invalidateQueries(listQueryKeys.listItems(listId));
+    },
+    onError: () => {
+      errorMessage('Error deleting product');
+    },
+  });
+};
+
+export type AddProductInput = CreateShoppingItemDTO;
+
+export const useAddProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: AddProductInput) => shoppingAPI.create(input),
+    onSuccess: (_data, variables) => {
+      const listId = variables.listId;
+      queryClient.invalidateQueries(listQueryKeys.listItems(listId));
+      successMessage(`${variables.name} added to list`);
     },
   });
 };

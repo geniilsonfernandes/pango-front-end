@@ -4,12 +4,8 @@ import { Paper, ScrollArea, Stack, Tabs } from '@mantine/core';
 import { useDebouncedCallback, useDebouncedValue } from '@mantine/hooks';
 import { useRecentsProducts } from '@/hooks/useRecentsProducts';
 import { CreateShoppingItemDTO, ListDTO, ShoppingItem } from '@/service/api';
-import {
-  useAddShoppingItem,
-  useDeleteShoppingItem,
-  useUpdateShoppingItem,
-} from '@/service/mutation';
-import { Product, useProductsCatalog } from '@/service/queries';
+import { useAddProduct, useDeleteProduct, useUpdateProduct } from '@/service/queries/useList';
+import { CatalogProduct, useProductsCatalog } from '@/service/queries/useProductsCatalog';
 import { generateNumericId } from '@/utils/generateNumericId';
 import { ProductButton } from '../ProductButton/ProductButton';
 import { ProductSearchInput } from '../ProductSearchInput/ProductSearchInput';
@@ -21,15 +17,20 @@ type ListManagerProps = {
 
 export const ListManager = ({ products, list }: ListManagerProps) => {
   const [queryValue, setQueryValue] = useState('');
-  const { mutate: addItem } = useAddShoppingItem(list.id);
-  const { mutate: updateItem } = useUpdateShoppingItem(list.id);
-  const { mutate: deleteItem } = useDeleteShoppingItem(list.id);
-  const { addToRecents, recents } = useRecentsProducts();
   const [queryDebounced] = useDebouncedValue(queryValue, 800);
-  const { data: productsCatalog, isLoading: isLoadingProducts } =
-    useProductsCatalog(queryDebounced);
   const [debouncedItems, setDebouncedItems] = useState<CreateShoppingItemDTO[]>([]);
 
+  // mutations
+  const { mutate: addItem } = useAddProduct();
+  const { mutate: updateItem } = useUpdateProduct();
+  const { mutate: deleteItem } = useDeleteProduct();
+  const { addToRecents, recents } = useRecentsProducts();
+
+  // queries
+  const { data: productsCatalog, isLoading: isLoadingProducts } =
+    useProductsCatalog(queryDebounced);
+
+  // handlers
   const handleAddMultipleItems = useDebouncedCallback(() => {
     debouncedItems.forEach((product) => {
       addToRecents(product);
@@ -39,7 +40,7 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
     setDebouncedItems([]);
   }, 800);
 
-  const handleAddItem = (product: Product) => {
+  const handleAddProduct = (product: CatalogProduct) => {
     const existingItem = debouncedItems.find((item) => item.name === product.name);
     if (existingItem) {
       return;
@@ -66,7 +67,7 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
       if (item) {
         const newQuantity = item.quantity - 1;
         newQuantity === 0
-          ? deleteItem(item.id)
+          ? deleteItem({ id: item.id, listId: list.id })
           : updateItem({ id: item.id, data: { quantity: newQuantity } });
       }
     },
@@ -76,7 +77,7 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
   const handleRemoveItem = useCallback(
     (item?: ShoppingItem) => {
       if (item) {
-        deleteItem(item.id);
+        deleteItem({ id: item.id, listId: list.id });
       }
     },
     [deleteItem]
@@ -107,7 +108,7 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
             product={queryValueHasMatchInProductsSelected}
             onClick={() => {
               if (!queryValueHasMatchInProductsSelected) {
-                handleAddItem({
+                handleAddProduct({
                   name: queryValue,
                   category: 'other',
                 });
@@ -124,7 +125,7 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
     );
   };
 
-  const renderProducts = (list: Product[]) => {
+  const renderProducts = (list: CatalogProduct[]) => {
     return (
       <>
         {list.map((product) => {
@@ -137,7 +138,7 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
               product={itemSelected}
               onClick={() => {
                 if (!itemSelected) {
-                  handleAddItem(product);
+                  handleAddProduct(product);
                 } else {
                   handleIncrement(itemSelected);
                 }

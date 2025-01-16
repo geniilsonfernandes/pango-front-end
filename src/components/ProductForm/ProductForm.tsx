@@ -17,7 +17,7 @@ import { notifications } from '@mantine/notifications';
 // import { useForm } from 'react-hook-form';
 import { categories } from '@/dummyData';
 import { ShoppingItem } from '@/service/api';
-import { useDeleteShoppingItem, useUpdateShoppingItem } from '@/service/mutation';
+import { useDeleteProduct, useUpdateProduct } from '@/service/queries/useList';
 
 // import { useForm } from 'react-hook-form';
 
@@ -32,7 +32,7 @@ import { useDeleteShoppingItem, useUpdateShoppingItem } from '@/service/mutation
 // };
 
 export type FormProps = {
-  shoppingItem?: ShoppingItem;
+  product?: ShoppingItem;
   initialFocus?: 'name' | 'category' | 'quantity' | 'unit';
   onCancel?: () => void;
 };
@@ -45,25 +45,26 @@ const shoppingItemSchema = z.object({
   unit: z.string().optional(),
 });
 
-export const ProductForm: React.FC<FormProps> = ({ onCancel, shoppingItem }) => {
-  const { mutate: updateItem, isLoading } = useUpdateShoppingItem(shoppingItem?.listId || '');
-  const { mutate: deleteItem } = useDeleteShoppingItem(shoppingItem?.listId || '');
-
+export const ProductForm: React.FC<FormProps> = ({ onCancel, product }) => {
   const form = useForm({
     mode: 'uncontrolled',
-
     initialValues: {
-      name: shoppingItem?.name || '',
-      category: shoppingItem?.category || '',
-      quantity: shoppingItem?.quantity || 0,
-      unit: shoppingItem?.unit || '',
-      price: shoppingItem?.price || 0,
+      name: product?.name || '',
+      category: product?.category || '',
+      quantity: product?.quantity || 0,
+      unit: product?.unit || '',
+      price: product?.price || 0,
     },
     validate: zodResolver(shoppingItemSchema),
   });
 
+  // mutations
+  const { mutate: updateProduct, isLoading } = useUpdateProduct();
+  const { mutate: deleteProduct } = useDeleteProduct();
+
+  // Handlers
   const handleUpdate = (values: typeof form.values) => {
-    if (!shoppingItem?.id) {
+    if (!product?.id) {
       notifications.show({
         title: 'Error',
         message: 'Item not found',
@@ -71,39 +72,42 @@ export const ProductForm: React.FC<FormProps> = ({ onCancel, shoppingItem }) => 
       });
       return;
     }
-    updateItem({
-      id: shoppingItem?.id,
-      data: values,
-    });
-
-    notifications.show({
-      title: 'Success',
-      message: 'Item updated',
-      color: 'green',
-    });
-
-    onCancel?.();
+    updateProduct(
+      {
+        id: product?.id,
+        data: {
+          ...values,
+          listId: product?.listId,
+        },
+      },
+      {
+        onSuccess: () => {
+          onCancel?.();
+        },
+      }
+    );
   };
 
-  const handleRemoveItem = useCallback(
-    (item?: ShoppingItem) => {
-      if (item) {
-        deleteItem(item.id);
-        onCancel?.();
-        notifications.show({
-          title: 'Success',
-          message: 'Item deleted',
-          color: 'green',
-        });
-      }
-    },
-    [deleteItem]
-  );
+  const handleDeleteProduct = useCallback((item?: ShoppingItem) => {
+    if (item) {
+      deleteProduct(
+        {
+          id: item.id,
+          listId: item.listId || '',
+        },
+        {
+          onSuccess: () => {
+            onCancel?.();
+          },
+        }
+      );
+    }
+  }, []);
 
   return (
     <form onSubmit={form.onSubmit(handleUpdate)}>
       <Grid gutter="sm">
-        {shoppingItem?.listId}
+        {product?.listId}
         <Grid.Col span={12}>
           <TextInput
             label="Name"
@@ -167,7 +171,7 @@ export const ProductForm: React.FC<FormProps> = ({ onCancel, shoppingItem }) => 
             color="red"
             variant="outline"
             size="lg"
-            onClick={() => handleRemoveItem(shoppingItem)}
+            onClick={() => handleDeleteProduct(product)}
           >
             <IconTrash size={16} stroke={1.5} />
           </ActionIcon>

@@ -348,6 +348,102 @@
       "listId": "9f50",
       "checked": false,
       "createdAt": "2025-01-16T17:27:52.443Z"
+    },
+    {
+      "id": "134936510",
+      "name": "Rice",
+      "category": "Basic Foods",
+      "quantity": 1,
+      "listId": "9474",
+      "checked": false,
+      "createdAt": "2025-01-16T21:15:33.923Z"
+    },
+    {
+      "id": "975323973",
+      "name": "Beans",
+      "category": "Basic Foods",
+      "quantity": 2,
+      "listId": "9474",
+      "checked": true,
+      "createdAt": "2025-01-16T21:15:33.924Z",
+      "unit": "",
+      "price": 0
+    },
+    {
+      "id": "217944113",
+      "name": "Pasta",
+      "category": "Basic Foods",
+      "quantity": 1,
+      "listId": "9474",
+      "checked": true,
+      "createdAt": "2025-01-16T21:15:33.925Z"
+    },
+    {
+      "id": "758058350",
+      "name": "Salt",
+      "category": "Oils and Spices",
+      "quantity": 7,
+      "listId": "9474",
+      "checked": true,
+      "createdAt": "2025-01-16T21:15:33.926Z",
+      "unit": "",
+      "price": 0
+    },
+    {
+      "id": "443147583",
+      "name": "Pepper",
+      "category": "Oils and Spices",
+      "quantity": 4,
+      "listId": "9474",
+      "checked": false,
+      "createdAt": "2025-01-16T21:15:56.115Z",
+      "unit": "",
+      "price": 0
+    },
+    {
+      "id": "753085832",
+      "name": "Oil",
+      "category": "Oils and Spices",
+      "quantity": 1,
+      "listId": "9474",
+      "checked": true,
+      "createdAt": "2025-01-16T21:15:56.117Z"
+    },
+    {
+      "id": "995585851",
+      "name": "Bread flour",
+      "category": "Bakery",
+      "quantity": 7,
+      "listId": "9474",
+      "checked": true,
+      "createdAt": "2025-01-16T21:15:56.119Z"
+    },
+    {
+      "id": "179814606",
+      "name": "Bread",
+      "category": "Bakery",
+      "quantity": 1,
+      "listId": "9474",
+      "checked": false,
+      "createdAt": "2025-01-16T21:46:33.151Z"
+    },
+    {
+      "id": "729473507",
+      "name": "Sugar",
+      "category": "Bakery",
+      "quantity": 1,
+      "listId": "9474",
+      "checked": false,
+      "createdAt": "2025-01-16T21:46:50.006Z"
+    },
+    {
+      "id": "312278301",
+      "name": "Eggs",
+      "category": "Dairy",
+      "quantity": 1,
+      "listId": "9474",
+      "checked": false,
+      "createdAt": "2025-01-16T21:47:02.272Z"
     }
   ]
 }

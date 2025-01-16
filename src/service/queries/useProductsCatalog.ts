@@ -8,11 +8,11 @@ export const catalogQueryKeys = {
   search: (query: string) => [...catalogQueryKeys.base(), query],
 };
 
-export type Product = ProductType;
+export type CatalogProduct = ProductType;
 
 const catalogQueryFn = (query: string) => {
   if (query) {
-    return matchSorter<Product>(products || [], query, {
+    return matchSorter<CatalogProduct>(products || [], query, {
       keys: ['name'],
       threshold: rankings.ACRONYM,
     });

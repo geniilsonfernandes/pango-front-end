@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { Button, Group, Modal, Paper, Stack, Text } from '@mantine/core';
 import { useWindowScroll } from '@mantine/hooks';
 import { ListDTO, ShoppingItem } from '@/service/api';
-import { useToggleShoppingItem } from '@/service/mutation/useToggleShoppingItem';
+import { useCheckListProduct } from '@/service/queries/useList';
 import { useListStore } from '@/store/listStore';
 import { categorizeProducts } from '@/utils/categorizeShoppingItems';
 import { ListHeader } from '../ListHeader/ListHeader';
@@ -21,8 +21,18 @@ type ListProps = {
 export const List: React.FC<ListProps> = ({ list, products }) => {
   const { showPrice } = useListStore();
   const [scroll] = useWindowScroll();
-  const [itemSelected, setItemSelected] = useState<ShoppingItem>();
-  const { mutate: toggleShoppingItem } = useToggleShoppingItem(list.id);
+  const [productSelected, setProductSelected] = useState<ShoppingItem>();
+
+  // mutations
+  const { mutate: toggleShoppingItem } = useCheckListProduct(list.id);
+
+  // handlers
+  const handleCheck = (item: ShoppingItem) => {
+    toggleShoppingItem({
+      id: item.id,
+      checked: !item.checked,
+    });
+  };
 
   const categorizedProducts = useMemo(() => {
     return categorizeProducts(products);
@@ -32,7 +42,6 @@ export const List: React.FC<ListProps> = ({ list, products }) => {
     <Stack flex={1} gap={0}>
       <Stack
         gap="md"
-        flex={1}
         component={Paper}
         p="sm"
         style={{
@@ -82,14 +91,14 @@ export const List: React.FC<ListProps> = ({ list, products }) => {
                     name={item.name}
                     shoppingItem={item}
                     showPrice={showPrice}
-                    onClick={() => setItemSelected(item)}
+                    onClick={() => setProductSelected(item)}
                     onCheck={() =>
                       toggleShoppingItem({
                         id: item.id,
                         checked: true,
                       })
                     }
-                    onPriceClick={() => setItemSelected(item)}
+                    onPriceClick={() => setProductSelected(item)}
                     checked={item.checked}
                   />
                 </motion.div>
@@ -113,13 +122,8 @@ export const List: React.FC<ListProps> = ({ list, products }) => {
                 key={item.id}
                 shoppingItem={item}
                 showPrice={showPrice}
-                onClick={() => setItemSelected(item)}
-                onCheck={() =>
-                  toggleShoppingItem({
-                    id: item.id,
-                    checked: false,
-                  })
-                }
+                onClick={() => setProductSelected(item)}
+                onCheck={() => handleCheck(item)}
                 checked={item.checked}
               />
             ))}
@@ -128,11 +132,11 @@ export const List: React.FC<ListProps> = ({ list, products }) => {
       </Stack>
 
       <Modal
-        opened={!!itemSelected}
-        onClose={() => setItemSelected(undefined)}
-        title={`${itemSelected?.name} - ${itemSelected?.id}`}
+        opened={!!productSelected}
+        onClose={() => setProductSelected(undefined)}
+        title={`${productSelected?.name} - ${productSelected?.id}`}
       >
-        <ProductForm shoppingItem={itemSelected} onCancel={() => setItemSelected(undefined)} />
+        <ProductForm product={productSelected} onCancel={() => setProductSelected(undefined)} />
       </Modal>
     </Stack>
   );

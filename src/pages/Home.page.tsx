@@ -1,10 +1,8 @@
-import { useQueries, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { Card, Center, Loader, rem } from '@mantine/core';
 import { List } from '@/components/List/List';
 import { ListManager } from '@/components/ListManager/ListManager';
-import { ListDTO, shoppingAPI } from '@/service/api';
-import { listQueryKeys } from '@/service/queries/useList';
+import { useListItems } from '@/service/queries/useList';
 
 type Params = {
   id: string;
@@ -12,28 +10,8 @@ type Params = {
 
 export function HomePage() {
   const { id } = useParams<Params>();
-  const queryClient = useQueryClient();
-  const results = useQueries({
-    queries: [
-      {
-        queryKey: listQueryKeys.getList(id),
-        queryFn: () => shoppingAPI.getList(id),
-        staleTime: 1000 * 60 * 5,
-        cacheTime: 1000 * 60 * 30,
-        initialData: () => {
-          const shoppingList = queryClient.getQueryData(listQueryKeys.list()) as
-            | ListDTO[]
-            | undefined;
 
-          return shoppingList?.find((item) => item.id === id);
-        },
-      },
-      {
-        queryKey: listQueryKeys.listItems(id),
-        queryFn: () => shoppingAPI.getlistItems(id),
-      },
-    ],
-  });
+  const results = useListItems(id);
 
   const [list, products] = results;
 
