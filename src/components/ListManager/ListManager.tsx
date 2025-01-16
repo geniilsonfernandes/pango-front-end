@@ -60,7 +60,7 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
 
   const handleIncrement = useCallback((item?: ShoppingItem) => {
     if (item) {
-      updateItem({ id: item.id, data: { quantity: item.quantity + 1 } });
+      updateItem({ id: item.id, data: { quantity: item.quantity + 1, listId: item.listId } });
     }
   }, []);
 
@@ -70,7 +70,7 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
         const newQuantity = item.quantity - 1;
         newQuantity === 0
           ? deleteItem({ id: item.id, listId: list.id })
-          : updateItem({ id: item.id, data: { quantity: newQuantity } });
+          : updateItem({ id: item.id, data: { quantity: newQuantity, listId: item.listId } });
       }
     },
     [deleteItem, updateItem]
