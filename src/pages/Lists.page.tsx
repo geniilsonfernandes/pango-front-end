@@ -37,7 +37,7 @@ export const ListsPage = () => {
   };
 
   return (
-    <Stack flex={1}>
+    <Stack flex={1} p="md">
       <Title order={2}> Suas listas de compras</Title>
       <Flex justify="space-between">
         <MonthSelect
