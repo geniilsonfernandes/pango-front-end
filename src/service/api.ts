@@ -1,5 +1,7 @@
 import axios from 'axios';
+import { List, Product } from './models/types';
 
+// ------
 
 export type ShoppingItem = {
   id: string;
@@ -14,9 +16,6 @@ export type ShoppingItem = {
 };
 
 export type CreateShoppingItemDTO = Omit<ShoppingItem, 'createdAt' | 'checked' | 'userId'>;
-
-
-
 
 class ShoppingListAPI {
   private baseURL: string;
@@ -109,12 +108,6 @@ class ShoppingListAPI {
     await axios.delete(`${this.baseURL}/shoppingList/${id}`);
   }
 
-  async getLists(): Promise<ListDTO[]> {
-    const response = await axios.get(`${this.baseURL}/lists`);
-
-    return response.data;
-  }
-
   async getList(id?: string): Promise<ListDTO> {
     if (!id) {
       throw new Error('List ID is required');
@@ -128,10 +121,6 @@ class ShoppingListAPI {
     };
   }
 
-  async deleteList(id: string): Promise<void> {
-    await axios.delete(`${this.baseURL}/lists/${id}`);
-  }
-
   async getlistItems(listId?: string): Promise<ShoppingItem[]> {
     if (!listId) {
       throw new Error('List ID is required');
@@ -141,31 +130,34 @@ class ShoppingListAPI {
     return response.data.filter((item: ShoppingItem) => item.listId === listId);
   }
 
-  // refactor
+  async getLists(): Promise<List[]> {
+    const response = await axios.get<List[]>(`${this.baseURL}/list`);
+
+    return response.data;
+  }
 
   async createList(data: CreateListDTO): Promise<ListDTO> {
-    const response = await axios.post<ListDTO>(`${this.baseURL}/lists`, data);
+    const response = await axios.post<ListDTO>(`${this.baseURL}/list`, data);
     const list = response.data;
     list.items = [];
     return response.data;
   }
 
   async updateList(id: string, data: CreateListDTO): Promise<ListDTO> {
-    const response = await axios.patch(`${this.baseURL}/lists/${id}`, data);
+    const response = await axios.put(`${this.baseURL}/list/${id}`, data);
 
     const list = response.data;
     list.items = [];
 
     return response.data;
   }
+
+  async deleteList(id: string): Promise<void> {
+    await axios.delete(`${this.baseURL}/list/${id}`);
+  }
 }
 
-export type CreateListDTO = {
-  name: string;
-  budget?: number;
-  date?: string;
-  description?: string;
-};
+// ---- list methods
 
 export type ListDTO = {
   id: string;
@@ -176,39 +168,103 @@ export type ListDTO = {
   items?: ShoppingItem[];
 };
 
+export type CreateListDTO = {
+  title: string;
+  budget?: number;
+  date?: string;
+  description?: string;
+};
+class ListAPI {
+  private baseURL: string;
 
+  private routes = 'list';
 
-// Usage example
-export const shoppingAPI = new ShoppingListAPI('http://localhost:5555');
+  constructor(baseURL: string) {
+    this.baseURL = baseURL;
+  }
 
-// // Example operations
-// (async () => {
-//   try {
-//     // List all items
-//     console.log('Current shopping list:', await shoppingAPI.list());
+  async create(data: CreateListDTO): Promise<ListDTO> {
+    const response = await axios.post<ListDTO>(`${this.baseURL}/${this.routes}`, data);
+    return response.data;
+  }
 
-//     // Add a new item
-//     const newItem = {
-//       name: 'Milk',
-//       category: 'Dairy',
-//       quantity: 2,
-//       price: 10,
-//     };
-//     console.log('Adding item:', await shoppingAPI.create(newItem));
+  async update(id: string, data: CreateListDTO): Promise<ListDTO> {
+    const response = await axios.put<ListDTO>(`${this.baseURL}/${this.routes}/${id}`, data);
+    return response.data;
+  }
 
-//     // Increment quantity of an existing item
-//     console.log('Incrementing item quantity:', await shoppingAPI.create(newItem));
+  async get(id?: string): Promise<List> {
+    const response = await axios.get<List>(`${this.baseURL}/${this.routes}/${id}`);
+    return response.data;
+  }
 
-//     // Mark an item as checked
-//     console.log('Marking item as checked:', await shoppingAPI.toggleCheck(1, true));
+  async delete(id: string): Promise<void> {
+    await axios.delete(`${this.baseURL}/${this.routes}/${id}`);
+  }
 
-//     // Delete an item
-//     console.log('Deleting item with ID 1');
-//     await shoppingAPI.delete(1);
+  async list(): Promise<ListDTO[]> {
+    const response = await axios.get<ListDTO[]>(`${this.baseURL}/${this.routes}`);
+    return response.data;
+  }
+}
 
-//     // List updated shopping list
-//     console.log('Updated shopping list:', await shoppingAPI.list());
-//   } catch (error) {
-//     console.error('Error:', error);
-//   }
-// })();
+export const shoppingAPI = new ShoppingListAPI('http://localhost:3000');
+
+export const listAPI = new ListAPI('http://localhost:3000');
+
+// products methods
+export type ProductDTO = {
+  list_id: string;
+  checked: boolean;
+  name: string;
+  quantity: number;
+  price: number;
+  category: string;
+};
+
+export interface ProductAPIinterface {
+  list: (listId?: string) => Promise<Product[]>;
+  patch: (id: string, input: Partial<ProductDTO>) => Promise<Product>;
+  update: (id: string, input: Partial<ProductDTO>) => Promise<Product>;
+  create: (input: ProductDTO[]) => Promise<Product>;
+  delete: (id: string) => Promise<void>;
+}
+export class ProductAPI implements ProductAPIinterface {
+  private baseURL: string;
+  private route = 'product';
+
+  constructor(baseURL: string) {
+    this.baseURL = baseURL;
+  }
+
+  async delete(id: string): Promise<void> {
+    await axios.delete(`${this.baseURL}/${this.route}/${id}`);
+  }
+
+  async list(listId?: string): Promise<Product[]> {
+    const response = await axios.get<Product[]>(`${this.baseURL}/${this.route}`, {
+      params: { list_id: listId },
+    });
+    return response.data;
+  }
+
+  async patch(id: string, input: Partial<ProductDTO>): Promise<Product> {
+    const response = await axios.patch<Product>(`${this.baseURL}/${this.route}/${id}`, {
+      ...input,
+    });
+    return response.data;
+  }
+  async update(id: string, input: Partial<ProductDTO>): Promise<Product> {
+    const response = await axios.patch<Product>(`${this.baseURL}/${this.route}/${id}`, {
+      ...input,
+    });
+    return response.data;
+  }
+
+  async create(input: ProductDTO[]): Promise<Product> {
+    const response = await axios.post<Product>(`${this.baseURL}/${this.route}`, input);
+    return response.data;
+  }
+}
+
+export const productAPI = new ProductAPI('http://localhost:3000');

@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 import { Card, Flex, Progress } from '@mantine/core';
-import { ListDTO, ShoppingItem } from '@/service/api';
+import { ShoppingItem } from '@/service/api';
+import { List } from '@/service/models/types';
 import { calculateStatus } from '@/utils/calculateStatus';
 import { CurrencyMode, formatCurrency } from '@/utils/formatCurrency';
 import { DisplayValue } from '../DisplayValue/DisplayValue';
 
 type ListStatsProps = {
-  list: ListDTO;
+  list: List;
   products: ShoppingItem[];
   currencyMode?: CurrencyMode;
 };

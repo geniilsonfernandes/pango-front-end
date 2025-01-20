@@ -1,6 +1,6 @@
-import { ShoppingItem } from '@/service/api';
+import { Product } from '@/service/models/types';
 
-export const categorizeProducts = (items: ShoppingItem[]) => {
+export const categorizeProducts = (items: Product[]) => {
   if (!items?.length) {
     return {
       unchecked: [],
@@ -18,8 +18,8 @@ export const categorizeProducts = (items: ShoppingItem[]) => {
       unchecked: [],
       checked: [],
     } as {
-      unchecked: ShoppingItem[];
-      checked: ShoppingItem[];
+      unchecked: Product[];
+      checked: Product[];
     }
   );
 };

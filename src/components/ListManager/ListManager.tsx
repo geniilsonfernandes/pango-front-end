@@ -1,18 +1,19 @@
 import { useCallback, useState } from 'react';
 import { matchSorter, rankings } from 'match-sorter';
+import { v4 as uuidv4 } from 'uuid';
 import { Paper, ScrollArea, Stack, Tabs } from '@mantine/core';
 import { useDebouncedCallback, useDebouncedValue } from '@mantine/hooks';
 import { useRecentsProducts } from '@/hooks/useRecentsProducts';
-import { CreateShoppingItemDTO, ListDTO, ShoppingItem } from '@/service/api';
-import { useAddProduct, useDeleteProduct, useUpdateProduct } from '@/service/queries/list';
+import { ProductDTO, ShoppingItem } from '@/service/api';
+import { List, Product } from '@/service/models/types';
+import { useAddProduct, useDeleteProduct, usePatchProduct } from '@/service/queries/list';
 import { CatalogProduct, useProductsCatalog } from '@/service/queries/useProductsCatalog';
-import { generateNumericId } from '@/utils/generateNumericId';
 import { ProductButton } from '../ProductButton/ProductButton';
 import { ProductSearchInput } from '../ProductSearchInput/ProductSearchInput';
 
 type ListManagerProps = {
-  list: ListDTO;
-  products: ShoppingItem[];
+  list: List;
+  products: Product[];
 };
 
 const SIZE = 'calc(100vh - 154px)';
@@ -20,11 +21,11 @@ const SIZE = 'calc(100vh - 154px)';
 export const ListManager = ({ products, list }: ListManagerProps) => {
   const [queryValue, setQueryValue] = useState('');
   const [queryDebounced] = useDebouncedValue(queryValue, 800);
-  const [debouncedItems, setDebouncedItems] = useState<CreateShoppingItemDTO[]>([]);
+  const [debouncedItems, setDebouncedItems] = useState<ProductDTO[]>([]);
 
   // mutations
+  const { mutate: patchProduct } = usePatchProduct();
   const { mutate: addItem } = useAddProduct();
-  const { mutate: updateItem } = useUpdateProduct();
   const { mutate: deleteItem } = useDeleteProduct();
   const { addToRecents, recents } = useRecentsProducts();
 
@@ -36,9 +37,8 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
   const handleAddMultipleItems = useDebouncedCallback(() => {
     debouncedItems.forEach((product) => {
       addToRecents(product);
-      addItem(product);
     });
-
+    addItem(debouncedItems);
     setDebouncedItems([]);
   }, 800);
 
@@ -48,19 +48,21 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
       return;
     }
     const newProduct = {
-      id: generateNumericId().toString(),
+      id: uuidv4(),
       name: product.name,
       category: product.category,
       quantity: 1,
-      listId: list.id,
-    };
+      list_id: list.id,
+      price: 0,
+      checked: false,
+    } as ProductDTO;
     setDebouncedItems((prevItems) => [...prevItems, newProduct]);
     handleAddMultipleItems();
   };
 
   const handleIncrement = useCallback((item?: ShoppingItem) => {
     if (item) {
-      updateItem({ id: item.id, data: { quantity: item.quantity + 1, listId: item.listId } });
+      patchProduct({ id: item.id, data: { quantity: item.quantity + 1 } });
     }
   }, []);
 
@@ -68,18 +70,21 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
     (item?: ShoppingItem) => {
       if (item) {
         const newQuantity = item.quantity - 1;
-        newQuantity === 0
-          ? deleteItem({ id: item.id, listId: list.id })
-          : updateItem({ id: item.id, data: { quantity: newQuantity, listId: item.listId } });
+        if (newQuantity <= 0) {
+          return;
+        }
+        patchProduct({ id: item.id, data: { quantity: newQuantity } });
       }
     },
-    [deleteItem, updateItem]
+    [deleteItem, patchProduct]
   );
 
   const handleRemoveItem = useCallback(
     (item?: ShoppingItem) => {
       if (item) {
-        deleteItem({ id: item.id, listId: list.id });
+        deleteItem({
+          id: item.id,
+        });
       }
     },
     [deleteItem]
@@ -145,7 +150,11 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
                   handleIncrement(itemSelected);
                 }
               }}
-              onRemove={() => handleRemoveItem(itemSelected)}
+              onRemove={() => {
+                if (itemSelected) {
+                  handleRemoveItem(itemSelected);
+                }
+              }}
               onIncrement={() => handleIncrement(itemSelected)}
               onDecrement={() => handleDecrement(itemSelected)}
             />

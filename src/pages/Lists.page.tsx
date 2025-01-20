@@ -1,20 +1,20 @@
 import { useState } from 'react';
 import { IconPlus } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Flex, Grid, Modal, Stack, Title } from '@mantine/core';
+import { Button, Center, Flex, Grid, Loader, Modal, Stack, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { ListCard } from '@/components/ListCard/ListCard';
 import { DeleteConfirmation, ListForm } from '@/components/ListForm/ListForm';
 import { MonthSelect } from '@/components/MonthSelect/MonthSelect';
 import { useCalendar } from '@/hooks/useCalendar';
-import { ListDTO } from '@/service/api';
+import { List } from '@/service/api';
 import { useDeleteList, useList } from '@/service/queries/list';
 
 export const ListsPage = () => {
-  const { data } = useList();
+  const { data: lists, isLoading: isListsLoading } = useList();
   const navigate = useNavigate();
   const { currentDate, setValue, nextMonth, previousMonth, formattedMonth } = useCalendar();
-  const [listSelected, setListSelected] = useState<ListDTO>();
+  const [listSelected, setListSelected] = useState<List>();
 
   const [openedDelete, { open: openDeleteModal, close: closeDeleteModal }] = useDisclosure(false);
   const [openedList, { open: openListModal, close: closeListModal }] = useDisclosure();
@@ -36,6 +36,14 @@ export const ListsPage = () => {
     }
   };
 
+  if (isListsLoading) {
+    return (
+      <Center flex={1} h="100vh">
+        <Loader />
+      </Center>
+    );
+  }
+
   return (
     <Stack flex={1} p="md">
       <Title order={2}> Suas listas de compras</Title>
@@ -56,7 +64,7 @@ export const ListsPage = () => {
         </Button>
       </Flex>
       <Grid>
-        {data?.map((list) => (
+        {lists?.map((list) => (
           <Grid.Col key={list.id} span={6}>
             <ListCard
               list={list}

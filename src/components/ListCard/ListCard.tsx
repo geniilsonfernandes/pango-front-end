@@ -13,12 +13,12 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { ListDTO } from '@/service/api';
+import { List } from '@/service/api';
 import { calculateStatus } from '@/utils/calculateStatus';
 import classes from './ListCard.module.css';
 
 type ListCardProps = {
-  list?: ListDTO;
+  list?: List;
   onEdit?: () => void;
   onDelete?: () => void;
   onShare?: () => void;
@@ -38,20 +38,19 @@ export const ListCard: React.FC<ListCardProps> = ({
   onShare,
   ...props
 }) => {
-  const { items } = list || {};
   const status = useMemo(() => {
-    return calculateStatus(items || []);
-  }, [items]);
+    return calculateStatus([]);
+  }, []);
 
   return (
     <Card className={classes.card} {...props}>
       <Flex align="center" justify="space-between">
         <Box>
           <Title order={3} fz="h5">
-            {list?.name}
+            {list?.title}
           </Title>
           <Text size="xs" c="dimmed" fz="xs">
-            {status?.checked || 0} / {items?.length || 0} items
+            {status?.checked || 0} / {0} items
           </Text>
         </Box>
 

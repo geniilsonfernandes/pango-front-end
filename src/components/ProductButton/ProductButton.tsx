@@ -1,6 +1,7 @@
 import React from 'react';
 import { IconMinus, IconPlus, IconTrash } from '@tabler/icons-react';
 import { ActionIcon, Button, ButtonVariant, Flex, ThemeIcon } from '@mantine/core';
+import { useDebouncedCallback } from '@mantine/hooks';
 import { ShoppingItem } from '@/service/api';
 
 /**
@@ -60,6 +61,18 @@ export const ProductButton: React.FC<ProductButtonProps> = ({
   isLoading,
   ...props
 }) => {
+  const handleRemoveDebounced = useDebouncedCallback(() => {
+    onRemove?.();
+  }, 200);
+
+  const handleIncrementDebounced = useDebouncedCallback(() => {
+    onIncrement?.();
+  }, 200);
+
+  const handleDecrementDebounced = useDebouncedCallback(() => {
+    onDecrement?.();
+  }, 200);
+
   return (
     <Button
       variant={variant}
@@ -76,7 +89,7 @@ export const ProductButton: React.FC<ProductButtonProps> = ({
         <ActionIcon
           loading={isLoading}
           component="span"
-          onClick={onIncrement}
+          onClick={handleIncrementDebounced}
           aria-label="increment-button"
           role="button"
           size="sm"
@@ -100,7 +113,7 @@ export const ProductButton: React.FC<ProductButtonProps> = ({
               variant="light"
               onClick={(e) => {
                 e.stopPropagation();
-                onDecrement?.();
+                handleDecrementDebounced();
               }}
             >
               <IconMinus size={16} />
@@ -114,7 +127,7 @@ export const ProductButton: React.FC<ProductButtonProps> = ({
             role="button"
             onClick={(e) => {
               e.stopPropagation();
-              onRemove?.();
+              handleRemoveDebounced();
             }}
             size="sm"
             radius="sm"

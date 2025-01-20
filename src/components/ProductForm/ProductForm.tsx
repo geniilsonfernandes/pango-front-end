@@ -17,6 +17,7 @@ import { notifications } from '@mantine/notifications';
 // import { useForm } from 'react-hook-form';
 import { categories } from '@/dummyData';
 import { ShoppingItem } from '@/service/api';
+import { Product } from '@/service/models/types';
 import { useDeleteProduct, useUpdateProduct } from '@/service/queries/list';
 
 // import { useForm } from 'react-hook-form';
@@ -32,7 +33,7 @@ import { useDeleteProduct, useUpdateProduct } from '@/service/queries/list';
 // };
 
 export type FormProps = {
-  product?: ShoppingItem;
+  product?: Product;
   initialFocus?: 'name' | 'category' | 'quantity' | 'unit';
   onCancel?: () => void;
 };
@@ -75,10 +76,7 @@ export const ProductForm: React.FC<FormProps> = ({ onCancel, product }) => {
     updateProduct(
       {
         id: product?.id,
-        data: {
-          ...values,
-          listId: product?.listId,
-        },
+        data: values,
       },
       {
         onSuccess: () => {
@@ -93,7 +91,6 @@ export const ProductForm: React.FC<FormProps> = ({ onCancel, product }) => {
       deleteProduct(
         {
           id: item.id,
-          listId: item.listId || '',
         },
         {
           onSuccess: () => {
@@ -107,7 +104,6 @@ export const ProductForm: React.FC<FormProps> = ({ onCancel, product }) => {
   return (
     <form onSubmit={form.onSubmit(handleUpdate)}>
       <Grid gutter="sm">
-        {product?.listId}
         <Grid.Col span={12}>
           <TextInput
             label="Name"

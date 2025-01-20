@@ -22,14 +22,14 @@ import {
   Title,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { ListDTO } from '@/service/api';
+import { List } from '@/service/models/types';
 import { useDeleteList } from '@/service/queries/list';
 import { ListActions } from '../ListActions/ListActions';
 import { DeleteConfirmation, ListForm } from '../ListForm/ListForm';
 import { PrintableList } from '../PrintableList/PrintableList';
 
 type ListHeaderProps = {
-  list: ListDTO;
+  list: List;
 };
 
 export const ListHeader: React.FC<ListHeaderProps> = ({ list }) => {
@@ -63,7 +63,7 @@ export const ListHeader: React.FC<ListHeaderProps> = ({ list }) => {
   return (
     <Flex align="center" justify="space-between" gap="xs">
       <Title order={1} fz="xl">
-        {list.name}
+        {list.title}
       </Title>
       <ListActions
         onEdit={open}
@@ -80,13 +80,13 @@ export const ListHeader: React.FC<ListHeaderProps> = ({ list }) => {
         onDeleteList={handleDelete}
       />
 
-      <Modal opened={opened} onClose={close} title={`Edit ${list.name}`}>
+      <Modal opened={opened} onClose={close} title={`Edit ${list.title}`}>
         <ListForm list={list} onCancel={close} />
       </Modal>
-      <Modal opened={openedCopy} onClose={closeCopy} title={`Copy ${list.name}`}>
+      <Modal opened={openedCopy} onClose={closeCopy} title={`Copy ${list.title}`}>
         <ListForm list={list} onCancel={closeCopy} isCopy />
       </Modal>
-      <Modal opened={openedPrint} onClose={closePrint} title={`Print ${list.name}`}>
+      <Modal opened={openedPrint} onClose={closePrint} title={`Print ${list.title}`}>
         <Checkbox.Group
           label="Print Options"
           description="Select what you want to print"
@@ -121,7 +121,7 @@ export const ListHeader: React.FC<ListHeaderProps> = ({ list }) => {
         </Group>
       </Modal>
 
-      <Modal opened={openedShare} onClose={closeShare} size="sm" title={`Share ${list.name}`}>
+      <Modal opened={openedShare} onClose={closeShare} size="sm" title={`Share ${list.title}`}>
         <Group align="flex-start" gap="xs" mt="md">
           <TextInput flex={1} placeholder="hello@gluesticker.com" error="Invalid email" />
           <Button onClick={close} leftSection={<IconSend size={16} />}>

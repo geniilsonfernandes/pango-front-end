@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { ShoppingItem } from '@/service/api';
+import { ProductDTO } from '@/service/api';
 
 export const useRecentsProducts = () => {
-  const [recents, setRecents] = useState<ShoppingItem[]>(
+  const [recents, setRecents] = useState<ProductDTO[]>(
     JSON.parse(localStorage.getItem('pango-recents') || '[]')
   );
 
-  const addToRecents = (product: ShoppingItem) => {
+  const addToRecents = (product: ProductDTO) => {
     setRecents((prevRecents) => {
       const existingItem = prevRecents.find((item) => item.name === product.name);
       if (existingItem) {
@@ -16,7 +16,7 @@ export const useRecentsProducts = () => {
     });
   };
 
-  const removeFromRecents = (product: ShoppingItem) => {
+  const removeFromRecents = (product: ProductDTO) => {
     setRecents((prevRecents) => prevRecents.filter((item) => item.name !== product.name));
   };
 

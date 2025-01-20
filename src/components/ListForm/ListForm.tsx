@@ -20,7 +20,7 @@ import {
 import { DateInput } from '@mantine/dates';
 import { useForm, zodResolver } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
-import { ListDTO } from '@/service/api';
+import { List } from '@/service/api';
 import { listQueryKeys, useCreateList, useDeleteList, useUpdateList } from '@/service/queries/list';
 
 type DeleteConfirmationProps = {
@@ -48,7 +48,7 @@ export const DeleteConfirmation: React.FC<DeleteConfirmationProps> = ({
 );
 
 const ListFormSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
+  title: z.string().min(1, 'Name is required'),
   budget: z.number().optional(),
   date: z
     .date()
@@ -58,7 +58,7 @@ const ListFormSchema = z.object({
 });
 
 type ListFormProps = {
-  list?: ListDTO;
+  list?: List;
   onCancel?: () => void;
   isCopy?: boolean;
 };
@@ -79,9 +79,9 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, list, isCopy }) =>
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
-      name: isCopy ? `Copy of ${list?.name}` : list?.name || '',
+      title: isCopy ? `Copy of ${list?.title}` : list?.title || '',
       budget: list?.budget || 0,
-      date: dayjs(list?.date).toDate(),
+      date: dayjs().toDate(),
       description: list?.description || '',
     },
     validate: zodResolver(ListFormSchema),
@@ -124,7 +124,7 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, list, isCopy }) =>
             <TextInput
               label="Name"
               placeholder="ex: name of list"
-              {...form.getInputProps('name')}
+              {...form.getInputProps('title')}
               error={form.errors.name}
             />
           </Grid.Col>

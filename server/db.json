@@ -13,9 +13,9 @@
   ],
   "lists": [
     {
-      "id": "9474",
-      "name": "Copy of lista 2",
-      "budget": 10,
+      "id": "f700",
+      "name": "12313",
+      "budget": 0,
       "date": "2025-01-16",
       "description": ""
     }
@@ -347,7 +347,7 @@
       "name": "Rice",
       "category": "Basic Foods",
       "quantity": 1,
-      "listId": "9474",
+      "listId": null,
       "checked": true,
       "createdAt": "2025-01-16T21:15:33.923Z"
     },
@@ -356,8 +356,8 @@
       "name": "Beans",
       "category": "Basic Foods",
       "quantity": 2,
-      "listId": "9474",
-      "checked": false,
+      "listId": null,
+      "checked": true,
       "createdAt": "2025-01-16T21:15:33.924Z",
       "unit": "",
       "price": 8
@@ -367,7 +367,7 @@
       "name": "Pasta",
       "category": "Basic Foods",
       "quantity": 1,
-      "listId": "9474",
+      "listId": null,
       "checked": true,
       "createdAt": "2025-01-16T21:15:33.925Z"
     },
@@ -376,7 +376,7 @@
       "name": "Salt",
       "category": "Oils and Spices",
       "quantity": 7,
-      "listId": "9474",
+      "listId": null,
       "checked": true,
       "createdAt": "2025-01-16T21:15:33.926Z",
       "unit": "",
@@ -386,8 +386,8 @@
       "id": "443147583",
       "name": "Pepper",
       "category": "Oils and Spices",
-      "quantity": 4,
-      "listId": "9474",
+      "quantity": 6,
+      "listId": null,
       "checked": true,
       "createdAt": "2025-01-16T21:15:56.115Z",
       "unit": "",
@@ -397,8 +397,8 @@
       "id": "753085832",
       "name": "Oil",
       "category": "Oils and Spices",
-      "quantity": 1,
-      "listId": "9474",
+      "quantity": 2,
+      "listId": null,
       "checked": true,
       "createdAt": "2025-01-16T21:15:56.117Z"
     },
@@ -407,7 +407,7 @@
       "name": "Bread flour",
       "category": "Bakery",
       "quantity": 7,
-      "listId": "9474",
+      "listId": null,
       "checked": true,
       "createdAt": "2025-01-16T21:15:56.119Z"
     },
@@ -415,8 +415,8 @@
       "id": "179814606",
       "name": "Bread",
       "category": "Bakery",
-      "quantity": 1,
-      "listId": "9474",
+      "quantity": 5,
+      "listId": null,
       "checked": false,
       "createdAt": "2025-01-16T21:46:33.151Z"
     },
@@ -424,8 +424,8 @@
       "id": "729473507",
       "name": "Sugar",
       "category": "Bakery",
-      "quantity": 1,
-      "listId": "9474",
+      "quantity": 2,
+      "listId": null,
       "checked": false,
       "createdAt": "2025-01-16T21:46:50.006Z"
     },
@@ -434,7 +434,7 @@
       "name": "Eggs",
       "category": "Dairy",
       "quantity": 2,
-      "listId": "9474",
+      "listId": null,
       "checked": false,
       "createdAt": "2025-01-16T21:47:02.272Z"
     },
@@ -496,8 +496,8 @@
       "id": "568817966",
       "name": "Butter",
       "category": "Bakery",
-      "quantity": 1,
-      "listId": "9474",
+      "quantity": 2,
+      "listId": null,
       "checked": false,
       "createdAt": "2025-01-16T23:13:01.797Z"
     },
@@ -505,8 +505,8 @@
       "id": "494558836",
       "name": "Cheese",
       "category": "Dairy",
-      "quantity": 1,
-      "listId": "9474",
+      "quantity": 14,
+      "listId": null,
       "checked": true,
       "createdAt": "2025-01-16T23:13:01.798Z"
     },
@@ -514,8 +514,8 @@
       "id": "667567693",
       "name": "Milk",
       "category": "Dairy",
-      "quantity": 1,
-      "listId": "9474",
+      "quantity": 2,
+      "listId": null,
       "checked": true,
       "createdAt": "2025-01-16T23:13:01.798Z"
     },
@@ -523,17 +523,19 @@
       "id": "214800792",
       "name": "Yogurt",
       "category": "Dairy",
-      "quantity": 1,
-      "listId": "9474",
+      "quantity": 5,
+      "listId": null,
       "checked": false,
-      "createdAt": "2025-01-16T23:13:01.798Z"
+      "createdAt": "2025-01-16T23:13:01.798Z",
+      "unit": "",
+      "price": 0
     },
     {
       "id": "757755583",
       "name": "Spinach",
       "category": "Fruits and Vegetables",
       "quantity": 1,
-      "listId": "9474",
+      "listId": null,
       "checked": true,
       "createdAt": "2025-01-16T23:13:07.344Z"
     },
@@ -542,7 +544,7 @@
       "name": "Garlic",
       "category": "Oils and Spices",
       "quantity": 1,
-      "listId": "9474",
+      "listId": null,
       "checked": false,
       "createdAt": "2025-01-16T23:13:07.344Z"
     },
@@ -551,25 +553,27 @@
       "name": "Onions",
       "category": "Fruits and Vegetables",
       "quantity": 1,
-      "listId": "9474",
+      "listId": null,
       "checked": false,
       "createdAt": "2025-01-16T23:13:07.345Z"
     },
     {
       "id": "839499883",
       "name": "Tomatoes",
-      "category": "Fruits and Vegetables",
-      "quantity": 1,
-      "listId": "9474",
-      "checked": false,
-      "createdAt": "2025-01-16T23:13:07.345Z"
+      "category": "Bakery",
+      "quantity": 4,
+      "listId": null,
+      "checked": true,
+      "createdAt": "2025-01-16T23:13:07.345Z",
+      "unit": "",
+      "price": 4
     },
     {
       "id": "209575449",
       "name": "Peppers",
       "category": "Fruits and Vegetables",
       "quantity": 1,
-      "listId": "9474",
+      "listId": null,
       "checked": false,
       "createdAt": "2025-01-16T23:13:37.051Z"
     },
@@ -578,7 +582,7 @@
       "name": "Cabbage",
       "category": "Fruits and Vegetables",
       "quantity": 1,
-      "listId": "9474",
+      "listId": null,
       "checked": false,
       "createdAt": "2025-01-16T23:13:37.054Z"
     },
@@ -587,7 +591,7 @@
       "name": "Pineapple",
       "category": "Fruits and Vegetables",
       "quantity": 1,
-      "listId": "9474",
+      "listId": null,
       "checked": true,
       "createdAt": "2025-01-16T23:13:37.055Z"
     },
@@ -596,7 +600,7 @@
       "name": "Mango",
       "category": "Fruits and Vegetables",
       "quantity": 1,
-      "listId": "9474",
+      "listId": null,
       "checked": true,
       "createdAt": "2025-01-16T23:13:37.055Z"
     }
