@@ -1,13 +1,20 @@
+import { matchSorter } from 'match-sorter';
 import { Product } from '@/service/models/types';
 
-export const categorizeProducts = (items: Product[]) => {
+export const categorizeProducts = (
+  items: Product[]
+): {
+  unchecked: Product[];
+  checked: Product[];
+} => {
   if (!items?.length) {
     return {
       unchecked: [],
       checked: [],
     };
   }
-  return items.reduce(
+
+  const reduced = items.reduce(
     (acc, cur) => {
       return {
         unchecked: acc.unchecked.concat(cur.checked ? [] : [cur]),
@@ -22,4 +29,13 @@ export const categorizeProducts = (items: Product[]) => {
       checked: Product[];
     }
   );
+
+  return {
+    unchecked: matchSorter(reduced.unchecked, '', {
+      keys: ['name'],
+    }),
+    checked: matchSorter(reduced.checked, '', {
+      keys: ['name'],
+    }),
+  };
 };

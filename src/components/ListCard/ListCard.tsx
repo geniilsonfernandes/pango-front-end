@@ -13,9 +13,9 @@ import {
   Text,
   Title,
 } from '@mantine/core';
+import { List } from '@/service/models/types';
 import { calculateStatus } from '@/utils/calculateStatus';
 import classes from './ListCard.module.css';
-import { List } from '@/service/models/types';
 
 type ListCardProps = {
   list?: List;
@@ -39,7 +39,7 @@ export const ListCard: React.FC<ListCardProps> = ({
   ...props
 }) => {
   const status = useMemo(() => {
-    return calculateStatus([]);
+    return calculateStatus(list?.products);
   }, []);
 
   return (
@@ -50,7 +50,7 @@ export const ListCard: React.FC<ListCardProps> = ({
             {list?.title}
           </Title>
           <Text size="xs" c="dimmed" fz="xs">
-            {status?.checked || 0} / {0} items
+            {status?.checked || 0} / {status?.total || 0} items
           </Text>
         </Box>
 
