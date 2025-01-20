@@ -6,8 +6,8 @@ import { useDebouncedCallback, useDebouncedValue } from '@mantine/hooks';
 import { useRecentsProducts } from '@/hooks/useRecentsProducts';
 import { ProductDTO, ShoppingItem } from '@/service/api';
 import { List, Product } from '@/service/models/types';
-import { useAddProduct, useDeleteProduct, usePatchProduct } from '@/service/queries/product';
 import { CatalogProduct, useProductsCatalog } from '@/service/queries/catalog';
+import { useAddProduct, useDeleteProduct, usePatchProduct } from '@/service/queries/product';
 import { ProductButton } from '../ProductButton/ProductButton';
 import { ProductSearchInput } from '../ProductSearchInput/ProductSearchInput';
 
@@ -108,26 +108,24 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
 
     return (
       <>
-        {!queryValueHasMatchInProducts && (
-          <ProductButton
-            name={queryValue}
-            variant="outline"
-            product={queryValueHasMatchInProductsSelected}
-            onClick={() => {
-              if (!queryValueHasMatchInProductsSelected) {
-                handleAddProduct({
-                  name: queryValue,
-                  category: 'other',
-                });
-              } else {
-                handleIncrement(queryValueHasMatchInProductsSelected);
-              }
-            }}
-            onRemove={() => handleRemoveItem(queryValueHasMatchInProductsSelected)}
-            onDecrement={() => handleDecrement(queryValueHasMatchInProductsSelected)}
-            onIncrement={() => handleIncrement(queryValueHasMatchInProductsSelected)}
-          />
-        )}
+        <ProductButton
+          name={queryValue}
+          variant={queryValueHasMatchInProductsSelected ? 'subtle' : 'outline'}
+          product={queryValueHasMatchInProductsSelected}
+          onClick={() => {
+            if (!queryValueHasMatchInProductsSelected) {
+              handleAddProduct({
+                name: queryValue,
+                category: 'other',
+              });
+            } else {
+              handleIncrement(queryValueHasMatchInProductsSelected);
+            }
+          }}
+          onRemove={() => handleRemoveItem(queryValueHasMatchInProductsSelected)}
+          onDecrement={() => handleDecrement(queryValueHasMatchInProductsSelected)}
+          onIncrement={() => handleIncrement(queryValueHasMatchInProductsSelected)}
+        />
       </>
     );
   };
@@ -139,6 +137,7 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
           const itemSelected = findProductInSelectedList(product.name);
           return (
             <ProductButton
+              variant="subtle"
               isLoading={debouncedItems.some((item) => item.name === product.name)}
               key={product.name}
               name={product.name}

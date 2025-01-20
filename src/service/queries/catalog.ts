@@ -22,5 +22,6 @@ export function useProductsCatalog(queryValue: string) {
   return useQuery({
     queryKey: RQKEY(queryValue),
     queryFn: () => catalogQueryFn(queryValue),
+    placeholderData: [],
   });
 }
