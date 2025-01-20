@@ -13,9 +13,9 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { List } from '@/service/api';
 import { calculateStatus } from '@/utils/calculateStatus';
 import classes from './ListCard.module.css';
+import { List } from '@/service/models/types';
 
 type ListCardProps = {
   list?: List;

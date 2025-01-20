@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { List, Product } from './models/types';
 
+
 // ------
 
 export type ShoppingItem = {
@@ -202,8 +203,8 @@ class ListAPI {
     await axios.delete(`${this.baseURL}/${this.routes}/${id}`);
   }
 
-  async list(): Promise<ListDTO[]> {
-    const response = await axios.get<ListDTO[]>(`${this.baseURL}/${this.routes}`);
+  async list(): Promise<List[]> {
+    const response = await axios.get<List[]>(`${this.baseURL}/${this.routes}`);
     return response.data;
   }
 }

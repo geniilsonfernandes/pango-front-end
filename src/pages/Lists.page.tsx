@@ -7,7 +7,7 @@ import { ListCard } from '@/components/ListCard/ListCard';
 import { DeleteConfirmation, ListForm } from '@/components/ListForm/ListForm';
 import { MonthSelect } from '@/components/MonthSelect/MonthSelect';
 import { useCalendar } from '@/hooks/useCalendar';
-import { List } from '@/service/api';
+import { List } from '@/service/models/types';
 import { useDeleteList, useList } from '@/service/queries/list';
 
 export const ListsPage = () => {
@@ -43,6 +43,8 @@ export const ListsPage = () => {
       </Center>
     );
   }
+
+  console.log(lists);
 
   return (
     <Stack flex={1} p="md">

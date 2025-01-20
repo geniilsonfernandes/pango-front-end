@@ -5,7 +5,7 @@ import { List } from '../models/types';
 import { RQKEY as RQKEY_PRODUCT } from './product';
 
 const RQKEY_ROOT = 'list';
-export const RQKEY = (prefix?: string) => [RQKEY_ROOT, prefix];
+export const RQKEY = (prefix?: string) => (prefix ? [RQKEY_ROOT, prefix] : [RQKEY_ROOT]);
 
 const CACHE_TIME = 1000 * 60 * 30;
 const STALE_TIME = 1000 * 60 * 5;
@@ -81,7 +81,7 @@ export const useListItems = (listId?: string) => {
   return useQueries({
     queries: [
       {
-        queryKey: RQKEY(),
+        queryKey: RQKEY(listId),
         queryFn: () => listAPI.get(listId),
         staleTime: STALE_TIME,
         cacheTime: CACHE_TIME,

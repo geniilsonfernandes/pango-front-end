@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Text, Title } from '@mantine/core';
 import { ListDTO, ShoppingItem } from '@/service/api';
 import { List } from '@/service/models/types';
-import { listQueryKeys } from '@/service/queries/list';
+import { RQKEY as RQKEY_PRODUCT } from '../../service/queries/product';
 import { ListStats } from '../ListStats/ListStats';
 import { Logo } from '../Logo/Logo';
 import classes from './PrintableList.module.css';
@@ -70,7 +70,7 @@ export const PrintableList: React.FC<PrintableListProps> = ({
   uncheckedOnly,
 }) => {
   const queryClient = useQueryClient();
-  const listItems = queryClient.getQueryData(listQueryKeys.listItems(list.id)) as ShoppingItem[];
+  const listItems = queryClient.getQueryData(RQKEY_PRODUCT(list.id)) as ShoppingItem[];
 
   const filterItems = (checked: boolean) =>
     listItems?.filter((item) => item.checked === checked) || [];

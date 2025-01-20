@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
 import { IconChevronDown, IconChevronUp, IconTrash } from '@tabler/icons-react';
-import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import {
@@ -21,7 +20,7 @@ import { DateInput } from '@mantine/dates';
 import { useForm, zodResolver } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { List } from '@/service/models/types';
-import { listQueryKeys, useCreateList, useDeleteList, useUpdateList } from '@/service/queries/list';
+import { useCreateList, useDeleteList, useUpdateList } from '@/service/queries/list';
 
 type DeleteConfirmationProps = {
   onDeleteList: () => void;
@@ -65,7 +64,6 @@ type ListFormProps = {
 
 export const ListForm: React.FC<ListFormProps> = ({ onCancel, list, isCopy }) => {
   // Hooks
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [openedOptions, { toggle: toggleOptions }] = useDisclosure(false);
   const [openedDelete, { open: openDelete, close: closeDelete }] = useDisclosure(false);
@@ -109,7 +107,6 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, list, isCopy }) =>
     if (list?.id) {
       deleteList(list.id, {
         onSuccess: () => {
-          queryClient.invalidateQueries(listQueryKeys.getList(list?.id));
           onCancel?.();
         },
       });
