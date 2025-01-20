@@ -6,7 +6,7 @@ import { useDebouncedCallback, useDebouncedValue } from '@mantine/hooks';
 import { useRecentsProducts } from '@/hooks/useRecentsProducts';
 import { ProductDTO, ShoppingItem } from '@/service/api';
 import { List, Product } from '@/service/models/types';
-import { useAddProduct, useDeleteProduct, usePatchProduct } from '@/service/queries/list';
+import { useAddProduct, useDeleteProduct, usePatchProduct } from '@/service/queries/product';
 import { CatalogProduct, useProductsCatalog } from '@/service/queries/useProductsCatalog';
 import { ProductButton } from '../ProductButton/ProductButton';
 import { ProductSearchInput } from '../ProductSearchInput/ProductSearchInput';

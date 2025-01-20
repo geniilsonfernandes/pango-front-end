@@ -20,7 +20,7 @@ import {
 import { DateInput } from '@mantine/dates';
 import { useForm, zodResolver } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
-import { List } from '@/service/api';
+import { List } from '@/service/models/types';
 import { listQueryKeys, useCreateList, useDeleteList, useUpdateList } from '@/service/queries/list';
 
 type DeleteConfirmationProps = {

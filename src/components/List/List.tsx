@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { Box, Button, Group, Modal, Paper, Stack, Text } from '@mantine/core';
 import { useWindowScroll } from '@mantine/hooks';
 import { type List as ListType, type Product } from '@/service/models/types';
-import { usePatchProduct } from '@/service/queries/list';
+import { usePatchProduct } from '@/service/queries/product';
 import { useListStore } from '@/store/listStore';
 import { categorizeProducts } from '@/utils/categorizeShoppingItems';
 import { ListHeader } from '../ListHeader/ListHeader';
