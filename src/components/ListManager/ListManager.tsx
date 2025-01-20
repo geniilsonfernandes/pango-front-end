@@ -96,15 +96,8 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
     [products]
   );
 
-  const findProductInProductList = useCallback(
-    (name: string) =>
-      matchSorter(products || [], name, { keys: ['name'], threshold: rankings.EQUAL })[0],
-    [products]
-  );
-
   const inputToCreateProduct = () => {
     const queryValueHasMatchInProductsSelected = findProductInSelectedList(queryValue);
-    const queryValueHasMatchInProducts = findProductInProductList(queryValue);
 
     return (
       <>
