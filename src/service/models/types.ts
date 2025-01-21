@@ -38,5 +38,9 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  password: string;
+}
+
+export interface Session {
+  token: string;
+  expires_in: number;
 }

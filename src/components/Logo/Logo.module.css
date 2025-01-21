@@ -1,5 +1,5 @@
 .logoColor {
-    fill: rgb(1, 136, 69);
+    fill: #018845;
 }
 .logoText {
   fill: light-dark(var(--mantine-color-black), var(--mantine-color-white));

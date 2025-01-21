@@ -7,16 +7,15 @@ import {
 } from '@tabler/icons-react';
 import { NavLink } from 'react-router-dom';
 import { ActionIcon, Box, Button, Divider, Paper, rem, Stack } from '@mantine/core';
-import { ColorSchemeToggle } from '../ColorSchemeToggle/ColorSchemeToggle';
+import useModalStore from '@/store/modalStore';
+import useUserStore from '@/store/userStore';
 import { Logo } from '../Logo/Logo';
 import { UserButton } from '../UserButton/UserButton';
 
-export type SideNavigationProps = {
-  initialValue: number;
-  step: number;
-};
+export const SideNavigation = () => {
+  const { openModal } = useModalStore();
+  const { user } = useUserStore();
 
-export const SideNavigation: React.FC<SideNavigationProps> = () => {
   return (
     <Paper
       component="aside"
@@ -36,12 +35,12 @@ export const SideNavigation: React.FC<SideNavigationProps> = () => {
     >
       <ActionIcon
         variant="filled"
-        radius="xl"
+        size="lg"
         aria-expanded="true"
         aria-controls="sidebar-content"
-        style={{ position: 'absolute', top: rem(18), right: rem(-10) }}
+        style={{ position: 'absolute', top: rem(18), right: rem(-14) }}
       >
-        <IconLayoutSidebarLeftCollapseFilled size={18} stroke={1} />
+        <IconLayoutSidebarLeftCollapseFilled size={22} stroke={1} />
       </ActionIcon>
 
       <Stack gap="xxs" p="xs" component="nav" aria-label="Main navigation">
@@ -124,14 +123,14 @@ export const SideNavigation: React.FC<SideNavigationProps> = () => {
           }}
           px="xxs"
           leftSection={<IconSettings width={rem(14)} stroke={1} />}
+          onClick={() => openModal('settings')}
         >
           Settings
         </Button>
       </Stack>
 
       <Stack gap="xxs">
-        <ColorSchemeToggle />
-        <UserButton />
+        <UserButton user={user} onClick={() => openModal(user ? 'profile' : 'auth')} />
       </Stack>
     </Paper>
   );

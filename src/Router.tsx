@@ -1,108 +1,17 @@
-import { IconBrandGoogle } from '@tabler/icons-react';
+import { IconLogout2, IconSettings } from '@tabler/icons-react';
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
-import {
-  Anchor,
-  Box,
-  Button,
-  Card,
-  Divider,
-  Flex,
-  Grid,
-  Modal,
-  ModalProps,
-  Paper,
-  PasswordInput,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-} from '@mantine/core';
-import { useDisclosure, useToggle } from '@mantine/hooks';
-import { Logo } from './components/Logo/Logo';
+import { Box, Button, Divider, Flex, Modal, Paper, Stack, Title } from '@mantine/core';
+import { AuthenticationModal } from './components/AuthenticationModal/AuthenticationModal';
 import { SideNavigation } from './components/SideNavigation/SideNavigation';
 import { ListsDeletedPage } from './pages/Deleted.page';
 import { ListPage } from './pages/List.page';
 import { ListsPage } from './pages/Lists.page';
-
-type AuthenticationModalProps = {} & ModalProps;
-
-const AuthenticationModal: React.FC<AuthenticationModalProps> = (props) => {
-  const [value, toggle] = useToggle(['sign in', 'sign up']);
-  return (
-    <Modal
-      {...props}
-      size="xl"
-      withCloseButton={false}
-      centered
-      overlayProps={{
-        backgroundOpacity: 0.55,
-        blur: 3,
-      }}
-    >
-      <Flex gap="md" direction={{ base: 'column', md: 'row' }}>
-        <Card bg="dark.8" display={{ base: 'none', md: 'block' }} w="100%" flex={1}>
-          <Logo />
-          <Title order={4} mt="md">
-            Welcome to Pango
-          </Title>
-          <Text c="dimmed" mt="xs">
-            The best way to organize your shopping
-          </Text>
-        </Card>
-        <Box maw={{ base: '100%', md: 400 }} p="md" flex={1}>
-          <Title order={4}>Log in to Pango</Title>
-          <Text c="dimmed">
-            {value === 'sign in' ? 'Sign in to your account' : 'Create a new account'}
-          </Text>
-          <Grid gutter="md" mt="md">
-            <Grid.Col span={12}>
-              <TextInput label="Email" placeholder="ex: name of list" />
-            </Grid.Col>
-            <Grid.Col span={12}>
-              <PasswordInput label="Password" placeholder="ex: name of list" />
-            </Grid.Col>
-            <Grid.Col span={12}>
-              <Stack align="flex-end" gap="xs">
-                <Anchor component="button" size="sm" onClick={close} variant="transparent">
-                  Forgot Password
-                </Anchor>
-                <Button onClick={close} fullWidth>
-                  {value === 'sign in' ? 'Sign in' : 'Sign up'}
-                </Button>
-                <Button onClick={close} variant="outline" fullWidth>
-                  Continue without sign in
-                </Button>
-              </Stack>
-            </Grid.Col>
-          </Grid>
-          <Divider my="lg" label="or" />
-
-          <Stack gap="xs">
-            <Button
-              onClick={close}
-              variant="light"
-              leftSection={<IconBrandGoogle size={18} />}
-              fullWidth
-            >
-              Continue with Google
-            </Button>
-            <Box mt="xs">
-              <Text size="sm" c="dimmed">
-                {value === 'sign in' ? ' Don`t have an account yet?' : 'Already have an account?'}
-              </Text>
-              <Anchor size="sm" variant="subtle" onClick={() => toggle()}>
-                {value === 'sign in' ? 'Sign up' : 'Sign in'}
-              </Anchor>
-            </Box>
-          </Stack>
-        </Box>
-      </Flex>
-    </Modal>
-  );
-};
+import useModalStore from './store/modalStore';
+import useUserStore from './store/userStore';
 
 const AppWrapper = () => {
-  const [opened, { close, open }] = useDisclosure(true);
+  const { modals, closeAllModals, closeModal } = useModalStore();
+  const { logout } = useUserStore();
   return (
     <Flex
       component={Paper}
@@ -111,12 +20,82 @@ const AppWrapper = () => {
       }}
       mih="100vh"
     >
-      <Box p="md" h="100vh" style={{ position: 'sticky', top: 0, zIndex: 10 }}>
-        <SideNavigation initialValue={0} step={1} />
+      <Box p="md" h="100vh" miw={300} style={{ position: 'sticky', top: 0, zIndex: 10 }}>
+        <SideNavigation />
       </Box>
       <Outlet />
 
-      <AuthenticationModal opened={opened} onClose={close} size="xl" withCloseButton={false} />
+      <AuthenticationModal
+        opened={modals.auth}
+        onClose={() => closeModal('auth')}
+        size="xl"
+        withCloseButton={false}
+      />
+      <Modal
+        opened={modals.settings || modals.profile}
+        onClose={() => {
+          closeModal('settings');
+          closeModal('profile');
+        }}
+        size="xl"
+        title="Settings"
+      >
+        <Flex gap="md" mih="70vh">
+          <Stack justify="space-between">
+            <Stack w="200" gap="xxs">
+              <Button
+                justify="flex-start"
+                variant="filled"
+                leftSection={<IconSettings size={16} />}
+                fullWidth
+              >
+                General
+              </Button>
+              <Button
+                justify="flex-start"
+                variant="subtle"
+                leftSection={<IconSettings size={16} />}
+                fullWidth
+              >
+                Account
+              </Button>
+              <Button
+                justify="flex-start"
+                variant="subtle"
+                leftSection={<IconSettings size={16} />}
+                fullWidth
+              >
+                Settings
+              </Button>
+              <Button
+                justify="flex-start"
+                variant="subtle"
+                leftSection={<IconSettings size={16} />}
+                fullWidth
+              >
+                About
+              </Button>
+            </Stack>
+            <Button
+              justify="flex-start"
+              variant="subtle"
+              color="red"
+              leftSection={<IconLogout2 size={16} />}
+              fullWidth
+              onClick={() => {
+                closeAllModals();
+                logout();
+              }}
+            >
+              Logout
+            </Button>
+          </Stack>
+          <Paper bg="dark.8" p="md" style={{ flex: 1 }}>
+            <Title order={4}>Settings</Title>
+            <Divider my="sm" />
+          </Paper>
+        </Flex>
+      </Modal>
     </Flex>
   );
 };

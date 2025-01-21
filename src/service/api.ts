@@ -1,24 +1,6 @@
 import axios from 'axios';
-import { List, Product } from './models/types';
-
-
-// ------
-
-export type ShoppingItem = {
-  id: string;
-  listId?: string;
-  name: string;
-  category: string;
-  quantity: number;
-  unit?: string;
-  price?: number;
-  checked?: boolean;
-  createdAt?: string;
-};
-
-export type CreateShoppingItemDTO = Omit<ShoppingItem, 'createdAt' | 'checked' | 'userId'>;
-
-
+import { Session } from 'react-router-dom';
+import { List, Product, User } from './models/types';
 
 // ---- list methods
 
@@ -28,7 +10,7 @@ export type ListDTO = {
   budget?: number;
   date?: string;
   description?: string;
-  items?: ShoppingItem[];
+  items?: Product[];
 };
 
 export type CreateListDTO = {
@@ -80,8 +62,6 @@ class ListAPI {
     return response.data;
   }
 }
-
-
 
 export const listAPI = new ListAPI('http://localhost:3000');
 
@@ -141,3 +121,28 @@ export class ProductAPI implements ProductAPIinterface {
 }
 
 export const productAPI = new ProductAPI('http://localhost:3000');
+
+type authenticateResponse = {
+  user: User;
+  session: Session;
+};
+
+class UserAPI {
+  private baseURL: string;
+  private route = 'user';
+
+  constructor(baseURL: string) {
+    this.baseURL = baseURL;
+  }
+
+  async create(data: { email: string; password: string }): Promise<void> {
+    await axios.post(`${this.baseURL}/${this.route}`, data);
+  }
+
+  async authenticate(data: { email: string; password: string }): Promise<authenticateResponse> {
+    const response = await axios.post<authenticateResponse>(`${this.baseURL}/authenticate`, data);
+    return response.data;
+  }
+}
+
+export const userAPI = new UserAPI('http://localhost:3000');
