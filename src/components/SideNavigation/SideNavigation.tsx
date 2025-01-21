@@ -92,19 +92,28 @@ export const SideNavigation: React.FC<SideNavigationProps> = () => {
         </NavLink>
 
         <Divider my="md" />
-        <Button
-          variant="subtle"
-          color="gray"
-          styles={{
-            label: {
-              width: '100%',
-            },
-          }}
-          px="xxs"
-          leftSection={<IconTrash width={rem(14)} stroke={1} />}
-        >
-          Trash
-        </Button>
+
+        <NavLink to="/trash" style={{ width: '100%', textDecoration: 'none' }}>
+          {({ isActive }) => (
+            <Button
+              variant={isActive ? 'filled' : 'subtle'}
+              fullWidth
+              styles={{
+                label: {
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                },
+              }}
+              component="span"
+              px="xxs"
+              aria-current={isActive ? 'page' : undefined}
+              leftSection={<IconTrash width={rem(14)} stroke={1} />}
+            >
+              Trash
+            </Button>
+          )}
+        </NavLink>
         <Button
           variant="subtle"
           color="gray"

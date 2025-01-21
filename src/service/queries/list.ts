@@ -1,5 +1,5 @@
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
-import { CreateListDTO, listAPI, productAPI, shoppingAPI } from '@/service/api';
+import { CreateListDTO, listAPI, productAPI } from '@/service/api';
 import { errorMessage, successMessage } from '../helpers';
 import { List } from '../models/types';
 import { RQKEY as RQKEY_PRODUCT } from './product';
@@ -15,16 +15,17 @@ const REFRESH_INTERVAL = {
   INFINITE: Infinity,
 };
 
-export function useList() {
+export function useList(q: { deleted?: boolean } = {}) {
   return useQuery({
-    queryKey: RQKEY(),
-    queryFn: () => listAPI.list(),
+    queryKey: RQKEY(JSON.stringify(q)),
+    queryFn: () => listAPI.list(q),
     staleTime: STALE_TIME,
     cacheTime: CACHE_TIME,
   });
 }
 
 export type CreateListInput = CreateListDTO;
+
 export const useCreateList = () => {
   const queryClient = useQueryClient();
 
@@ -40,10 +41,24 @@ export const useCreateList = () => {
   });
 };
 
-export const useDeleteList = () => {
+export const useDeleteList = ({ permanent }: { permanent?: boolean } = {}) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => listAPI.delete(id),
+    mutationFn: (id: string) => (permanent ? listAPI.deletePermanent(id) : listAPI.delete(id)),
+    onSuccess: () => {
+      successMessage('List deleted');
+      queryClient.invalidateQueries(RQKEY());
+    },
+    onError: () => {
+      errorMessage('Error deleting list');
+    },
+  });
+};
+
+export const useRestoreList = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => listAPI.restore(id),
     onSuccess: () => {
       successMessage('List deleted');
       queryClient.invalidateQueries(RQKEY());
@@ -61,7 +76,7 @@ type UpdateListInput = {
 export const useUpdateList = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: UpdateListInput) => shoppingAPI.updateList(input.id, input),
+    mutationFn: (input: UpdateListInput) => listAPI.update(input.id, input),
     onSuccess: (data) => {
       queryClient.invalidateQueries(RQKEY());
       queryClient.invalidateQueries(RQKEY_PRODUCT(data.id));

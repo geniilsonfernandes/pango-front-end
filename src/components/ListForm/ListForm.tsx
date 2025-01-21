@@ -122,7 +122,7 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, list, isCopy }) =>
               label="Name"
               placeholder="ex: name of list"
               {...form.getInputProps('title')}
-              error={form.errors.name}
+              error={form.errors.title}
             />
           </Grid.Col>
           <Grid.Col span={12}>

@@ -5,6 +5,7 @@ import {
   Avatar,
   AvatarGroup,
   Box,
+  Button,
   Card,
   Flex,
   Group,
@@ -21,7 +22,11 @@ type ListCardProps = {
   list?: List;
   onEdit?: () => void;
   onDelete?: () => void;
+  isDeleting?: boolean;
   onShare?: () => void;
+  onRestore?: () => void;
+  isRestoring?: boolean;
+  type?: 'default' | 'restore';
 } & React.ComponentPropsWithoutRef<'div'>;
 
 function stopPropagation(callback?: () => void) {
@@ -35,7 +40,11 @@ export const ListCard: React.FC<ListCardProps> = ({
   list,
   onEdit,
   onDelete,
+  isDeleting,
   onShare,
+  onRestore,
+  isRestoring,
+  type = 'default',
   ...props
 }) => {
   const status = useMemo(() => {
@@ -55,41 +64,65 @@ export const ListCard: React.FC<ListCardProps> = ({
         </Box>
 
         <Group>
-          <AvatarGroup>
-            <Avatar
-              size="sm"
-              src="https://images.unsplash.com/photo-1612838320302-47e0f8e0d7a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80"
-            />
-            <Avatar
-              size="sm"
-              src="https://images.unsplash.com/photo-1612838320302-47e0f8e0d7a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80"
-            />
-          </AvatarGroup>
+          {type === 'restore' && (
+            <>
+              <Button.Group>
+                <Button
+                  variant="outline"
+                  color="red"
+                  loading={isDeleting}
+                  onClick={stopPropagation(onDelete)}
+                >
+                  Delete
+                </Button>
+                <Button variant="filled" loading={isRestoring} onClick={stopPropagation(onRestore)}>
+                  Restore
+                </Button>
+              </Button.Group>
+            </>
+          )}
+          {type === 'default' && (
+            <>
+              <AvatarGroup>
+                <Avatar
+                  size="sm"
+                  src="https://images.unsplash.com/photo-1612838320302-47e0f8e0d7a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80"
+                />
+                <Avatar
+                  size="sm"
+                  src="https://images.unsplash.com/photo-1612838320302-47e0f8e0d7a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80"
+                />
+              </AvatarGroup>
 
-          <Menu shadow="md" position="left" width={200}>
-            <Menu.Target>
-              <ActionIcon ml="auto" variant="default" onClick={stopPropagation()}>
-                <IconMenu size={16} />
-              </ActionIcon>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Label>Actions</Menu.Label>
-              <Menu.Item onClick={stopPropagation(onEdit)} leftSection={<IconMenu size={14} />}>
-                Edit
-              </Menu.Item>
-              <Menu.Item
-                onClick={stopPropagation(onDelete)}
-                leftSection={<IconTrash size={14} />}
-                color="red"
-              >
-                Delete
-              </Menu.Item>
-              <Menu.Divider />
-              <Menu.Item onClick={stopPropagation(onShare)} leftSection={<IconShare size={14} />}>
-                Shared
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
+              <Menu shadow="md" position="left" width={200}>
+                <Menu.Target>
+                  <ActionIcon ml="auto" variant="default" onClick={stopPropagation()}>
+                    <IconMenu size={16} />
+                  </ActionIcon>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <Menu.Label>Actions</Menu.Label>
+                  <Menu.Item onClick={stopPropagation(onEdit)} leftSection={<IconMenu size={14} />}>
+                    Edit
+                  </Menu.Item>
+                  <Menu.Item
+                    onClick={stopPropagation(onDelete)}
+                    leftSection={<IconTrash size={14} />}
+                    color="red"
+                  >
+                    Delete
+                  </Menu.Item>
+                  <Menu.Divider />
+                  <Menu.Item
+                    onClick={stopPropagation(onShare)}
+                    leftSection={<IconShare size={14} />}
+                  >
+                    Shared
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+            </>
+          )}
         </Group>
       </Flex>
       <Progress value={(status?.checked / status?.total) * 100} mt="xs" />
