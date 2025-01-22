@@ -93,31 +93,31 @@ export class ProductAPI implements ProductAPIinterface {
   private route = '/product';
 
   async delete(id: string): Promise<void> {
-    await axios.delete(`${this.route}/${id}`);
+    await api.delete(`${this.route}/${id}`);
   }
 
   async list(listId?: string): Promise<Product[]> {
-    const response = await axios.get<Product[]>(`${this.route}`, {
+    const response = await api.get<Product[]>(`${this.route}`, {
       params: { list_id: listId },
     });
     return response.data;
   }
 
   async patch(id: string, input: Partial<ProductDTO>): Promise<Product> {
-    const response = await axios.patch<Product>(`${this.route}/${id}`, {
+    const response = await api.patch<Product>(`${this.route}/${id}`, {
       ...input,
     });
     return response.data;
   }
   async update(id: string, input: Partial<ProductDTO>): Promise<Product> {
-    const response = await axios.patch<Product>(`${this.route}/${id}`, {
+    const response = await api.patch<Product>(`${this.route}/${id}`, {
       ...input,
     });
     return response.data;
   }
 
   async create(input: ProductDTO[]): Promise<Product> {
-    const response = await axios.post<Product>(`${this.route}`, input);
+    const response = await api.post<Product>(`${this.route}`, input);
     return response.data;
   }
 }
