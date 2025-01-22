@@ -1,17 +1,37 @@
-import { IconLogout2, IconSettings } from '@tabler/icons-react';
+import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
-import { Box, Button, Divider, Flex, Modal, Paper, Stack, Title } from '@mantine/core';
+import { Box, Flex, Paper } from '@mantine/core';
 import { AuthenticationModal } from './components/AuthenticationModal/AuthenticationModal';
+import { SettingsModal } from './components/SettingsModal/SettingsModal';
 import { SideNavigation } from './components/SideNavigation/SideNavigation';
 import { ListsDeletedPage } from './pages/Deleted.page';
 import { ListPage } from './pages/List.page';
 import { ListsPage } from './pages/Lists.page';
+import { useCreateAnonymous } from './service/queries/user';
 import useModalStore from './store/modalStore';
 import useUserStore from './store/userStore';
 
 const AppWrapper = () => {
   const { modals, closeAllModals, closeModal } = useModalStore();
-  const { logout } = useUserStore();
+  const { user, login } = useUserStore();
+  const queryClient = useQueryClient();
+
+  // mutations
+  const { mutate: createAnonymous } = useCreateAnonymous();
+
+  useEffect(() => {
+    if (!user) {
+      createAnonymous(undefined, {
+        onSuccess: (data) => {
+          login(data.user, data.session);
+          closeAllModals();
+          queryClient.invalidateQueries();
+        },
+      });
+    }
+  }, []);
+
   return (
     <Flex
       component={Paper}
@@ -31,71 +51,7 @@ const AppWrapper = () => {
         size="xl"
         withCloseButton={false}
       />
-      <Modal
-        opened={modals.settings || modals.profile}
-        onClose={() => {
-          closeModal('settings');
-          closeModal('profile');
-        }}
-        size="xl"
-        title="Settings"
-      >
-        <Flex gap="md" mih="70vh">
-          <Stack justify="space-between">
-            <Stack w="200" gap="xxs">
-              <Button
-                justify="flex-start"
-                variant="filled"
-                leftSection={<IconSettings size={16} />}
-                fullWidth
-              >
-                General
-              </Button>
-              <Button
-                justify="flex-start"
-                variant="subtle"
-                leftSection={<IconSettings size={16} />}
-                fullWidth
-              >
-                Account
-              </Button>
-              <Button
-                justify="flex-start"
-                variant="subtle"
-                leftSection={<IconSettings size={16} />}
-                fullWidth
-              >
-                Settings
-              </Button>
-              <Button
-                justify="flex-start"
-                variant="subtle"
-                leftSection={<IconSettings size={16} />}
-                fullWidth
-              >
-                About
-              </Button>
-            </Stack>
-            <Button
-              justify="flex-start"
-              variant="subtle"
-              color="red"
-              leftSection={<IconLogout2 size={16} />}
-              fullWidth
-              onClick={() => {
-                closeAllModals();
-                logout();
-              }}
-            >
-              Logout
-            </Button>
-          </Stack>
-          <Paper bg="dark.8" p="md" style={{ flex: 1 }}>
-            <Title order={4}>Settings</Title>
-            <Divider my="sm" />
-          </Paper>
-        </Flex>
-      </Modal>
+      <SettingsModal opened={modals.settings || modals.profile} onClose={closeAllModals} />
     </Flex>
   );
 };

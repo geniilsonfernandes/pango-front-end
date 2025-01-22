@@ -14,7 +14,7 @@ import { UserButton } from '../UserButton/UserButton';
 
 export const SideNavigation = () => {
   const { openModal } = useModalStore();
-  const { user } = useUserStore();
+  const { user, isAnonymous } = useUserStore();
 
   return (
     <Paper
@@ -130,7 +130,10 @@ export const SideNavigation = () => {
       </Stack>
 
       <Stack gap="xxs">
-        <UserButton user={user} onClick={() => openModal(user ? 'profile' : 'auth')} />
+        <UserButton
+          user={isAnonymous ? undefined : user}
+          onClick={() => openModal(user && !isAnonymous ? 'profile' : 'auth')}
+        />
       </Stack>
     </Paper>
   );
