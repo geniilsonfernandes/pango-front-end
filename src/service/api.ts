@@ -1,8 +1,20 @@
 import axios from 'axios';
-import { Session } from 'react-router-dom';
-import { List, Product, User } from './models/types';
+import { loadSession } from '@/store/userStore';
+import { List, Product, Session, User } from './models/types';
 
 // ---- list methods
+
+const api = axios.create({
+  baseURL: 'http://localhost:3000', // Altere para sua API.
+});
+
+api.interceptors.request.use((config) => {
+  const session = loadSession();
+  if (session) {
+    config.headers.Authorization = `Bearer ${session.token}`;
+  }
+  return config;
+});
 
 export type ListDTO = {
   id: string;
@@ -19,51 +31,46 @@ export type CreateListDTO = {
   date?: string;
   description?: string;
 };
+
 class ListAPI {
-  private baseURL: string;
-
-  private routes = 'list';
-
-  constructor(baseURL: string) {
-    this.baseURL = baseURL;
-  }
+  private route = '/list';
 
   async create(data: CreateListDTO): Promise<ListDTO> {
-    const response = await axios.post<ListDTO>(`${this.baseURL}/${this.routes}`, data);
+    const response = await api.post<ListDTO>(this.route, data);
     return response.data;
   }
 
   async update(id: string, data: CreateListDTO): Promise<ListDTO> {
-    const response = await axios.put<ListDTO>(`${this.baseURL}/${this.routes}/${id}`, data);
+    const response = await api.put<ListDTO>(`${this.route}/${id}`, data);
     return response.data;
   }
 
   async get(id?: string): Promise<List> {
-    const response = await axios.get<List>(`${this.baseURL}/${this.routes}/${id}`);
+    const response = await api.get<List>(`${this.route}/${id}`);
     return response.data;
   }
 
   async delete(id: string): Promise<void> {
-    await axios.delete(`${this.baseURL}/${this.routes}/${id}`);
+    await api.delete(`${this.route}/${id}`);
   }
 
   async deletePermanent(id: string): Promise<void> {
-    await axios.delete(`${this.baseURL}/${this.routes}/${id}/permanent`);
+    await api.delete(`${this.route}/${id}/permanent`);
   }
 
   async restore(id: string): Promise<void> {
-    await axios.post(`${this.baseURL}/${this.routes}/${id}/restore`);
+    await api.post(`${this.route}/${id}/restore`);
   }
 
   async list(q: { deleted?: boolean } = {}): Promise<List[]> {
-    const response = await axios.get<List[]>(`${this.baseURL}/${this.routes}`, {
+    const response = await api.get<List[]>(this.route, {
       params: { deleted: q.deleted },
     });
     return response.data;
   }
 }
 
-export const listAPI = new ListAPI('http://localhost:3000');
+export const listAPI = new ListAPI();
 
 // products methods
 export type ProductDTO = {
@@ -83,44 +90,40 @@ export interface ProductAPIinterface {
   delete: (id: string) => Promise<void>;
 }
 export class ProductAPI implements ProductAPIinterface {
-  private baseURL: string;
-  private route = 'product';
-
-  constructor(baseURL: string) {
-    this.baseURL = baseURL;
-  }
+  private route = '/product';
 
   async delete(id: string): Promise<void> {
-    await axios.delete(`${this.baseURL}/${this.route}/${id}`);
+    await axios.delete(`${this.route}/${id}`);
   }
 
   async list(listId?: string): Promise<Product[]> {
-    const response = await axios.get<Product[]>(`${this.baseURL}/${this.route}`, {
+    const response = await axios.get<Product[]>(`${this.route}`, {
       params: { list_id: listId },
     });
     return response.data;
   }
 
   async patch(id: string, input: Partial<ProductDTO>): Promise<Product> {
-    const response = await axios.patch<Product>(`${this.baseURL}/${this.route}/${id}`, {
+    const response = await axios.patch<Product>(`${this.route}/${id}`, {
       ...input,
     });
     return response.data;
   }
   async update(id: string, input: Partial<ProductDTO>): Promise<Product> {
-    const response = await axios.patch<Product>(`${this.baseURL}/${this.route}/${id}`, {
+    const response = await axios.patch<Product>(`${this.route}/${id}`, {
       ...input,
     });
     return response.data;
   }
 
   async create(input: ProductDTO[]): Promise<Product> {
-    const response = await axios.post<Product>(`${this.baseURL}/${this.route}`, input);
+    const response = await axios.post<Product>(`${this.route}`, input);
     return response.data;
   }
 }
+export const productAPI = new ProductAPI();
 
-export const productAPI = new ProductAPI('http://localhost:3000');
+// ---- user methods
 
 type authenticateResponse = {
   user: User;
@@ -137,6 +140,14 @@ class UserAPI {
 
   async create(data: { email: string; password: string }): Promise<void> {
     await axios.post(`${this.baseURL}/${this.route}`, data);
+  }
+
+  async createAnonymous(data?: { name: string }): Promise<authenticateResponse> {
+    const response = await axios.post<authenticateResponse>(
+      `${this.baseURL}/${this.route}/anonymous`,
+      data
+    );
+    return response.data;
   }
 
   async authenticate(data: { email: string; password: string }): Promise<authenticateResponse> {
