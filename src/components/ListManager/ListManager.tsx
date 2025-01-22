@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Paper, ScrollArea, Stack, Tabs } from '@mantine/core';
 import { useDebouncedCallback, useDebouncedValue } from '@mantine/hooks';
 import { useRecentsProducts } from '@/hooks/useRecentsProducts';
-import { ProductDTO, ShoppingItem } from '@/service/api';
+import { ProductDTO } from '@/service/api';
 import { List, Product } from '@/service/models/types';
 import { CatalogProduct, useProductsCatalog } from '@/service/queries/catalog';
 import { useAddProduct, useDeleteProduct, usePatchProduct } from '@/service/queries/product';
@@ -60,14 +60,14 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
     handleAddMultipleItems();
   };
 
-  const handleIncrement = useCallback((item?: ShoppingItem) => {
+  const handleIncrement = useCallback((item?: Product) => {
     if (item) {
       patchProduct({ id: item.id, data: { quantity: item.quantity + 1 } });
     }
   }, []);
 
   const handleDecrement = useCallback(
-    (item?: ShoppingItem) => {
+    (item?: Product) => {
       if (item) {
         const newQuantity = item.quantity - 1;
         if (newQuantity <= 0) {
@@ -80,7 +80,7 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
   );
 
   const handleRemoveItem = useCallback(
-    (item?: ShoppingItem) => {
+    (item?: Product) => {
       if (item) {
         deleteItem({
           id: item.id,
