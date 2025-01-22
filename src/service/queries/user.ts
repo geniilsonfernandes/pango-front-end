@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { userAPI } from '../api';
 import { errorMessage } from '../helpers';
 
@@ -9,6 +9,18 @@ export const useCreateUser = () => {
   return useMutation({
     mutationKey: RQKEY(),
     mutationFn: (data: { email: string; password: string }) => userAPI.create(data),
+    onError: () => errorMessage('Failed to create user'),
+  });
+};
+
+export const useCreateAnonymous = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: RQKEY(),
+    mutationFn: (data?: { name: string }) => userAPI.createAnonymous(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+    },
     onError: () => errorMessage('Failed to create user'),
   });
 };

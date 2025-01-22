@@ -1,5 +1,6 @@
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CreateListDTO, listAPI, productAPI } from '@/service/api';
+import useUserStore from '@/store/userStore';
 import { errorMessage, successMessage } from '../helpers';
 import { List } from '../models/types';
 import { RQKEY as RQKEY_PRODUCT } from './product';
@@ -16,8 +17,10 @@ const REFRESH_INTERVAL = {
 };
 
 export function useList(q: { deleted?: boolean } = {}) {
+  const { user } = useUserStore();
   return useQuery({
     queryKey: RQKEY(JSON.stringify(q)),
+    enabled: !!user,
     queryFn: () => listAPI.list(q),
     staleTime: STALE_TIME,
     cacheTime: CACHE_TIME,
@@ -89,10 +92,12 @@ export const useUpdateList = () => {
 };
 
 export const useListItems = (listId?: string) => {
+  const { user } = useUserStore();
   const queryClient = useQueryClient();
   if (listId) {
     localStorage.setItem('activeList', listId);
   }
+
   return useQueries({
     queries: [
       {
@@ -100,7 +105,7 @@ export const useListItems = (listId?: string) => {
         queryFn: () => listAPI.get(listId),
         staleTime: STALE_TIME,
         cacheTime: CACHE_TIME,
-        enabled: !!listId,
+        enabled: !!listId && !!user,
         initialData: () => {
           const lists = queryClient.getQueryData(RQKEY()) as List[] | undefined;
           localStorage.setItem('activeList', listId || '');
@@ -110,6 +115,7 @@ export const useListItems = (listId?: string) => {
       {
         queryKey: RQKEY_PRODUCT(listId || ''),
         queryFn: () => productAPI.list(listId),
+        enabled: !!listId && !!user,
         staleTime: 0,
         cacheTime: CACHE_TIME,
         refetchInterval: REFRESH_INTERVAL.MIN,
