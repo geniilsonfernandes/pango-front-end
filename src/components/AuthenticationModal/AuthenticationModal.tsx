@@ -1,4 +1,5 @@
 import { IconBrandGoogle } from '@tabler/icons-react';
+import { useQueryClient } from '@tanstack/react-query';
 import z from 'zod';
 import {
   Anchor,
@@ -26,11 +27,13 @@ import { Logo } from '../Logo/Logo';
 type AuthenticationModalProps = {} & ModalProps;
 
 const authenticationSchema = z.object({
+  name: z.string().min(3, 'Name must be at least 3 characters long').optional(),
   email: z.string().email('Invalid email'),
   password: z.string().min(6, 'Password must be at least 6 characters long'),
 });
 
 export const AuthenticationModal: React.FC<AuthenticationModalProps> = (props) => {
+  const queryClient = useQueryClient();
   const [value, toggle] = useToggle(['sign in', 'sign up'] as const);
 
   //store
@@ -53,7 +56,25 @@ export const AuthenticationModal: React.FC<AuthenticationModalProps> = (props) =
   // Handlers
   const handleCreate = (values: typeof form.values) => {
     if (value === 'sign up') {
-      createUser(values);
+      createUser(values, {
+        onSuccess: () => {
+          authenticate(
+            {
+              email: values.email,
+              password: values.password,
+            },
+            {
+              onSuccess: (data) => {
+                if (data) {
+                  props.onClose();
+                  login(data.user, data.session);
+                }
+                queryClient.invalidateQueries();
+              },
+            }
+          );
+        },
+      });
     }
     if (value === 'sign in') {
       authenticate(values, {
@@ -62,6 +83,7 @@ export const AuthenticationModal: React.FC<AuthenticationModalProps> = (props) =
             props.onClose();
             login(data.user, data.session);
           }
+          queryClient.invalidateQueries();
         },
       });
     }
@@ -89,12 +111,14 @@ export const AuthenticationModal: React.FC<AuthenticationModalProps> = (props) =
           </Text>
         </Card>
         <Box maw={{ base: '100%', md: 400 }} p="md" flex={1}>
-          <Title order={4}>Log in to Pango</Title>
+          <Title order={4}>
+            {value === 'sign in' ? 'Sign in to your account' : 'Create a new account'}
+          </Title>
           <Text c="dimmed">
             {value === 'sign in' ? 'Sign in to your account' : 'Create a new account'}
           </Text>
           <form onSubmit={form.onSubmit(handleCreate)}>
-            <Grid gutter="md" mt="md">
+            <Grid gutter="md" mt="md" mih="30vh">
               <Grid.Col span={12}>
                 <TextInput
                   label="Email"
@@ -124,9 +148,16 @@ export const AuthenticationModal: React.FC<AuthenticationModalProps> = (props) =
                   >
                     {value === 'sign in' ? 'Sign in' : 'Sign up'}
                   </Button>
-                  <Button onClick={close} variant="outline" fullWidth>
-                    Continue without sign in
-                  </Button>
+                  {value === 'sign in' && (
+                    <Button
+                      onClick={() => props.onClose()}
+                      type="button"
+                      variant="outline"
+                      fullWidth
+                    >
+                      Continue without sign in
+                    </Button>
+                  )}
                 </Stack>
               </Grid.Col>
             </Grid>
