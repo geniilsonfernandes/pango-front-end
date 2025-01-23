@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { matchSorter, rankings } from 'match-sorter';
 import { v4 as uuidv4 } from 'uuid';
-import { Paper, ScrollArea, Stack, Tabs } from '@mantine/core';
+import { Box, Paper, ScrollArea, Stack, Tabs } from '@mantine/core';
 import { useDebouncedCallback, useDebouncedValue } from '@mantine/hooks';
 import { useRecentsProducts } from '@/hooks/useRecentsProducts';
 import { ProductDTO } from '@/service/api';
@@ -14,11 +14,14 @@ import { ProductSearchInput } from '../ProductSearchInput/ProductSearchInput';
 type ListManagerProps = {
   list: List;
   products: Product[];
+  scrollSize?: string;
 };
 
-const SIZE = 'calc(100vh - 154px)';
-
-export const ListManager = ({ products, list }: ListManagerProps) => {
+export const ListManager = ({
+  products,
+  list,
+  scrollSize = 'calc(100vh - 150px)',
+}: ListManagerProps) => {
   const [queryValue, setQueryValue] = useState('');
   const [queryDebounced] = useDebouncedValue(queryValue, 800);
   const [debouncedItems, setDebouncedItems] = useState<ProductDTO[]>([]);
@@ -157,56 +160,60 @@ export const ListManager = ({ products, list }: ListManagerProps) => {
   };
 
   return (
-    <Paper p="sm" w="100%" h="100%">
-      <ProductSearchInput
-        queryValue={queryValue}
-        setQueryValue={setQueryValue}
-        isLoading={isLoadingProducts}
-      />
+    <Paper p="sm" w="100%" h="100%" pos="relative" withBorder>
+      <Stack h="100%" gap="xxs">
+        <Box>
+          <ProductSearchInput
+            queryValue={queryValue}
+            setQueryValue={setQueryValue}
+            isLoading={isLoadingProducts}
+          />
+        </Box>
+        {queryValue && (
+          <Stack gap="xxs" mt="xs">
+            <Tabs variant="pills" defaultValue="Results">
+              <Tabs.List>
+                <Tabs.Tab fz="sm" px="xs" py="xs" value="Results">
+                  Results
+                </Tabs.Tab>
+              </Tabs.List>
+              <Tabs.Panel value="Results">
+                <ScrollArea h={scrollSize} offsetScrollbars mt="xs">
+                  <Stack gap="xxs">
+                    {inputToCreateProduct()}
+                    {renderProducts(productsCatalog || [])}
+                  </Stack>
+                </ScrollArea>
+              </Tabs.Panel>
+            </Tabs>
+          </Stack>
+        )}
 
-      {queryValue && (
-        <Stack gap="xxs" mt="xs">
-          <Tabs variant="pills" defaultValue="Results">
-            <Tabs.List>
-              <Tabs.Tab fz="sm" px="xs" py="xs" value="Results">
-                Results
-              </Tabs.Tab>
-            </Tabs.List>
-            <Tabs.Panel value="Results">
-              <ScrollArea h={SIZE} offsetScrollbars mt="xs">
-                <Stack gap="xxs">
-                  {inputToCreateProduct()}
-                  {renderProducts(productsCatalog || [])}
-                </Stack>
-              </ScrollArea>
-            </Tabs.Panel>
-          </Tabs>
-        </Stack>
-      )}
-      {!queryValue && (
-        <Stack gap="xxs" mt="xs">
-          <Tabs variant="pills" defaultValue="Products">
-            <Tabs.List>
-              <Tabs.Tab fz="sm" px="xs" py="xs" value="Products">
-                Products
-              </Tabs.Tab>
-              <Tabs.Tab fz="sm" px="xs" py="xs" value="Recents">
-                Recents
-              </Tabs.Tab>
-            </Tabs.List>
-            <Tabs.Panel value="Products">
-              <ScrollArea h={SIZE} offsetScrollbars mt="xs">
-                <Stack gap="xxs">{renderProducts(productsCatalog || [])}</Stack>
-              </ScrollArea>
-            </Tabs.Panel>
-            <Tabs.Panel value="Recents">
-              <ScrollArea h={SIZE} offsetScrollbars mt="xs">
-                <Stack gap="xxs">{renderProducts(recents || [])}</Stack>
-              </ScrollArea>
-            </Tabs.Panel>
-          </Tabs>
-        </Stack>
-      )}
+        {!queryValue && (
+          <Stack gap="xxs" mt="xs" h="100%" flex={1}>
+            <Tabs variant="pills" defaultValue="Products">
+              <Tabs.List>
+                <Tabs.Tab fz="sm" px="xs" py="xs" value="Products">
+                  Products
+                </Tabs.Tab>
+                <Tabs.Tab fz="sm" px="xs" py="xs" value="Recents">
+                  Recents
+                </Tabs.Tab>
+              </Tabs.List>
+              <Tabs.Panel value="Products">
+                <ScrollArea h={scrollSize} offsetScrollbars mt="xs">
+                  <Stack gap="xxs">{renderProducts(productsCatalog || [])}</Stack>
+                </ScrollArea>
+              </Tabs.Panel>
+              <Tabs.Panel value="Recents">
+                <ScrollArea h={scrollSize} offsetScrollbars mt="xs">
+                  <Stack gap="xxs">{renderProducts(recents || [])}</Stack>
+                </ScrollArea>
+              </Tabs.Panel>
+            </Tabs>
+          </Stack>
+        )}
+      </Stack>
     </Paper>
   );
 };

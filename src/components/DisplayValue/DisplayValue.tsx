@@ -9,10 +9,16 @@ type DisplayValueProps = {
 export const DisplayValue: React.FC<DisplayValueProps> = ({ value, label, ...props }) => {
   return (
     <Box {...props}>
-      <Text fz={rem(10)} tt="uppercase" fw={700} c="dimmed">
+      <Text fz={{
+        base: rem(10),
+        sm: rem(14),
+      }} tt="uppercase" fw={700} c="dimmed">
         {label}
       </Text>
-      <Text fz={rem(14)} fw={700}>
+      <Text fz={{
+        base: rem(12),
+        sm: rem(15),
+      }} fw={700}>
         {value}
       </Text>
     </Box>

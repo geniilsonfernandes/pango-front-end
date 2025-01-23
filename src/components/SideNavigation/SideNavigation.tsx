@@ -41,7 +41,6 @@ export const SideNavigation: React.FC<SideNavigationProps> = ({ collapsed, onCol
       <ActionIcon
         variant="filled"
         size="lg"
-        aria-expanded={collapsed}
         aria-controls="sidebar-content"
         style={{ position: 'absolute', top: rem(18), right: rem(-14) }}
         onClick={onCollapse}
@@ -125,13 +124,13 @@ export const SideNavigation: React.FC<SideNavigationProps> = ({ collapsed, onCol
         </NavLink>
         <Button
           variant="subtle"
-          color="gray"
           styles={{
             label: {
               width: '100%',
             },
           }}
           px="xxs"
+          component="span"
           leftSection={<IconSettings width={rem(14)} stroke={1} />}
           onClick={() => openModal('settings')}
         >

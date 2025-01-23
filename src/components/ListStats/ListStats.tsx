@@ -1,14 +1,13 @@
 import { useMemo } from 'react';
 import { Card, Flex, Progress } from '@mantine/core';
-import { ShoppingItem } from '@/service/api';
-import { List } from '@/service/models/types';
+import { List, Product } from '@/service/models/types';
 import { calculateStatus } from '@/utils/calculateStatus';
 import { CurrencyMode, formatCurrency } from '@/utils/formatCurrency';
 import { DisplayValue } from '../DisplayValue/DisplayValue';
 
 type ListStatsProps = {
   list: List;
-  products: ShoppingItem[];
+  products: Product[];
   currencyMode?: CurrencyMode;
 };
 
@@ -29,7 +28,7 @@ export const ListStats: React.FC<ListStatsProps> = ({ list, products, currencyMo
       <Flex gap="lg" justify="space-between">
         <DisplayValue
           value={` ${status?.checked} / ${status?.total}`}
-          label="Total Items"
+          label="T. Items"
           aria-label="Total Items"
         />
         <Flex gap="lg" justify="flex-end" align="center">

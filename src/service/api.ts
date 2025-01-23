@@ -5,7 +5,7 @@ import { List, Product, Session, User } from './models/types';
 // ---- list methods
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000', // Altere para sua API.
+  baseURL: 'http://192.168.10.106:3000', // Altere para sua API.
 });
 
 api.interceptors.request.use((config) => {

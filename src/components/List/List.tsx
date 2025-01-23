@@ -29,7 +29,7 @@ export const Header: React.FC<ListProps> = ({ list, products }) => {
         position: 'sticky',
         top: 0,
         zIndex: 10,
-        backgroundColor: 'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8))',
+        backgroundColor: 'light-dark(var(--mantine-color-body), var(--mantine-color-dark-7))',
       }}
     >
       <Stack
@@ -85,30 +85,30 @@ export const List: React.FC<ListProps> = ({ products }) => {
         <Paper>
           <AnimatePresence>
             <Paper className={classes.list} data-no-background>
-              {categorizedProducts.unchecked?.map((item) => (
+              {categorizedProducts.unchecked?.map((product) => (
                 <motion.div
-                  key={item.id}
+                  key={product.id}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   layout
                 >
                   <ProductCheckbox
-                    name={item.name}
-                    shoppingItem={item}
+                    name={product.name}
+                    product={product}
                     showPrice={showPrice}
-                    onClick={() => setProductSelected(item)}
+                    onClick={() => setProductSelected(product)}
                     onCheck={() =>
                       patchProduct({
-                        id: item.id,
+                        id: product.id,
                         data: {
                           checked: true,
-                          list_id: item.list_id,
+                          list_id: product.list_id,
                         },
                       })
                     }
-                    onPriceClick={() => setProductSelected(item)}
-                    checked={item.checked}
+                    onPriceClick={() => setProductSelected(product)}
+                    checked={product.checked}
                   />
                 </motion.div>
               ))}
@@ -125,23 +125,23 @@ export const List: React.FC<ListProps> = ({ products }) => {
                 Clear
               </Button>
             </Group>
-            {categorizedProducts.checked?.map((item) => (
+            {categorizedProducts.checked?.map((product) => (
               <ProductCheckbox
-                name={item.name}
-                key={item.id}
-                shoppingItem={item}
+                name={product.name}
+                key={product.id}
+                product={product}
                 showPrice={showPrice}
-                onClick={() => setProductSelected(item)}
+                onClick={() => setProductSelected(product)}
                 onCheck={() =>
                   patchProduct({
-                    id: item.id,
+                    id: product.id,
                     data: {
                       checked: false,
-                      list_id: item.list_id,
+                      list_id: product.list_id,
                     },
                   })
                 }
-                checked={item.checked}
+                checked={product.checked}
               />
             ))}
           </Paper>

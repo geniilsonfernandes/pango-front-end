@@ -62,7 +62,19 @@ export const ListHeader: React.FC<ListHeaderProps> = ({ list }) => {
 
   return (
     <Flex align="center" justify="space-between" gap="xs">
-      <Title order={1} fz="xl">
+      <Title
+        order={1}
+        fz={{
+          base: 'md',
+          sm: 'lg',
+        }}
+        style={{
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          maxWidth: '60%',
+        }}
+      >
         {list.title}
       </Title>
       <ListActions

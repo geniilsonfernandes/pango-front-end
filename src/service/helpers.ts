@@ -6,7 +6,7 @@ export const successMessage = (message: string) => {
     title: 'Success',
     message,
     color: 'green',
-    position: 'bottom-left',
+    position: 'top-left',
   });
 };
 
@@ -15,6 +15,6 @@ export const errorMessage = (message: string) => {
     title: 'Error',
     message,
     color: 'red',
-    position: 'bottom-left',
+    position: 'top-left',
   });
 };

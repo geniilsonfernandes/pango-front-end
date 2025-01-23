@@ -383,12 +383,38 @@ const DeleteAccount: React.FC = () => {
 };
 
 const UserSettings: React.FC = () => {
-  const { isAnonymous } = useUserStore();
+  const { isAnonymous, logout, login } = useUserStore();
   const { openModal } = useModalStore();
+  const queryClient = useQueryClient();
+  const { closeAllModals } = useModalStore();
+
+  // mutations
+  const { mutate: createAnonymous } = useCreateAnonymous();
+
+  // handles
+  const handleLogout = () => {
+    logout();
+    createAnonymous(undefined, {
+      onSuccess: (data) => {
+        login(data.user, data.session);
+        closeAllModals();
+        queryClient.invalidateQueries();
+      },
+    });
+  };
   return (
     <Stack gap="xs">
       {!isAnonymous && (
         <Group justify="flex-end">
+          <Button
+            justify="flex-start"
+            variant="subtle"
+            color="red"
+            leftSection={<IconLogout2 size={16} />}
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
           <DeleteAccount />
         </Group>
       )}
@@ -425,6 +451,7 @@ const GeneralSettings: React.FC = () => {
         <Flex gap="xs" pt="xs">
           {themes.map((theme) => (
             <ActionIcon
+              key={theme.id}
               size="md"
               radius="xl"
               color={theme.id === selectedTheme.id ? 'violet' : 'gray'}
@@ -592,21 +619,24 @@ export const SettingsModal: React.FC<SettingsModalProps> = (props) => {
 
   const renderSelectOption: SelectProps['renderOption'] = ({ option, checked }) => (
     <Group flex="1" gap="xs">
+      {menus.find((menu) => menu.value === option.value)?.icon}
       {option.label}
       {checked && <IconCheck style={{ marginInlineStart: 'auto' }} {...iconProps} />}
     </Group>
   );
 
   return (
-    <Modal size="xl" title="Settings" {...props}>
-      <Flex gap="md" mih="80vh" direction={{ base: 'column', md: 'row' }}>
-        <Stack justify="space-between">
-          <Select
-            display="none"
-            data={menus}
-            defaultValue="general"
-            renderOption={renderSelectOption}
-          />
+    <Modal size="lg" title="Settings" {...props}>
+      <Select
+        data={menus}
+        renderOption={renderSelectOption}
+        value={tab}
+        onChange={(value) => setTab((value as (typeof menus)[number]['value']) || 'general')}
+        display={{ base: 'block', md: 'none' }}
+        mb="md"
+      />
+      <Flex gap="md" mih={{ base: '60vh', md: '70vh' }} direction={{ base: 'column', md: 'row' }}>
+        <Stack justify="space-between" display={{ base: 'none', md: 'flex' }}>
           <Stack w="200" gap="xxs">
             {menus.map((menu) => (
               <Button

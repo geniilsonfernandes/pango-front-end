@@ -1,13 +1,14 @@
-import React, { useMemo, useState } from 'react';
+import { Product } from '@/service/models/types';
+import { CurrencyMode, formatCurrency } from '@/utils/formatCurrency';
 import { Button, Card, Checkbox, CheckboxProps, Group, Text, Title, Tooltip } from '@mantine/core';
 import { useDebouncedCallback } from '@mantine/hooks';
-import { ShoppingItem } from '@/service/api';
-import { CurrencyMode, formatCurrency } from '@/utils/formatCurrency';
+import React, { useMemo, useState } from 'react';
 import classes from './ProductCheckbox.module.css';
+
 
 export type ProductCheckboxProps = {
   name: string;
-  shoppingItem?: ShoppingItem;
+  product?: Product;
   currency?: CurrencyMode;
   showPrice?: boolean;
   onCheck?: () => void;
@@ -20,7 +21,7 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
   checked = false,
   opacity,
   name,
-  shoppingItem,
+  product,
   currency = 'br',
   showPrice = false,
   onPriceClick,
@@ -30,11 +31,11 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
   const [check, setCheck] = useState(checked);
 
   const value = useMemo(() => {
-    if (shoppingItem) {
-      return formatCurrency((shoppingItem.quantity || 0) * (shoppingItem.price || 0), currency);
+    if (product) {
+      return formatCurrency((product.quantity || 0) * (product.price || 0), currency);
     }
     return 0;
-  }, [currency, shoppingItem]);
+  }, [currency, product]);
 
   const handleSearch = useDebouncedCallback(() => {
     onCheck?.();
@@ -59,15 +60,25 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
             }}
           />
         </Tooltip>
-        <Title order={3} fz="sm" fw={500}>
+        <Title
+          order={3}
+          fz="sm"
+          fw={500}
+          style={{
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            maxWidth: '80%',
+          }}
+        >
           {name}
         </Title>
       </Group>
       <Group gap="xs">
         <Text c="dimmed" fz="xs" pl="xs" fw={500}>
-          {shoppingItem?.quantity}
+          {product?.quantity}
         </Text>
-        {shoppingItem?.unit && (
+        {product?.unit && (
           <Button
             c="gray"
             fz="xs"
@@ -78,7 +89,7 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
             radius="sm"
             onClick={onPriceClick}
           >
-            {shoppingItem?.unit}
+            {product?.unit}
           </Button>
         )}
         {showPrice && (
