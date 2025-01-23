@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-type ModalKey = 'auth' | 'settings' | 'profile' | 'custom'; // Adicione os nomes dos modais aqui.
+type ModalKey = 'auth' | 'settings' | 'profile' | 'custom' | 'welcoming';
 
 type ModalState = {
   modals: Record<ModalKey, boolean>;
@@ -16,12 +16,14 @@ const useModalStore = create<ModalState>((set) => ({
     settings: false,
     profile: false,
     custom: false,
+    welcoming: false,
   },
   modalProps: {
     auth: {},
     settings: {},
     profile: {},
     custom: {},
+    welcoming: {},
   },
   openModal: (key, props = {}) =>
     set((state) => ({
@@ -40,12 +42,14 @@ const useModalStore = create<ModalState>((set) => ({
         settings: false,
         profile: false,
         custom: false,
+        welcoming: false,
       },
       modalProps: {
         auth: {},
         settings: {},
         profile: {},
         custom: {},
+        welcoming: {},
       },
     })),
 }));

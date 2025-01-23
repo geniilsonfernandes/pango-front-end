@@ -1,36 +1,25 @@
 import { useEffect, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { Outlet } from 'react-router-dom';
 import { Box, Flex } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { useCreateAnonymous } from '@/service/queries/user';
 import useModalStore from '@/store/modalStore';
 import useUserStore from '@/store/userStore';
 import { AuthenticationModal } from '../AuthenticationModal/AuthenticationModal';
 import { MobileNavigation } from '../MobileNavigation/MobileNavigation';
 import { SettingsModal } from '../SettingsModal/SettingsModal';
 import { SideNavigation } from '../SideNavigation/SideNavigation';
+import { Welcoming } from '../Welcoming/Welcoming';
 import classes from './AppWrapper.module.css';
 
 export const AppWrapper = () => {
   const [colapsed, setCollapsed] = useState(false);
-  const { modals, closeAllModals } = useModalStore();
-  const { user, login } = useUserStore();
-  const queryClient = useQueryClient();
+  const { modals, closeAllModals, openModal, closeModal } = useModalStore();
+  const { user } = useUserStore();
   const isTablet = useMediaQuery('(max-width: 768px)');
-
-  // mutations
-  const { mutate: createAnonymous } = useCreateAnonymous();
 
   useEffect(() => {
     if (!user) {
-      createAnonymous(undefined, {
-        onSuccess: (data) => {
-          login(data.user, data.session);
-          closeAllModals();
-          queryClient.invalidateQueries();
-        },
-      });
+      openModal('welcoming');
     }
   }, []);
 
@@ -67,20 +56,22 @@ export const AppWrapper = () => {
         )}
         <Outlet />
 
+        <Welcoming opened={modals.welcoming} onClose={() => closeAllModals()} />
+
         <AuthenticationModal
           opened={modals.auth}
-          onClose={closeAllModals}
+          onClose={() => closeModal('auth')}
           size="xl"
           withCloseButton={false}
-          zIndex={200}
+          zIndex={400}
         />
         <SettingsModal
           opened={modals.settings || modals.profile}
-          onClose={closeAllModals}
-          zIndex={100}
+          onClose={() => closeModal('settings')}
+          zIndex={200}
         />
       </Flex>
-      {isTablet && <MobileNavigation />}
+      {isTablet && user && <MobileNavigation />}
     </>
   );
 };

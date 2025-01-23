@@ -20,7 +20,8 @@ import {
 import { useForm, zodResolver } from '@mantine/form';
 import { useToggle } from '@mantine/hooks';
 import { useAuthenticate } from '@/service/queries/Authentication';
-import { useCreateUser } from '@/service/queries/user';
+import { useCreateAnonymous, useCreateUser } from '@/service/queries/user';
+import useModalStore from '@/store/modalStore';
 import useUserStore from '@/store/userStore';
 import { Logo } from '../Logo/Logo';
 
@@ -33,6 +34,7 @@ const authenticationSchema = z.object({
 });
 
 export const AuthenticationModal: React.FC<AuthenticationModalProps> = (props) => {
+  const { closeAllModals } = useModalStore();
   const queryClient = useQueryClient();
   const [value, toggle] = useToggle(['sign in', 'sign up'] as const);
 
@@ -42,6 +44,7 @@ export const AuthenticationModal: React.FC<AuthenticationModalProps> = (props) =
   // mutation
   const { mutate: createUser, isLoading: isCreating } = useCreateUser();
   const { mutate: authenticate, isLoading: isAuthenticating } = useAuthenticate();
+  const { mutate: createAnonymous, isLoading: isCreatingAnonymous } = useCreateAnonymous();
 
   // Form
   const form = useForm({
@@ -82,11 +85,24 @@ export const AuthenticationModal: React.FC<AuthenticationModalProps> = (props) =
           if (data) {
             props.onClose();
             login(data.user, data.session);
+            closeAllModals();
           }
           queryClient.invalidateQueries();
         },
       });
     }
+  };
+
+  // handles
+
+  const createAnonymousUser = () => {
+    createAnonymous(undefined, {
+      onSuccess: (data) => {
+        login(data.user, data.session);
+        closeAllModals();
+        queryClient.invalidateQueries();
+      },
+    });
   };
 
   return (
@@ -101,7 +117,12 @@ export const AuthenticationModal: React.FC<AuthenticationModalProps> = (props) =
       }}
     >
       <Flex gap="md" direction={{ base: 'column', md: 'row' }}>
-        <Card bg="dark.8" display={{ base: 'none', md: 'block' }} w="100%" flex={1}>
+        <Card
+          bg="light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-6))"
+          display={{ base: 'none', md: 'block' }}
+          w="100%"
+          flex={1}
+        >
           <Logo />
           <Title order={4} mt="md">
             Welcome to Pango
@@ -150,10 +171,11 @@ export const AuthenticationModal: React.FC<AuthenticationModalProps> = (props) =
                   </Button>
                   {value === 'sign in' && (
                     <Button
-                      onClick={() => props.onClose()}
+                      onClick={createAnonymousUser}
                       type="button"
                       variant="outline"
                       fullWidth
+                      loading={isCreatingAnonymous}
                     >
                       Continue without sign in
                     </Button>
