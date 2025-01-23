@@ -1,4 +1,4 @@
-import { IconClipboardList, IconSettings, IconWorldSearch } from '@tabler/icons-react';
+import { IconClipboardList, IconSettings, IconTrash, IconWorldSearch } from '@tabler/icons-react';
 import { NavLink } from 'react-router-dom';
 import { Button, Flex, Group, Paper, Text } from '@mantine/core';
 import useModalStore from '@/store/modalStore';
@@ -53,7 +53,7 @@ export const MobileNavigation = () => {
                   label: { flexDirection: 'column', gap: 4 },
                 }}
               >
-                <IconClipboardList size={22} />
+                <IconWorldSearch size={22} />
                 <Text size="xs">Explore</Text>
               </Button>
             )}
@@ -71,8 +71,8 @@ export const MobileNavigation = () => {
                   label: { flexDirection: 'column', gap: 4 },
                 }}
               >
-                <IconWorldSearch size={22} />
-                <Text size="xs">Explore</Text>
+                <IconTrash size={22} />
+                <Text size="xs">Trash</Text>
               </Button>
             )}
           </NavLink>
