@@ -25,7 +25,7 @@ export const AppWrapper = () => {
   });
 
   useEffect(() => {
-    if (!data) {
+    if (!data && !user) {
       logout();
       openModal('welcoming');
     }

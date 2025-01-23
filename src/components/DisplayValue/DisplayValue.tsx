@@ -11,13 +11,13 @@ export const DisplayValue: React.FC<DisplayValueProps> = ({ value, label, ...pro
     <Box {...props}>
       <Text fz={{
         base: rem(10),
-        sm: rem(14),
+        sm: rem(12),
       }} tt="uppercase" fw={700} c="dimmed">
         {label}
       </Text>
       <Text fz={{
-        base: rem(12),
-        sm: rem(15),
+        base: rem(8),
+        sm: rem(12),
       }} fw={700}>
         {value}
       </Text>

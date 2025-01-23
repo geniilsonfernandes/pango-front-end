@@ -122,6 +122,7 @@ export const AuthenticationModal: React.FC<AuthenticationModalProps> = (props) =
           display={{ base: 'none', md: 'block' }}
           w="100%"
           flex={1}
+          mt="md"
         >
           <Logo />
           <Title order={4} mt="md">

@@ -22,7 +22,8 @@ import {
   Title,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { List } from '@/service/models/types';
+import { notifications } from '@mantine/notifications';
+import { List, Product } from '@/service/models/types';
 import { useDeleteList } from '@/service/queries/list';
 import { ListActions } from '../ListActions/ListActions';
 import { DeleteConfirmation, ListForm } from '../ListForm/ListForm';
@@ -30,16 +31,18 @@ import { PrintableList } from '../PrintableList/PrintableList';
 
 type ListHeaderProps = {
   list: List;
+  products: Product[];
 };
 
-export const ListHeader: React.FC<ListHeaderProps> = ({ list }) => {
+export const ListHeader: React.FC<ListHeaderProps> = ({ list, products }) => {
   const navigate = useNavigate();
   const [opened, { open, close }] = useDisclosure();
   const [openedShare, { open: openShare, close: closeShare }] = useDisclosure();
   const [openedCopy, { open: openCopy, close: closeCopy }] = useDisclosure();
   const [openedDelete, { open: openDelete, close: closeDelete }] = useDisclosure();
   const [openedPrint, { open: openPrint, close: closePrint }] = useDisclosure();
-
+  const contentRef = useRef<HTMLDivElement>(null);
+  const reactToPrintFn = useReactToPrint({ contentRef });
   const [printSettings, setPrintSettings] = useState<string[]>(['grouped']);
 
   // Mutations
@@ -57,8 +60,50 @@ export const ListHeader: React.FC<ListHeaderProps> = ({ list }) => {
     }
   };
 
-  const contentRef = useRef<HTMLDivElement>(null);
-  const reactToPrintFn = useReactToPrint({ contentRef });
+  const generateListUrl = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(
+      () => notifications.show({ message: 'URL copiada para o clipboard!', color: 'green' }),
+      (err) => notifications.show({ message: `Erro ao copiar URL: ${err}`, color: 'red' })
+    );
+  };
+
+  const generateShareMessage = (list: List, products: Product[]): string => {
+    let message = `*${list.title}*\n\n${list.description}\n\nItens da lista:\n`;
+
+    products.forEach((product) => {
+      message += `• ${product.name} (${product.quantity} ${product?.unit || 'unit'}) - R$${product.price.toFixed(2)}\n`;
+    });
+
+    if (list.budget) {
+      message += `\n*Orçamento Total:* R$${list.budget.toFixed(2)}\n`;
+    }
+
+    const url = window.location.href;
+    message += `\nConfira a lista completa aqui: ${url}`;
+
+    return message;
+  };
+
+  const shareListOnPlatform = (platform: 'whatsapp' | 'telegram') => {
+    const message = generateShareMessage(list, products);
+
+    const url =
+      platform === 'whatsapp'
+        ? `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`
+        : `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(message)}`;
+
+    window.open(url, '_blank');
+  };
+
+  const copyListToClipboard = () => {
+    const message = generateShareMessage(list, products);
+
+    navigator.clipboard.writeText(message).then(
+      () => notifications.show({ message: 'Mensagem copiada para o clipboard!', color: 'green' }),
+      (err) => notifications.show({ message: `Erro ao copiar mensagem: ${err}`, color: 'red' })
+    );
+  };
 
   return (
     <Flex align="center" justify="space-between" gap="xs">
@@ -143,25 +188,33 @@ export const ListHeader: React.FC<ListHeaderProps> = ({ list }) => {
         <Divider my="md" />
         <Group justify="space-between">
           <Stack gap="xs" align="center">
-            <ActionIcon onClick={closeShare} size="input-lg">
+            <ActionIcon onClick={generateListUrl} size="input-lg">
               <IconLink />
             </ActionIcon>
             <Text size="xs">Copy link</Text>
           </Stack>
           <Stack gap="xs" align="center">
-            <ActionIcon onClick={closeShare} color="teal" size="input-lg">
+            <ActionIcon onClick={copyListToClipboard} color="teal" size="input-lg">
               <IconList />
             </ActionIcon>
             <Text size="xs">Copy text</Text>
           </Stack>
           <Stack gap="xs" align="center">
-            <ActionIcon onClick={closeShare} color="blue" size="input-lg">
+            <ActionIcon
+              onClick={() => shareListOnPlatform('telegram')}
+              color="blue"
+              size="input-lg"
+            >
               <IconBrandTelegram />
             </ActionIcon>
             <Text size="xs">Telegram</Text>
           </Stack>
           <Stack gap="xs" align="center">
-            <ActionIcon onClick={closeShare} color="green" size="input-lg">
+            <ActionIcon
+              onClick={() => shareListOnPlatform('whatsapp')}
+              color="green"
+              size="input-lg"
+            >
               <IconBrandWhatsapp />
             </ActionIcon>
             <Text size="xs">WhatsApp</Text>

@@ -45,7 +45,7 @@ export const Header: React.FC<ListProps> = ({ list, products }) => {
               : '',
         }}
       >
-        <ListHeader list={list} />
+        <ListHeader list={list} products={products} />
         <AnimatePresence>
           {showPrice && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
