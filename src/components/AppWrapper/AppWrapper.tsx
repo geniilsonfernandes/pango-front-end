@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Outlet } from 'react-router-dom';
-import { Box, Flex } from '@mantine/core';
+import { Box, Center, Flex, Loader } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
+import { userAPI } from '@/service/api';
 import useModalStore from '@/store/modalStore';
 import useUserStore from '@/store/userStore';
 import { AuthenticationModal } from '../AuthenticationModal/AuthenticationModal';
@@ -14,11 +16,17 @@ import classes from './AppWrapper.module.css';
 export const AppWrapper = () => {
   const [colapsed, setCollapsed] = useState(false);
   const { modals, closeAllModals, openModal, closeModal } = useModalStore();
-  const { user } = useUserStore();
+  const { user, logout } = useUserStore();
   const isTablet = useMediaQuery('(max-width: 768px)');
+  const { isLoading, data } = useQuery({
+    queryKey: ['user', 'verify'],
+    queryFn: () => userAPI?.verifyToken(),
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
-    if (!user) {
+    if (!data) {
+      logout();
       openModal('welcoming');
     }
   }, []);
@@ -30,6 +38,14 @@ export const AppWrapper = () => {
       setCollapsed(false);
     }
   }, [isTablet]);
+
+  if (isLoading) {
+    return (
+      <Center h="100vh">
+        <Loader />
+      </Center>
+    );
+  }
 
   return (
     <>

@@ -208,6 +208,15 @@ class UserAPI implements IUserAPI {
       throw new Error('Could not authenticate user');
     }
   }
+
+  async verifyToken(): Promise<void> {
+    try {
+      await api.get(`${this.route}/verify-token`);
+    } catch (error) {
+      console.error('Failed to verify token', error);
+      throw new Error('Could not verify token');
+    }
+  }
 }
 
 export const userAPI = new UserAPI();
