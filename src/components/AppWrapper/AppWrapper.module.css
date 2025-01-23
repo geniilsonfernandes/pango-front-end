@@ -1,0 +1,17 @@
+
+
+.sideNav {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+
+[data-closed="true"] {
+    position: fixed;
+    top: 0;
+    left: -200px;
+    transition: left 0.3s ease-in-out;
+}
+[data-closed="true"]:hover {
+    left: 0;
+}

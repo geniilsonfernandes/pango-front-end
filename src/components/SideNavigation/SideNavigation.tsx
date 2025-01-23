@@ -1,6 +1,7 @@
 import {
   IconClipboardList,
   IconLayoutSidebarLeftCollapseFilled,
+  IconLayoutSidebarRightCollapseFilled,
   IconSettings,
   IconTrash,
   IconWorldSearch,
@@ -12,7 +13,12 @@ import useUserStore from '@/store/userStore';
 import { Logo } from '../Logo/Logo';
 import { UserButton } from '../UserButton/UserButton';
 
-export const SideNavigation = () => {
+type SideNavigationProps = {
+  onCollapse: () => void;
+  collapsed: boolean;
+};
+
+export const SideNavigation: React.FC<SideNavigationProps> = ({ collapsed, onCollapse }) => {
   const { openModal } = useModalStore();
   const { user, isAnonymous } = useUserStore();
 
@@ -23,7 +29,6 @@ export const SideNavigation = () => {
       w="100%"
       h="100%"
       withBorder
-      shadow="md"
       aria-expanded
       styles={{
         root: {
@@ -36,11 +41,16 @@ export const SideNavigation = () => {
       <ActionIcon
         variant="filled"
         size="lg"
-        aria-expanded="true"
+        aria-expanded={collapsed}
         aria-controls="sidebar-content"
         style={{ position: 'absolute', top: rem(18), right: rem(-14) }}
+        onClick={onCollapse}
       >
-        <IconLayoutSidebarLeftCollapseFilled size={22} stroke={1} />
+        {!collapsed ? (
+          <IconLayoutSidebarLeftCollapseFilled size={22} stroke={1} />
+        ) : (
+          <IconLayoutSidebarRightCollapseFilled size={22} stroke={1} />
+        )}
       </ActionIcon>
 
       <Stack gap="xxs" p="xs" component="nav" aria-label="Main navigation">

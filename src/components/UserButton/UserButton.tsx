@@ -1,5 +1,5 @@
 import { IconChevronRight, IconLogin2, IconUser } from '@tabler/icons-react';
-import { Group, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
+import { Box, Group, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
 import { User } from '@/service/models/types';
 import classes from './UserButton.module.css';
 
@@ -20,15 +20,31 @@ export const UserButton: React.FC<UserButtonProps> = ({ user, ...props }) => {
             <IconUser size={20} />
           </ThemeIcon>
 
-          <div style={{ flex: 1 }}>
-            <Text size="sm" fw={500}>
+          <Box flex={1} w={90}>
+            <Text
+              size="sm"
+              fw={500}
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
               {user?.name || user?.email}
             </Text>
 
-            <Text c="dimmed" size="xs">
+            <Text
+              c="dimmed"
+              size="xs"
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
               {user?.email}
             </Text>
-          </div>
+          </Box>
 
           <IconChevronRight size={14} stroke={1.5} />
         </Group>
