@@ -13,7 +13,7 @@ import useModalStore from './store/modalStore';
 import useUserStore from './store/userStore';
 
 const AppWrapper = () => {
-  const { modals, closeAllModals, closeModal } = useModalStore();
+  const { modals, closeAllModals } = useModalStore();
   const { user, login } = useUserStore();
   const queryClient = useQueryClient();
 
@@ -47,11 +47,16 @@ const AppWrapper = () => {
 
       <AuthenticationModal
         opened={modals.auth}
-        onClose={() => closeModal('auth')}
+        onClose={closeAllModals}
         size="xl"
         withCloseButton={false}
+        zIndex={1000}
       />
-      <SettingsModal opened={modals.settings || modals.profile} onClose={closeAllModals} />
+      <SettingsModal
+        opened={modals.settings || modals.profile}
+        onClose={closeAllModals}
+        zIndex={100}
+      />
     </Flex>
   );
 };

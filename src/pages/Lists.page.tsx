@@ -44,7 +44,13 @@ export const ListsPage = () => {
     );
   }
 
-  console.log(lists);
+  if (!lists) {
+    return (
+      <Center flex={1} h="100vh">
+        No lists found
+      </Center>
+    );
+  }
 
   return (
     <Stack flex={1} p="md">

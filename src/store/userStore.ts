@@ -5,6 +5,7 @@ import { Session, User } from '@/service/models/types';
 type UserState = {
   isLoggedIn: boolean;
   user?: User;
+  setUser: (user: User) => void;
   session?: Session;
 
   isAnonymous: boolean;
@@ -30,6 +31,7 @@ const useUserStore = create<UserState>()(
     (set) => ({
       isLoggedIn: false,
       user: undefined,
+      setUser: (user) => set({ user }),
       session: undefined,
       isAnonymous: false,
       login: (user, session) => {

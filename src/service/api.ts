@@ -125,35 +125,89 @@ export const productAPI = new ProductAPI();
 
 // ---- user methods
 
-type authenticateResponse = {
+type AuthenticateResponse = {
   user: User;
   session: Session;
 };
 
-class UserAPI {
-  private baseURL: string;
-  private route = 'user';
+interface IUserAPI {
+  create: (data: CreateUserPayload) => Promise<User>;
+  edit: (data: EditUserPayload) => Promise<User>;
+  changePassword: (data: ChangePasswordPayload) => Promise<void>;
+  delete: (id: string) => Promise<void>;
+  createAnonymous: (data?: CreateAnonymousPayload) => Promise<AuthenticateResponse>;
+  authenticate: (data: AuthenticatePayload) => Promise<AuthenticateResponse>;
+}
 
-  constructor(baseURL: string) {
-    this.baseURL = baseURL;
+// Tipos para os payloads
+export type CreateUserPayload = { email: string; password: string };
+export type EditUserPayload = { id: string; name: string; email: string };
+export type ChangePasswordPayload = { id: string; oldPassword: string; newPassword: string };
+export type CreateAnonymousPayload = { name?: string };
+export type AuthenticatePayload = { email: string; password: string };
+
+class UserAPI implements IUserAPI {
+  private readonly route = '/user';
+
+  async create(data: CreateUserPayload): Promise<User> {
+    try {
+      const response = await api.post<User>(`${this.route}`, data);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to create user', error);
+      throw new Error('Could not create user');
+    }
   }
 
-  async create(data: { email: string; password: string }): Promise<void> {
-    await axios.post(`${this.baseURL}/${this.route}`, data);
+  async edit(data: EditUserPayload): Promise<User> {
+    try {
+      const { id, ...rest } = data;
+      const response = await api.put<User>(`${this.route}/${id}`, rest);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to edit user', error);
+      throw new Error('Could not edit user');
+    }
   }
 
-  async createAnonymous(data?: { name: string }): Promise<authenticateResponse> {
-    const response = await axios.post<authenticateResponse>(
-      `${this.baseURL}/${this.route}/anonymous`,
-      data
-    );
-    return response.data;
+  async changePassword(data: ChangePasswordPayload): Promise<void> {
+    try {
+      const { id, ...rest } = data;
+      await api.patch(`${this.route}/${id}/password`, rest);
+    } catch (error) {
+      console.error('Failed to change user password', error);
+      throw new Error('Could not change password');
+    }
   }
 
-  async authenticate(data: { email: string; password: string }): Promise<authenticateResponse> {
-    const response = await axios.post<authenticateResponse>(`${this.baseURL}/authenticate`, data);
-    return response.data;
+  async delete(id: string): Promise<void> {
+    try {
+      await api.delete(`${this.route}/${id}`);
+    } catch (error) {
+      console.error('Failed to delete user', error);
+      throw new Error('Could not delete user');
+    }
+  }
+
+  async createAnonymous(data?: CreateAnonymousPayload): Promise<AuthenticateResponse> {
+    try {
+      const response = await api.post<AuthenticateResponse>(`${this.route}/anonymous`, data);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to create anonymous user', error);
+      throw new Error('Could not create anonymous user');
+    }
+  }
+
+  async authenticate(data: AuthenticatePayload): Promise<AuthenticateResponse> {
+    try {
+      const response = await api.post<AuthenticateResponse>(`/authenticate`, data);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to authenticate user', error);
+      throw new Error('Could not authenticate user');
+    }
   }
 }
 
-export const userAPI = new UserAPI('http://localhost:3000');
+export const userAPI = new UserAPI();
