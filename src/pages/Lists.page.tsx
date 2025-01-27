@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { IconPlus } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Center, Flex, Grid, Loader, Modal, Stack, Title } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useDocumentTitle } from '@mantine/hooks';
 import { ListCard } from '@/components/ListCard/ListCard';
 import { DeleteConfirmation, ListForm } from '@/components/ListForm/ListForm';
 import { List } from '@/service/models/types';
 import { useDeleteList, useList } from '@/service/queries/list';
 
 export const ListsPage = () => {
+  useDocumentTitle('pango | Lists');
   const { data: lists, isLoading: isListsLoading } = useList();
   const navigate = useNavigate();
 

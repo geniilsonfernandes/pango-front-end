@@ -16,6 +16,7 @@ import {
   ThemeIcon,
   Title,
 } from '@mantine/core';
+import { useDocumentTitle } from '@mantine/hooks';
 import { useListItems, useShareList } from '@/service/queries/list';
 import { useEditUser } from '@/service/queries/user';
 import useUserStore from '@/store/userStore';
@@ -25,6 +26,7 @@ type Params = {
 };
 
 export function AcceptListPage() {
+  useDocumentTitle(`pango | Accept List`);
   const { user } = useUserStore();
   const { id } = useParams<Params>();
   const navigate = useNavigate();

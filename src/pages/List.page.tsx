@@ -1,7 +1,7 @@
 import { IconPlus } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ActionIcon, Box, Card, Center, Drawer, Flex, Loader, rem, Stack } from '@mantine/core';
-import { useDisclosure, useMediaQuery } from '@mantine/hooks';
+import { useDisclosure, useDocumentTitle, useMediaQuery } from '@mantine/hooks';
 import { Header, List } from '@/components/List/List';
 import { ListManager } from '@/components/ListManager/ListManager';
 import { useListItems } from '@/service/queries/list';
@@ -46,6 +46,7 @@ export function ListPage() {
     );
   }
 
+  useDocumentTitle(`pango | ${list?.data?.title}`);
   return (
     <>
       <Flex flex={1}>

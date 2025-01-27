@@ -1,8 +1,10 @@
 import { Center, Grid, Loader, Stack, Title } from '@mantine/core';
+import { useDocumentTitle } from '@mantine/hooks';
 import { ListCard } from '@/components/ListCard/ListCard';
 import { useDeleteList, useList, useRestoreList } from '@/service/queries/list';
 
 export const ListsDeletedPage = () => {
+  useDocumentTitle(`pango | Trash`);
   // query
   const { data: lists, isLoading: isListsLoading } = useList({
     deleted: true,

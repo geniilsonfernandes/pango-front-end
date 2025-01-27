@@ -17,12 +17,13 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useDocumentTitle } from '@mantine/hooks';
 import { ListForm } from '@/components/ListForm/ListForm';
 import { type List } from '@/service/models/types';
 import { useList } from '@/service/queries/list';
 
 export const ExplorePage = () => {
+  useDocumentTitle(`pango | Explore`);
   const { data: lists, isLoading: isListsLoading } = useList({
     isPublic: true,
   });
