@@ -2,16 +2,16 @@ import { useMemo } from 'react';
 import { Card, Flex, Progress } from '@mantine/core';
 import { List, Product } from '@/service/models/types';
 import { calculateStatus } from '@/utils/calculateStatus';
-import { CurrencyMode, formatCurrency } from '@/utils/formatCurrency';
+import { formatCurrency } from '@/utils/formatCurrency';
 import { DisplayValue } from '../DisplayValue/DisplayValue';
 
 type ListStatsProps = {
   list: List;
   products: Product[];
-  currencyMode?: CurrencyMode;
+  currencyMode?: string;
 };
 
-export const ListStats: React.FC<ListStatsProps> = ({ list, products, currencyMode = 'br' }) => {
+export const ListStats: React.FC<ListStatsProps> = ({ list, products, currencyMode = 'BRL' }) => {
   const status = useMemo(() => {
     return calculateStatus(products);
   }, [products]);

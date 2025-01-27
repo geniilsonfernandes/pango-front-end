@@ -2,10 +2,10 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export const currencies = [
-  { value: 'br', label: 'Brazilian Real (BRL)' },
-  { value: 'us', label: 'United States Dollar (USD)' },
-  { value: 'eu', label: 'Euro (EUR)' },
-  { value: 'uk', label: 'British Pound (GBP)' },
+  { value: 'BRL', label: 'Brazilian Real (BRL)' },
+  { value: 'USD', label: 'United States Dollar (USD)' },
+  { value: 'EUR', label: 'Euro (EUR)' },
+  { value: 'GBP', label: 'British Pound (GBP)' },
 ];
 
 export type Theme = {

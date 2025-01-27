@@ -216,9 +216,6 @@ const EditablePasswordInput: React.FC = () => {
 
   // Handlers
   const handleChangePassword = (values: typeof form.values) => {
-    const data = editUserPasswordSchema.parse(values);
-    console.log({ data, values });
-
     changePassword(
       {
         id: user?.id as string,
@@ -513,7 +510,7 @@ const ListsSettings: React.FC = () => {
         description="Choose the currency you want to use"
         defaultValue="br"
         value={currency}
-        onChange={(value) => setCurrency(value || 'br')}
+        onChange={(value) => setCurrency(value || 'BRL')}
         data={currencies}
       />
       <Switch
@@ -550,13 +547,12 @@ const ListsSettings: React.FC = () => {
 };
 
 const About: React.FC = () => {
-  // Todo: Add changelog in the future
   const changeLog = [
     {
       version: '1.0.0',
-      date: new Date('2023-03-02'),
+      date: new Date('2025-01-27'),
       description: 'Initial release',
-      changes: ['Initial release'],
+      changes: ['First release of the app', 'Core functionality implemented and fully operational'],
     },
   ];
 

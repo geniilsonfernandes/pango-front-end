@@ -1,4 +1,3 @@
-import { IconBrandGoogle } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 import z from 'zod';
 import {
@@ -188,14 +187,14 @@ export const AuthenticationModal: React.FC<AuthenticationModalProps> = (props) =
           <Divider my="lg" label="or" />
 
           <Stack gap="xs">
-            <Button
+            {/* <Button
               onClick={close}
               variant="light"
               leftSection={<IconBrandGoogle size={18} />}
               fullWidth
             >
               Continue with Google
-            </Button>
+            </Button> */}
             <Box mt="xs">
               <Text size="sm" c="dimmed">
                 {value === 'sign in' ? ' Don`t have an account yet?' : 'Already have an account?'}

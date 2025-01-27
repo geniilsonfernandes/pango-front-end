@@ -8,7 +8,7 @@ import {
   IconTrash,
 } from '@tabler/icons-react';
 import { ActionIcon, Group, Menu, rem } from '@mantine/core';
-import { useListStore } from '@/store/listStore';
+import { useSettingsStore } from '@/store/settingsStore';
 
 type ListActionsProps = {
   onDelete: () => void;
@@ -24,7 +24,7 @@ export const ListActions: React.FC<ListActionsProps> = ({
   onPrint,
   onCopy,
 }) => {
-  const { setShowPrice, showPrice } = useListStore();
+  const { showPrice, setShowPrice } = useSettingsStore();
 
   return (
     <Group gap="xs">

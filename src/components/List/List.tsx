@@ -5,7 +5,7 @@ import { Box, Center, Group, Modal, Paper, Stack, Text, ThemeIcon } from '@manti
 import { useWindowScroll } from '@mantine/hooks';
 import { type List as ListType, type Product } from '@/service/models/types';
 import { usePatchProduct } from '@/service/queries/product';
-import { useListStore } from '@/store/listStore';
+import { useSettingsStore } from '@/store/settingsStore';
 import { categorizeProducts } from '@/utils/categorizeShoppingItems';
 import { ListHeader } from '../ListHeader/ListHeader';
 import { ListStats } from '../ListStats/ListStats';
@@ -20,7 +20,8 @@ type ListProps = {
 };
 
 export const Header: React.FC<ListProps> = ({ list, products }) => {
-  const { showPrice } = useListStore();
+  const { currency, showPrice } = useSettingsStore();
+
   const [scroll] = useWindowScroll();
 
   return (
@@ -50,7 +51,7 @@ export const Header: React.FC<ListProps> = ({ list, products }) => {
         <AnimatePresence>
           {showPrice && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <ListStats list={list} products={products} />
+              <ListStats list={list} products={products} currencyMode={currency} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -60,7 +61,7 @@ export const Header: React.FC<ListProps> = ({ list, products }) => {
 };
 
 export const List: React.FC<ListProps> = ({ products }) => {
-  const { showPrice } = useListStore();
+  const { currency, showPrice, showQuantities, showCategories } = useSettingsStore();
   const [productSelected, setProductSelected] = useState<Product>();
 
   // mutations
@@ -108,6 +109,9 @@ export const List: React.FC<ListProps> = ({ products }) => {
                 >
                   <ProductCheckbox
                     name={product.name}
+                    showQuantities={showQuantities}
+                    showCategories={showCategories}
+                    currency={currency}
                     product={product}
                     showPrice={showPrice}
                     onClick={() => setProductSelected(product)}
@@ -153,6 +157,9 @@ export const List: React.FC<ListProps> = ({ products }) => {
                 key={product.id}
                 product={product}
                 showPrice={showPrice}
+                showQuantities={showQuantities}
+                showCategories={showCategories}
+                currency={currency}
                 onClick={() => setProductSelected(product)}
                 onCheck={() =>
                   patchProduct({

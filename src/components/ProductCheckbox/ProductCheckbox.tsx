@@ -1,20 +1,31 @@
-import { Product } from '@/service/models/types';
-import { CurrencyMode, formatCurrency } from '@/utils/formatCurrency';
-import { Button, Card, Checkbox, CheckboxProps, Group, Text, Title, Tooltip } from '@mantine/core';
-import { useDebouncedCallback } from '@mantine/hooks';
 import React, { useMemo, useState } from 'react';
+import {
+  Button,
+  Card,
+  Checkbox,
+  CheckboxProps,
+  Group,
+  Stack,
+  Text,
+  Title,
+  Tooltip,
+} from '@mantine/core';
+import { useDebouncedCallback } from '@mantine/hooks';
+import { Product } from '@/service/models/types';
+import { formatCurrency } from '@/utils/formatCurrency';
 import classes from './ProductCheckbox.module.css';
-
 
 export type ProductCheckboxProps = {
   name: string;
   product?: Product;
-  currency?: CurrencyMode;
+  currency?: string;
   showPrice?: boolean;
   onCheck?: () => void;
   checked?: boolean;
   onPriceClick?: () => void;
   onClick?: () => void;
+  showQuantities: boolean;
+  showCategories: boolean;
 } & CheckboxProps;
 
 export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
@@ -22,11 +33,13 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
   opacity,
   name,
   product,
-  currency = 'br',
+  currency = 'BRL',
   showPrice = false,
   onPriceClick,
   onCheck,
   onClick,
+  showQuantities,
+  showCategories,
 }) => {
   const [check, setCheck] = useState(checked);
 
@@ -46,6 +59,8 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
     handleSearch();
   };
 
+  const shortenName = (name: string) => (name.length > 30 ? `${name.slice(0, 30)}...` : name);
+
   return (
     <Card opacity={opacity} className={classes.card} onClick={onClick}>
       <Group gap="xs">
@@ -60,24 +75,23 @@ export const ProductCheckbox: React.FC<ProductCheckboxProps> = ({
             }}
           />
         </Tooltip>
-        <Title
-          order={3}
-          fz="sm"
-          fw={500}
-          style={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            maxWidth: '80%',
-          }}
-        >
-          {name}
-        </Title>
+        <Stack gap="1" flex={1}>
+          <Title order={3} fz="sm" fw={500}>
+            {shortenName(name)}
+          </Title>
+          {showCategories && product?.category && (
+            <Text c="dimmed" fz="xs" fw={500}>
+              {showCategories && product?.category}
+            </Text>
+          )}
+        </Stack>
       </Group>
       <Group gap="xs">
-        <Text c="dimmed" fz="xs" pl="xs" fw={500}>
-          {product?.quantity}
-        </Text>
+        {showQuantities && (
+          <Text c="dimmed" fz="xs" pl="xs" fw={500}>
+            {product?.quantity}
+          </Text>
+        )}
         {product?.unit && (
           <Button
             c="gray"

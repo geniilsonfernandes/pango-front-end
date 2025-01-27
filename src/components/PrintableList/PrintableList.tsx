@@ -84,7 +84,7 @@ export const PrintableList: React.FC<PrintableListProps> = ({
 
       {showStatus && (
         <div className={classes.stats}>
-          <ListStats list={list} products={listItems} currencyMode="br" />
+          <ListStats list={list} products={listItems} currencyMode="BRL" />
         </div>
       )}
 
