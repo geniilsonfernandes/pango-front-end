@@ -5,7 +5,7 @@ import { Product, Session, User } from './models/types';
 // ---- list methods
 
 export const api = axios.create({
-  baseURL: 'http://192.168.10.106:3000', // Altere para sua API.
+  baseURL: import.meta.env.VITE_API_URL, // Altere para sua API.
 });
 
 api.interceptors.request.use((config) => {
