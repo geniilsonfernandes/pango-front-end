@@ -1,8 +1,8 @@
 import { IconCheckbox } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Text, Title } from '@mantine/core';
-import { ListDTO, ShoppingItem } from '@/service/api';
-import { List } from '@/service/models/types';
+import { ListDTO } from '@/service/api';
+import { List, Product } from '@/service/models/types';
 import { RQKEY as RQKEY_PRODUCT } from '../../service/queries/product';
 import { ListStats } from '../ListStats/ListStats';
 import { Logo } from '../Logo/Logo';
@@ -15,7 +15,7 @@ type PrintableListProps = {
   showStatus: boolean;
 };
 
-const Item: React.FC<{ item: ShoppingItem }> = ({ item }) => {
+const Item: React.FC<{ item: Product }> = ({ item }) => {
   const shortenName = (name: string) => (name.length > 30 ? `${name.slice(0, 30)}...` : name);
 
   return (
@@ -70,7 +70,7 @@ export const PrintableList: React.FC<PrintableListProps> = ({
   uncheckedOnly,
 }) => {
   const queryClient = useQueryClient();
-  const listItems = queryClient.getQueryData(RQKEY_PRODUCT(list.id)) as ShoppingItem[];
+  const listItems = queryClient.getQueryData(RQKEY_PRODUCT(list.id)) as Product[];
 
   const filterItems = (checked: boolean) =>
     listItems?.filter((item) => item.checked === checked) || [];

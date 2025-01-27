@@ -1,4 +1,4 @@
-import { ShoppingItem } from '@/service/api';
+import { Product } from '@/service/models/types';
 
 interface FilterOptions<T> {
   items: T[];
@@ -21,9 +21,6 @@ export const filterItems = <T>({ items, query, keys }: FilterOptions<T>): T[] =>
   );
 };
 
-export const findProductByName = (
-  products: ShoppingItem[],
-  name: string
-): ShoppingItem | undefined => {
+export const findProductByName = (products: Product[], name: string): Product | undefined => {
   return products.find((product) => product.name === name);
 };

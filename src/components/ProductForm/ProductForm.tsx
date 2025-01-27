@@ -16,7 +16,6 @@ import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 // import { useForm } from 'react-hook-form';
 import { categories } from '@/dummyData';
-import { ShoppingItem } from '@/service/api';
 import { Product } from '@/service/models/types';
 import { useDeleteProduct, useUpdateProduct } from '@/service/queries/product';
 
@@ -86,7 +85,7 @@ export const ProductForm: React.FC<FormProps> = ({ onCancel, product }) => {
     );
   };
 
-  const handleDeleteProduct = useCallback((item?: ShoppingItem) => {
+  const handleDeleteProduct = useCallback((item?: Product) => {
     if (item) {
       deleteProduct(
         {
