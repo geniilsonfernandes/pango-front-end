@@ -85,7 +85,7 @@ export const ListsPage = () => {
             <ListCard
               list={list}
               onClick={() => {
-                navigate(`/shopping-lists/${list.id}`);
+                navigate(`/list/${list.id}`);
               }}
               onEdit={() => {
                 setListSelected(list);

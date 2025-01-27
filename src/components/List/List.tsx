@@ -147,14 +147,15 @@ export const List: React.FC<ListProps> = ({ products }) => {
           </Paper>
         </RenderIf>
       </Stack>
-
-      <Modal
-        opened={!!productSelected}
-        onClose={() => setProductSelected(undefined)}
-        title={`${productSelected?.name}`}
-      >
-        <ProductForm product={productSelected} onCancel={() => setProductSelected(undefined)} />
-      </Modal>
+      {productSelected && (
+        <Modal
+          opened={!!productSelected}
+          onClose={() => setProductSelected(undefined)}
+          title={`${productSelected?.name}`}
+        >
+          <ProductForm product={productSelected} onCancel={() => setProductSelected(undefined)} />
+        </Modal>
+      )}
     </>
   );
 };

@@ -1,10 +1,10 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { loadSession } from '@/store/userStore';
-import { List, Product, Session, User } from './models/types';
+import { Product, Session, User } from './models/types';
 
 // ---- list methods
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: 'http://192.168.10.106:3000', // Altere para sua API.
 });
 
@@ -15,6 +15,28 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Função genérica de requisição de API
+async function makeApiRequest<T>(
+  method: 'get' | 'post' | 'patch' | 'delete' | 'put',
+  url: string,
+  data?: unknown
+): Promise<T> {
+  try {
+    const response = await api.request<T>({ method, url, data });
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+}
+
+export function handleApiError(error: unknown): never {
+  if (error instanceof AxiosError) {
+    const errorMessage = error.response?.data?.message || 'Unknown API error occurred';
+    throw new ApiError(errorMessage);
+  }
+  throw new Error('An unexpected error occurred');
+}
 
 export type ListDTO = {
   id: string;
@@ -32,45 +54,12 @@ export type CreateListDTO = {
   description?: string;
 };
 
-class ListAPI {
-  private route = '/list';
-
-  async create(data: CreateListDTO): Promise<ListDTO> {
-    const response = await api.post<ListDTO>(this.route, data);
-    return response.data;
-  }
-
-  async update(id: string, data: CreateListDTO): Promise<ListDTO> {
-    const response = await api.put<ListDTO>(`${this.route}/${id}`, data);
-    return response.data;
-  }
-
-  async get(id?: string): Promise<List> {
-    const response = await api.get<List>(`${this.route}/${id}`);
-    return response.data;
-  }
-
-  async delete(id: string): Promise<void> {
-    await api.delete(`${this.route}/${id}`);
-  }
-
-  async deletePermanent(id: string): Promise<void> {
-    await api.delete(`${this.route}/${id}/permanent`);
-  }
-
-  async restore(id: string): Promise<void> {
-    await api.post(`${this.route}/${id}/restore`);
-  }
-
-  async list(q: { deleted?: boolean } = {}): Promise<List[]> {
-    const response = await api.get<List[]>(this.route, {
-      params: { deleted: q.deleted },
-    });
-    return response.data;
+export class ApiError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ApiError';
   }
 }
-
-export const listAPI = new ListAPI();
 
 // products methods
 export type ProductDTO = {
@@ -83,44 +72,37 @@ export type ProductDTO = {
 };
 
 export interface ProductAPIinterface {
-  list: (listId?: string) => Promise<Product[]>;
+  list: (listId: string) => Promise<Product[]>;
   patch: (id: string, input: Partial<ProductDTO>) => Promise<Product>;
-  update: (id: string, input: Partial<ProductDTO>) => Promise<Product>;
-  create: (input: ProductDTO[]) => Promise<Product>;
-  delete: (id: string) => Promise<void>;
+  update: (id: string, input: Partial<ProductDTO>, listId: string) => Promise<Product>;
+  create: (input: ProductDTO[], listId: string) => Promise<Product>;
+  delete: (listId: string, id: string) => Promise<void>;
 }
+
 export class ProductAPI implements ProductAPIinterface {
   private route = '/product';
 
-  async delete(id: string): Promise<void> {
-    await api.delete(`${this.route}/${id}`);
+  async delete(listId: string, id: string): Promise<void> {
+    await makeApiRequest<void>('delete', `list/${listId}/products/${id}`);
   }
 
-  async list(listId?: string): Promise<Product[]> {
-    const response = await api.get<Product[]>(`${this.route}`, {
-      params: { list_id: listId },
-    });
-    return response.data;
+  async list(listId: string): Promise<Product[]> {
+    return makeApiRequest<Product[]>('get', `list/${listId}/products`);
   }
 
-  async patch(id: string, input: Partial<ProductDTO>): Promise<Product> {
-    const response = await api.patch<Product>(`${this.route}/${id}`, {
-      ...input,
-    });
-    return response.data;
-  }
-  async update(id: string, input: Partial<ProductDTO>): Promise<Product> {
-    const response = await api.patch<Product>(`${this.route}/${id}`, {
-      ...input,
-    });
-    return response.data;
+  async patch(id: string, input: Partial<ProductDTO>, listId?: string): Promise<Product> {
+    return makeApiRequest<Product>('patch', `list/${listId}/products/${id}`, input);
   }
 
-  async create(input: ProductDTO[]): Promise<Product> {
-    const response = await api.post<Product>(`${this.route}`, input);
-    return response.data;
+  async update(id: string, input: Partial<ProductDTO>, listId: string): Promise<Product> {
+    return makeApiRequest<Product>('patch', `list/${listId}/products/${id}`, input);
+  }
+
+  async create(input: ProductDTO[], listId: string): Promise<Product> {
+    return makeApiRequest<Product>('post', `list/${listId}/products`, input);
   }
 }
+
 export const productAPI = new ProductAPI();
 
 // ---- user methods
@@ -165,7 +147,6 @@ class UserAPI implements IUserAPI {
       const response = await api.put<User>(`${this.route}/${id}`, rest);
       return response.data;
     } catch (error) {
-      console.error('Failed to edit user', error);
       throw new Error('Could not edit user');
     }
   }
@@ -175,7 +156,6 @@ class UserAPI implements IUserAPI {
       const { id, ...rest } = data;
       await api.patch(`${this.route}/${id}/password`, rest);
     } catch (error) {
-      console.error('Failed to change user password', error);
       throw new Error('Could not change password');
     }
   }
@@ -184,7 +164,6 @@ class UserAPI implements IUserAPI {
     try {
       await api.delete(`${this.route}/${id}`);
     } catch (error) {
-      console.error('Failed to delete user', error);
       throw new Error('Could not delete user');
     }
   }
@@ -213,7 +192,6 @@ class UserAPI implements IUserAPI {
     try {
       await api.get(`${this.route}/verify-token`);
     } catch (error) {
-      console.error('Failed to verify token', error);
       throw new Error('Could not verify token');
     }
   }

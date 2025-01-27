@@ -7,7 +7,7 @@ import {
   IconShare,
   IconTrash,
 } from '@tabler/icons-react';
-import { ActionIcon, Avatar, AvatarGroup, Group, Menu, rem } from '@mantine/core';
+import { ActionIcon, Group, Menu, rem } from '@mantine/core';
 import { useListStore } from '@/store/listStore';
 
 type ListActionsProps = {
@@ -28,16 +28,6 @@ export const ListActions: React.FC<ListActionsProps> = ({
 
   return (
     <Group gap="xs">
-      <AvatarGroup>
-        <Avatar
-          size="sm"
-          src="https://images.unsplash.com/photo-1612838320302-47e0f8e0d7a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80"
-        />
-        <Avatar
-          size="sm"
-          src="https://images.unsplash.com/photo-1612838320302-47e0f8e0d7a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80"
-        />
-      </AvatarGroup>
       <Menu shadow="md" width={200}>
         <Menu.Target>
           <ActionIcon variant="subtle" color="gray">

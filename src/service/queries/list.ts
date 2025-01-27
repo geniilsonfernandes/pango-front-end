@@ -1,8 +1,10 @@
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
-import { CreateListDTO, listAPI, productAPI } from '@/service/api';
+import { CreateListDTO, productAPI } from '@/service/api';
+import { listHttpService } from '@/service/http';
 import useUserStore from '@/store/userStore';
 import { errorMessage, successMessage } from '../helpers';
 import { List } from '../models/types';
+import { handleQueryError } from './helpers';
 import { RQKEY as RQKEY_PRODUCT } from './product';
 
 const RQKEY_ROOT = 'list';
@@ -12,6 +14,7 @@ const CACHE_TIME = 1000 * 60 * 30;
 const STALE_TIME = 1000 * 60 * 5;
 const REFRESH_INTERVAL = {
   MIN: 15000,
+  MID: 30000, // 30 seconds
   MAX: 30000,
   INFINITE: Infinity,
 };
@@ -21,7 +24,7 @@ export function useList(q: { deleted?: boolean } = {}) {
   return useQuery({
     queryKey: RQKEY(JSON.stringify(q)),
     enabled: !!user,
-    queryFn: () => listAPI.list(q),
+    queryFn: () => listHttpService.list(q),
     staleTime: STALE_TIME,
     cacheTime: CACHE_TIME,
   });
@@ -33,7 +36,7 @@ export const useCreateList = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (input: CreateListInput) => listAPI.create(input),
+    mutationFn: (input: CreateListInput) => listHttpService.create(input),
     onSuccess: () => {
       queryClient.invalidateQueries(RQKEY());
       successMessage('List created');
@@ -44,24 +47,45 @@ export const useCreateList = () => {
   });
 };
 
+export const useShareList = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => listHttpService.share(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(RQKEY('shared'));
+    },
+    onError: handleQueryError,
+  });
+};
+
+export const useUnshareList = ({ listId }: { listId: string }) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (userId: string) => listHttpService.unshare(listId, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries(RQKEY());
+    },
+    onError: handleQueryError,
+  });
+};
+
 export const useDeleteList = ({ permanent }: { permanent?: boolean } = {}) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => (permanent ? listAPI.deletePermanent(id) : listAPI.delete(id)),
+    mutationFn: (id: string) =>
+      permanent ? listHttpService.deletePermanent(id) : listHttpService.delete(id),
     onSuccess: () => {
       successMessage('List deleted');
       queryClient.invalidateQueries(RQKEY());
     },
-    onError: () => {
-      errorMessage('Error deleting list');
-    },
+    onError: handleQueryError,
   });
 };
 
 export const useRestoreList = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => listAPI.restore(id),
+    mutationFn: (id: string) => listHttpService.restore(id),
     onSuccess: () => {
       successMessage('List deleted');
       queryClient.invalidateQueries(RQKEY());
@@ -79,15 +103,13 @@ type UpdateListInput = {
 export const useUpdateList = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: UpdateListInput) => listAPI.update(input.id, input),
+    mutationFn: (input: UpdateListInput) => listHttpService.update(input.id, input),
     onSuccess: (data) => {
       queryClient.invalidateQueries(RQKEY());
       queryClient.invalidateQueries(RQKEY_PRODUCT(data.id));
       successMessage('List updated');
     },
-    onError: () => {
-      errorMessage('Error updating list');
-    },
+    onError: handleQueryError,
   });
 };
 
@@ -102,7 +124,7 @@ export const useListItems = (listId?: string) => {
     queries: [
       {
         queryKey: RQKEY(listId),
-        queryFn: () => listAPI.get(listId),
+        queryFn: () => listHttpService.get(listId),
         staleTime: STALE_TIME,
         cacheTime: CACHE_TIME,
         enabled: !!listId && !!user,
@@ -111,10 +133,11 @@ export const useListItems = (listId?: string) => {
           localStorage.setItem('activeList', listId || '');
           return lists?.find((item) => item.id === listId);
         },
+        // refetchInterval: REFRESH_INTERVAL.MID,
       },
       {
         queryKey: RQKEY_PRODUCT(listId || ''),
-        queryFn: () => productAPI.list(listId),
+        queryFn: () => productAPI.list(listId || ''),
         enabled: !!listId && !!user,
         staleTime: 0,
         cacheTime: CACHE_TIME,

@@ -2,7 +2,7 @@ import React from 'react';
 import { IconMinus, IconPlus, IconTrash } from '@tabler/icons-react';
 import { ActionIcon, Button, ButtonVariant, Flex, ThemeIcon } from '@mantine/core';
 import { useDebouncedCallback } from '@mantine/hooks';
-import { ShoppingItem } from '@/service/api';
+import { Product } from '@/service/models/types';
 
 /**
  * Props for the ProductButton component.
@@ -31,7 +31,7 @@ export type ProductButtonProps = {
   /**
    * An optional Product object containing product details.
    */
-  product?: ShoppingItem;
+  product?: Product;
 
   /**
    * The variant of the button.
@@ -89,7 +89,10 @@ export const ProductButton: React.FC<ProductButtonProps> = ({
         <ActionIcon
           loading={isLoading}
           component="span"
-          onClick={handleIncrementDebounced}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleIncrementDebounced();
+          }}
           aria-label="increment-button"
           role="button"
           size="sm"

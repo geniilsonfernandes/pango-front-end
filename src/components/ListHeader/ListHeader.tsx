@@ -4,13 +4,17 @@ import {
   IconBrandWhatsapp,
   IconLink,
   IconList,
-  IconSend,
+  IconX,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
 import {
   ActionIcon,
+  Avatar,
+  AvatarGroup,
+  Box,
   Button,
+  Card,
   Checkbox,
   Divider,
   Flex,
@@ -18,13 +22,13 @@ import {
   Modal,
   Stack,
   Text,
-  TextInput,
   Title,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { List, Product } from '@/service/models/types';
-import { useDeleteList } from '@/service/queries/list';
+import { useDeleteList, useUnshareList } from '@/service/queries/list';
+import { generateShareMessage } from '@/utils/generateShareMessage';
 import { ListActions } from '../ListActions/ListActions';
 import { DeleteConfirmation, ListForm } from '../ListForm/ListForm';
 import { PrintableList } from '../PrintableList/PrintableList';
@@ -47,6 +51,7 @@ export const ListHeader: React.FC<ListHeaderProps> = ({ list, products }) => {
 
   // Mutations
   const { mutate: deleteList, isLoading: isDeleting } = useDeleteList();
+  const { mutate: unshareList, isLoading: isUnsharing } = useUnshareList({ listId: list.id });
 
   // handles
   const handleDelete = () => {
@@ -60,30 +65,14 @@ export const ListHeader: React.FC<ListHeaderProps> = ({ list, products }) => {
     }
   };
 
-  const generateListUrl = () => {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url).then(
-      () => notifications.show({ message: 'URL copiada para o clipboard!', color: 'green' }),
-      (err) => notifications.show({ message: `Erro ao copiar URL: ${err}`, color: 'red' })
+  const handleCopy = (message: string) => {
+    navigator.clipboard.writeText(message).then(
+      () => notifications.show({ message: 'Mensagem copiada para o clipboard!', color: 'green' }),
+      (err) => notifications.show({ message: `Erro ao copiar mensagem: ${err}`, color: 'red' })
     );
   };
 
-  const generateShareMessage = (list: List, products: Product[]): string => {
-    let message = `*${list.title}*\n\n${list.description}\n\nItens da lista:\n`;
-
-    products.forEach((product) => {
-      message += `• ${product.name} (${product.quantity} ${product?.unit || 'unit'}) - R$${product.price.toFixed(2)}\n`;
-    });
-
-    if (list.budget) {
-      message += `\n*Orçamento Total:* R$${list.budget.toFixed(2)}\n`;
-    }
-
-    const url = window.location.href;
-    message += `\nConfira a lista completa aqui: ${url}`;
-
-    return message;
-  };
+  const generateListUrl = () => handleCopy(window.location.href);
 
   const shareListOnPlatform = (platform: 'whatsapp' | 'telegram') => {
     const message = generateShareMessage(list, products);
@@ -96,14 +85,7 @@ export const ListHeader: React.FC<ListHeaderProps> = ({ list, products }) => {
     window.open(url, '_blank');
   };
 
-  const copyListToClipboard = () => {
-    const message = generateShareMessage(list, products);
-
-    navigator.clipboard.writeText(message).then(
-      () => notifications.show({ message: 'Mensagem copiada para o clipboard!', color: 'green' }),
-      (err) => notifications.show({ message: `Erro ao copiar mensagem: ${err}`, color: 'red' })
-    );
-  };
+  const copyListToClipboard = () => handleCopy(generateShareMessage(list, products));
 
   return (
     <Flex align="center" justify="space-between" gap="xs">
@@ -122,13 +104,27 @@ export const ListHeader: React.FC<ListHeaderProps> = ({ list, products }) => {
       >
         {list.title}
       </Title>
-      <ListActions
-        onEdit={open}
-        onShare={openShare}
-        onCopy={openCopy}
-        onDelete={openDelete}
-        onPrint={openPrint}
-      />
+
+      <Group>
+        <AvatarGroup>
+          {list.shared_with.map((sharedUser) => (
+            <Avatar
+              color="initials"
+              name={sharedUser.user?.name}
+              key={sharedUser.user?.id}
+              size="28"
+            />
+          ))}
+        </AvatarGroup>
+
+        <ListActions
+          onEdit={open}
+          onShare={openShare}
+          onCopy={openCopy}
+          onDelete={openDelete}
+          onPrint={openPrint}
+        />
+      </Group>
 
       <DeleteConfirmation
         opened={openedDelete}
@@ -179,12 +175,36 @@ export const ListHeader: React.FC<ListHeaderProps> = ({ list, products }) => {
       </Modal>
 
       <Modal opened={openedShare} onClose={closeShare} size="sm" title={`Share ${list.title}`}>
-        <Group align="flex-start" gap="xs" mt="md">
-          <TextInput flex={1} placeholder="hello@gluesticker.com" error="Invalid email" />
-          <Button onClick={close} leftSection={<IconSend size={16} />}>
-            Send
-          </Button>
-        </Group>
+        <Stack gap="xs">
+          <Box fz="xs">Share whith:</Box>
+          {list.shared_with.length > 0 &&
+            list.shared_with.map((sharedUser) => (
+              <Card p="xs">
+                <Group>
+                  <Avatar size="sm" name={sharedUser.user?.name} color="initials" />
+                  <Text fz="sm">{sharedUser.user?.name}</Text>
+
+                  <ActionIcon
+                    ml="auto"
+                    size="sm"
+                    onClick={() => {
+                      unshareList(sharedUser.user.id);
+                    }}
+                    loading={isUnsharing}
+                  >
+                    <IconX />
+                  </ActionIcon>
+                </Group>
+              </Card>
+            ))}
+          {list.shared_with.length === 0 && (
+            <Box>
+              <Text size="xs" color="dimmed">
+                No one has access to this list
+              </Text>
+            </Box>
+          )}
+        </Stack>
         <Divider my="md" />
         <Group justify="space-between">
           <Stack gap="xs" align="center">

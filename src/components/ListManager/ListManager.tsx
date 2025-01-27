@@ -150,7 +150,13 @@ export const ListManager = ({
                   handleRemoveItem(itemSelected);
                 }
               }}
-              onIncrement={() => handleIncrement(itemSelected)}
+              onIncrement={() => {
+                if (!itemSelected) {
+                  handleAddProduct(product);
+                } else {
+                  handleIncrement(itemSelected);
+                }
+              }}
               onDecrement={() => handleDecrement(itemSelected)}
             />
           );

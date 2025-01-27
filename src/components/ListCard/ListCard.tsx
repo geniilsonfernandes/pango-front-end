@@ -84,16 +84,15 @@ export const ListCard: React.FC<ListCardProps> = ({
           {type === 'default' && (
             <>
               <AvatarGroup>
-                <Avatar
-                  size="sm"
-                  src="https://images.unsplash.com/photo-1612838320302-47e0f8e0d7a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80"
-                />
-                <Avatar
-                  size="sm"
-                  src="https://images.unsplash.com/photo-1612838320302-47e0f8e0d7a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80"
-                />
+                {list?.shared_with.map((sharedUser) => (
+                  <Avatar
+                    color="initials"
+                    name={sharedUser.user?.name}
+                    key={sharedUser.user?.id}
+                    size="sm"
+                  />
+                ))}
               </AvatarGroup>
-
               <Menu shadow="md" position="left" width={200}>
                 <Menu.Target>
                   <ActionIcon ml="auto" variant="default" onClick={stopPropagation()}>

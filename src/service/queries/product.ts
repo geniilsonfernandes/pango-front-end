@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { productAPI, ProductDTO } from '../api';
+import { ApiError, productAPI, ProductDTO } from '../api';
 import { errorMessage, successMessage } from '../helpers';
 import { Product } from '../models/types';
 
@@ -13,7 +13,7 @@ export const usePatchProduct = () => {
   const listId = localStorage.getItem('activeList') || '';
 
   return useMutation({
-    mutationFn: (input: PatchProductInput) => productAPI.patch(input.id, input.data),
+    mutationFn: (input: PatchProductInput) => productAPI.patch(input.id, input.data, listId),
     onMutate: (variables) => {
       const previousItems = queryClient.getQueryData<Product[]>(RQKEY(listId));
       if (previousItems) {
@@ -28,7 +28,12 @@ export const usePatchProduct = () => {
         );
       }
     },
-    onError: () => {
+    onError: (data) => {
+      if (data instanceof ApiError) {
+        errorMessage(data.message);
+        return;
+      }
+
       errorMessage('Error updating product');
     },
   });
@@ -41,7 +46,7 @@ export const useUpdateProduct = () => {
   const listId = localStorage.getItem('activeList') || '';
 
   return useMutation({
-    mutationFn: (input: UpdateProductInput) => productAPI.update(input.id, input.data),
+    mutationFn: (input: UpdateProductInput) => productAPI.update(input.id, input.data, listId),
     onMutate: (variables) => {
       const previousItems = queryClient.getQueryData<Product[]>(RQKEY(listId));
       if (previousItems) {
@@ -72,7 +77,7 @@ export const useDeleteProduct = () => {
   const listId = localStorage.getItem('activeList') || '';
 
   return useMutation({
-    mutationFn: (input: DeleteProductInput) => productAPI.delete(input.id),
+    mutationFn: (input: DeleteProductInput) => productAPI.delete(listId, input.id),
     onMutate: (variables) => {
       const previousItems = queryClient.getQueryData<Product[]>(RQKEY(listId));
       if (previousItems) {
@@ -98,7 +103,7 @@ export const useAddProduct = () => {
   const listId = localStorage.getItem('activeList') || '';
 
   return useMutation({
-    mutationFn: (input: AddProductInput) => productAPI.create(input),
+    mutationFn: (input: AddProductInput) => productAPI.create(input, listId),
     onMutate: (variables) => {
       const previousItems = queryClient.getQueryData<Product[]>(RQKEY(listId));
       const hasDuplicates = variables.some((item) =>

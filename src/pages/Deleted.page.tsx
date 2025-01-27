@@ -30,7 +30,13 @@ export const ListsDeletedPage = () => {
 
       <Grid>
         {lists?.map((list) => (
-          <Grid.Col key={list.id} span={6}>
+          <Grid.Col
+            key={list.id}
+            span={{
+              base: 12,
+              md: 6,
+            }}
+          >
             <ListCard
               list={list}
               type="restore"
