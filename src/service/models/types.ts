@@ -1,6 +1,7 @@
 export interface List {
   id: string;
   created_at: string;
+  isPublic: boolean;
   title: string;
   share_key: string;
   description: string;

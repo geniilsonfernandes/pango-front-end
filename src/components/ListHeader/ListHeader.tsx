@@ -72,7 +72,7 @@ export const ListHeader: React.FC<ListHeaderProps> = ({ list, products }) => {
     );
   };
 
-  const generateListUrl = () => handleCopy(window.location.href);
+  const generateListUrl = () => handleCopy(`${window.location.origin}/list/share/${list.id}`);
 
   const shareListOnPlatform = (platform: 'whatsapp' | 'telegram') => {
     const message = generateShareMessage(list, products);

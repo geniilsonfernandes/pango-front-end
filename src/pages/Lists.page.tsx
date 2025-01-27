@@ -103,7 +103,11 @@ export const ListsPage = () => {
         ))}
       </Grid>
 
-      <Modal opened={openedList} onClose={handleCloseList} title="Create a new list">
+      <Modal
+        opened={openedList}
+        onClose={handleCloseList}
+        title={listSelected?.title ? listSelected.title : 'Create a new list'}
+      >
         <ListForm list={listSelected} onCancel={handleCloseList} />
       </Modal>
       <DeleteConfirmation

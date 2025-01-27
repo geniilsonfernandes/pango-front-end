@@ -26,6 +26,7 @@ export const clearSession = () => {
 };
 
 const checkAnonymous = (email: string) => email.match(/@anonymous.com$/);
+
 const useUserStore = create<UserState>()(
   persist(
     (set) => ({

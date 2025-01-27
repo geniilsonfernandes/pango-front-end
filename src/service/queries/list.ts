@@ -19,7 +19,7 @@ const REFRESH_INTERVAL = {
   INFINITE: Infinity,
 };
 
-export function useList(q: { deleted?: boolean } = {}) {
+export function useList(q: { deleted?: boolean; isPublic?: boolean } = {}) {
   const { user } = useUserStore();
   return useQuery({
     queryKey: RQKEY(JSON.stringify(q)),
@@ -37,6 +37,25 @@ export const useCreateList = () => {
 
   return useMutation({
     mutationFn: (input: CreateListInput) => listHttpService.create(input),
+    onSuccess: () => {
+      queryClient.invalidateQueries(RQKEY());
+      successMessage('List created');
+    },
+    onError: () => {
+      errorMessage('Error creating list');
+    },
+  });
+};
+
+type CreateListCopyInput = {
+  id: string;
+} & CreateListInput;
+
+export const useCreateListCopy = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: CreateListCopyInput) => listHttpService.createCopy(input.id, input),
     onSuccess: () => {
       queryClient.invalidateQueries(RQKEY());
       successMessage('List created');

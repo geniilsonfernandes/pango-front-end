@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
+import { IconCheck } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Box, Button, Group, Modal, Paper, Stack, Text } from '@mantine/core';
+import { Box, Center, Group, Modal, Paper, Stack, Text, ThemeIcon } from '@mantine/core';
 import { useWindowScroll } from '@mantine/hooks';
 import { type List as ListType, type Product } from '@/service/models/types';
 import { usePatchProduct } from '@/service/queries/product';
@@ -85,6 +86,18 @@ export const List: React.FC<ListProps> = ({ products }) => {
         <Paper>
           <AnimatePresence>
             <Paper className={classes.list} data-no-background>
+              {categorizedProducts.unchecked?.length === 0 && (
+                <Center>
+                  <Stack align="center" gap="xs">
+                    <ThemeIcon variant="filled" size={40} radius="xl">
+                      <IconCheck size={20} />
+                    </ThemeIcon>
+                    <Text fw={500} fz="xs" c="dimmed">
+                      No unchecked items
+                    </Text>
+                  </Stack>
+                </Center>
+              )}
               {categorizedProducts.unchecked?.map((product) => (
                 <motion.div
                   key={product.id}
@@ -121,10 +134,19 @@ export const List: React.FC<ListProps> = ({ products }) => {
               <Text fw={500} fz="xs" c="dimmed">
                 Checked Items
               </Text>
-              <Button variant="outline" size="compact-xs" radius="xl">
-                Clear
-              </Button>
             </Group>
+            {categorizedProducts.checked?.length === 0 && (
+              <Center>
+                <Stack align="center" gap="xs">
+                  <ThemeIcon variant="outline" size={40} radius="xl">
+                    <IconCheck size={20} />
+                  </ThemeIcon>
+                  <Text fw={500} fz="xs" c="dimmed">
+                    No checked items
+                  </Text>
+                </Stack>
+              </Center>
+            )}
             {categorizedProducts.checked?.map((product) => (
               <ProductCheckbox
                 name={product.name}

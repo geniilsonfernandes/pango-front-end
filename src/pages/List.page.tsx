@@ -1,27 +1,12 @@
-import { IconPlus, IconShare } from '@tabler/icons-react';
+import { IconPlus } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  ActionIcon,
-  Box,
-  Button,
-  Card,
-  Center,
-  Divider,
-  Drawer,
-  Flex,
-  Loader,
-  Modal,
-  rem,
-  Stack,
-  TextInput,
-  ThemeIcon,
-  Title,
-} from '@mantine/core';
+import { ActionIcon, Box, Card, Center, Drawer, Flex, Loader, rem, Stack } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { Header, List } from '@/components/List/List';
 import { ListManager } from '@/components/ListManager/ListManager';
-import { useListItems, useShareList } from '@/service/queries/list';
+import { useListItems } from '@/service/queries/list';
 import useUserStore from '@/store/userStore';
+import { checkPermissions } from '@/utils/checkPermissions';
 
 type Params = {
   id: string;
@@ -38,37 +23,6 @@ export function ListPage() {
   const results = useListItems(id);
   const [list, products] = results;
 
-  // mutations
-  const { mutate: share, isLoading: isSharing } = useShareList();
-
-  // handles
-
-  const handleAccpetShare = () => {
-    if (!id) {
-      return;
-    }
-    share(id, {
-      onSuccess: () => {
-        list.refetch();
-        products.refetch();
-      },
-    });
-  };
-
-  const checkPermissions = () => {
-    const isOwner = list.data?.owner?.id === user?.id;
-
-    if (isOwner) {
-      return true;
-    }
-    const sharedUser = list.data?.shared_with.find(
-      (sharedUser) => sharedUser?.user?.id === user?.id
-    );
-
-    return sharedUser;
-  };
-
-  // Renderizando estado de carregamento
   if (list.isLoading || products.isLoading) {
     return (
       <Center flex={1} h={rem(400)}>
@@ -77,31 +31,8 @@ export function ListPage() {
     );
   }
 
-  if (!checkPermissions()) {
-    const { name } = list?.data?.owner ?? { name: 'Unknown' };
-
-    return (
-      <Modal opened onClose={() => navigate('/')} centered>
-        <Stack justify="center" align="center">
-          <ThemeIcon variant="light" size="70" radius="xl">
-            <IconShare />
-          </ThemeIcon>
-          <Title order={4} fz="md" ta="center" fw={500}>
-            You received a list from{' '}
-            <Box component="span" c="base">
-              {name}
-            </Box>
-          </Title>
-        </Stack>
-        <Divider my="md" />
-        <Stack>
-          <TextInput label="Set your name" size="md" radius="md" />
-          <Button size="md" radius="md" fullWidth loading={isSharing} onClick={handleAccpetShare}>
-            Accept
-          </Button>
-        </Stack>
-      </Modal>
-    );
+  if (!checkPermissions(list.data, user)) {
+    navigate(`/`);
   }
 
   // Renderizando estado de erro (lista não encontrada)

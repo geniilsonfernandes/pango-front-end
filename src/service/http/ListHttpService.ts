@@ -1,6 +1,7 @@
 import { api, handleApiError } from '../api';
 import { List, Product } from '../models/types';
 
+
 export type CreateListDTO = {
   title: string;
   budget?: number;
@@ -23,6 +24,15 @@ export class ListHttpService {
   async create(data: CreateListDTO): Promise<List> {
     try {
       const response = await api.post<List>(this.route, data);
+      return response.data;
+    } catch (error) {
+      handleApiError(error);
+    }
+  }
+
+  async createCopy(id: string, data: CreateListDTO): Promise<List> {
+    try {
+      const response = await api.post<List>(`${this.route}/${id}/copy`, data);
       return response.data;
     } catch (error) {
       handleApiError(error);
@@ -88,10 +98,10 @@ export class ListHttpService {
     }
   }
 
-  async list(q: { deleted?: boolean } = {}): Promise<List[]> {
+  async list(q: { deleted?: boolean; isPublic?: boolean } = {}): Promise<List[]> {
     try {
       const response = await api.get<List[]>(this.route, {
-        params: { deleted: q.deleted },
+        params: q,
       });
       return response.data;
     } catch (error) {

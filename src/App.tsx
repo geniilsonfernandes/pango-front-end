@@ -15,7 +15,6 @@ import { Router } from './Router';
 import { useSettingsStore } from './store/settingsStore';
 import { theme } from './theme';
 
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {},

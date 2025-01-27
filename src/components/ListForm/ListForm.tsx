@@ -12,6 +12,7 @@ import {
   Modal,
   ModalProps,
   NumberInput,
+  Switch,
   Textarea,
   TextInput,
   Tooltip,
@@ -20,7 +21,12 @@ import { DateInput } from '@mantine/dates';
 import { useForm, zodResolver } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { List } from '@/service/models/types';
-import { useCreateList, useDeleteList, useUpdateList } from '@/service/queries/list';
+import {
+  useCreateList,
+  useCreateListCopy,
+  useDeleteList,
+  useUpdateList,
+} from '@/service/queries/list';
 
 type DeleteConfirmationProps = {
   onDeleteList: () => void;
@@ -54,6 +60,7 @@ const ListFormSchema = z.object({
     .optional()
     .transform((date) => dayjs(date).format('YYYY-MM-DD')),
   description: z.string().optional(),
+  isPublic: z.boolean().optional(),
 });
 
 type ListFormProps = {
@@ -69,6 +76,7 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, list, isCopy }) =>
   const [openedDelete, { open: openDelete, close: closeDelete }] = useDisclosure(false);
 
   // Mutations
+  const { mutate: createListCopy, isLoading: isCreatingCopy } = useCreateListCopy();
   const { mutate: createList, isLoading: isCreating } = useCreateList();
   const { mutate: updateList, isLoading: isUpdating } = useUpdateList();
   const { mutate: deleteList, isLoading: isDeleting } = useDeleteList();
@@ -80,27 +88,53 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, list, isCopy }) =>
       title: isCopy ? `Copy of ${list?.title}` : list?.title || '',
       budget: list?.budget || 0,
       date: dayjs().toDate(),
+      isPublic: list?.isPublic || false,
       description: list?.description || '',
     },
     validate: zodResolver(ListFormSchema),
   });
 
   // Handlers
+  const handleNewList = (id: string) => {
+    navigate(`/list/${id}`);
+    onCancel?.();
+  };
+
   const handleCreate = (values: typeof form.values) => {
-    if (list?.id && !isCopy) {
-      updateList({
-        id: list.id,
-        ...ListFormSchema.parse(values),
-      });
+    if (isCopy) {
+      createListCopy(
+        {
+          id: list?.id as string,
+          ...ListFormSchema.parse(values),
+        },
+        {
+          onSuccess: (data) => {
+            handleNewList(data.id);
+          },
+        }
+      );
+      return;
+    }
+
+    if (list?.id) {
+      updateList(
+        {
+          id: list.id,
+          ...ListFormSchema.parse(values),
+        },
+        {
+          onSuccess: () => {
+            onCancel?.();
+          },
+        }
+      );
     } else {
       createList(ListFormSchema.parse(values), {
         onSuccess: (data) => {
-          navigate(`/shopping-lists/${data.id}`);
+          handleNewList(data.id);
         },
       });
     }
-
-    onCancel?.();
   };
 
   const handleDelete = () => {
@@ -136,6 +170,14 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, list, isCopy }) =>
             />
           </Grid.Col>
           <Grid.Col span={12}>
+            <Switch
+              label="Public"
+              {...form.getInputProps('isPublic', { type: 'checkbox' })}
+              description="Make list public"
+            />
+          </Grid.Col>
+          <Grid.Col span={12}>
+            <Divider my="md" label="More options" />
             <Button fullWidth variant="transparent" size="xs" onClick={toggleOptions}>
               {!openedOptions ? (
                 <IconChevronDown size={16} stroke={1.5} />
@@ -165,7 +207,7 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, list, isCopy }) =>
             </Collapse>
           </Grid.Col>
         </Grid>
-        <Divider my="md" />
+
         <Group mt="lg" justify="space-between">
           <Tooltip label="Remove">
             <ActionIcon onClick={openDelete} color="red" variant="outline" size="lg">
@@ -176,7 +218,7 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, list, isCopy }) =>
             <Button variant="default" color="gray" onClick={onCancel}>
               Cancel
             </Button>
-            <Button type="submit" loading={isCreating || isUpdating}>
+            <Button type="submit" loading={isCreating || isUpdating || isCreatingCopy}>
               Save
             </Button>
           </Group>

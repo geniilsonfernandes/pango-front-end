@@ -1,11 +1,13 @@
 import axios, { AxiosError } from 'axios';
-import { loadSession } from '@/store/userStore';
+import useModalStore from '@/store/modalStore';
+import useUserStore, { clearSession, loadSession } from '@/store/userStore';
 import { Product, Session, User } from './models/types';
 
 // ---- list methods
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  // baseURL: import.meta.env.VITE_API_URL,
+  baseURL: 'http://localhost:3000',
 });
 
 api.interceptors.request.use((config) => {
@@ -15,6 +17,17 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response.status === 401) {
+      useUserStore.getState().logout();
+      clearSession();
+      useModalStore.getState().openModal('auth');
+    }
+  }
+);
 
 // Função genérica de requisição de API
 async function makeApiRequest<T>(

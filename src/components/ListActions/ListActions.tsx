@@ -42,6 +42,7 @@ export const ListActions: React.FC<ListActionsProps> = ({
           >
             Edit
           </Menu.Item>
+
           <Menu.Item
             leftSection={<IconShare style={{ width: rem(14), height: rem(14) }} />}
             onClick={onShare}
@@ -76,6 +77,7 @@ export const ListActions: React.FC<ListActionsProps> = ({
           >
             Delete list
           </Menu.Item>
+          <Menu.Divider />
         </Menu.Dropdown>
       </Menu>
     </Group>
