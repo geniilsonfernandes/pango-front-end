@@ -551,8 +551,9 @@ const About: React.FC = () => {
     {
       version: '1.0.0',
       date: new Date('2025-01-27'),
-      description: 'Initial release',
-      changes: ['First release of the app', 'Core functionality implemented and fully operational'],
+      description:
+        'Initial release, implemented and fully tested the core functionality of the app',
+      changes: ['First release of the app', 'Core functionality '],
     },
   ];
 
@@ -574,7 +575,7 @@ const About: React.FC = () => {
           {changeLog.map((change) => (
             <List.Item key={change.version}>
               <Badge fw="bold">{change.version}</Badge>
-              <Text size="sm" c="dimmed" mt="xs">
+              <Text size="sm" c="dimmed" mt="xs" maw={300}>
                 {change.description}
               </Text>
               <List size="sm" mt="xs" withPadding>
