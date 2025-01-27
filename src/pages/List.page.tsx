@@ -13,6 +13,7 @@ type Params = {
 };
 
 export function ListPage() {
+  useDocumentTitle(`pango | list`);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const { user } = useUserStore();
   const { id } = useParams<Params>();
@@ -46,7 +47,6 @@ export function ListPage() {
     );
   }
 
-  useDocumentTitle(`pango | ${list?.data?.title}`);
   return (
     <>
       <Flex flex={1}>

@@ -27,6 +27,7 @@ import {
   useDeleteList,
   useUpdateList,
 } from '@/service/queries/list';
+import useUserStore from '@/store/userStore';
 
 type DeleteConfirmationProps = {
   onDeleteList: () => void;
@@ -73,7 +74,9 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, list, isCopy }) =>
   // Hooks
   const navigate = useNavigate();
   const [openedOptions, { toggle: toggleOptions }] = useDisclosure(false);
+  const { user } = useUserStore();
   const [openedDelete, { open: openDelete, close: closeDelete }] = useDisclosure(false);
+  const isOwner = list?.owner?.id === user?.id;
 
   // Mutations
   const { mutate: createListCopy, isLoading: isCreatingCopy } = useCreateListCopy();
@@ -209,11 +212,13 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, list, isCopy }) =>
         </Grid>
 
         <Group mt="lg" justify="space-between">
-          <Tooltip label="Remove">
-            <ActionIcon onClick={openDelete} color="red" variant="outline" size="lg">
-              <IconTrash size={16} stroke={1.5} />
-            </ActionIcon>
-          </Tooltip>
+          {isOwner && (
+            <Tooltip label="Remove">
+              <ActionIcon onClick={openDelete} color="red" variant="outline" size="lg">
+                <IconTrash size={16} stroke={1.5} />
+              </ActionIcon>
+            </Tooltip>
+          )}
           <Group gap="xs">
             <Button variant="default" color="gray" onClick={onCancel}>
               Cancel
