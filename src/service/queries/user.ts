@@ -6,7 +6,9 @@ import {
   type CreateUserPayload,
   type EditUserPayload,
 } from '../api';
-import { errorMessage, successMessage } from '../helpers';
+import { successMessage } from '../helpers';
+import { handleQueryError } from './helpers';
+
 
 const RQKEY_ROOT = 'user';
 export const RQKEY = (prefix?: string) => (prefix ? [RQKEY_ROOT, prefix] : [RQKEY_ROOT]);
@@ -14,7 +16,7 @@ export const RQKEY = (prefix?: string) => (prefix ? [RQKEY_ROOT, prefix] : [RQKE
 export const useCreateUser = () => {
   return useMutation({
     mutationFn: (data: CreateUserPayload) => userAPI.create(data),
-    onError: () => errorMessage('Failed to create user'),
+    onError: handleQueryError,
   });
 };
 
@@ -25,7 +27,7 @@ export const useCreateAnonymous = () => {
     onSuccess: () => {
       queryClient.invalidateQueries();
     },
-    onError: () => errorMessage('Failed to create user'),
+    onError: handleQueryError,
   });
 };
 
@@ -35,20 +37,20 @@ export const useEditUser = () => {
     onSuccess: () => {
       successMessage('User updated');
     },
-    onError: () => errorMessage('Failed to edit user'),
+    onError: handleQueryError,
   });
 };
 
 export const useChangePassword = () => {
   return useMutation({
     mutationFn: (data: ChangePasswordPayload) => userAPI.changePassword(data),
-    onError: () => errorMessage('Failed to change password'),
+    onError: handleQueryError,
   });
 };
 
 export const useDeleteAccount = () => {
   return useMutation({
     mutationFn: (id: string) => userAPI.delete(id),
-    onError: () => errorMessage('Failed to delete user'),
+    onError: handleQueryError,
   });
 };

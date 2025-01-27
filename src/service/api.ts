@@ -149,8 +149,7 @@ class UserAPI implements IUserAPI {
       const response = await api.post<User>(`${this.route}`, data);
       return response.data;
     } catch (error) {
-      console.error('Failed to create user', error);
-      throw new Error('Could not create user');
+      throw new ApiError('email already in use or invalid data');
     }
   }
 
@@ -160,7 +159,7 @@ class UserAPI implements IUserAPI {
       const response = await api.put<User>(`${this.route}/${id}`, rest);
       return response.data;
     } catch (error) {
-      throw new Error('Could not edit user');
+      handleApiError(error);
     }
   }
 
@@ -169,7 +168,7 @@ class UserAPI implements IUserAPI {
       const { id, ...rest } = data;
       await api.patch(`${this.route}/${id}/password`, rest);
     } catch (error) {
-      throw new Error('Could not change password');
+      handleApiError(error);
     }
   }
 
@@ -177,7 +176,7 @@ class UserAPI implements IUserAPI {
     try {
       await api.delete(`${this.route}/${id}`);
     } catch (error) {
-      throw new Error('Could not delete user');
+      handleApiError(error);
     }
   }
 
@@ -186,8 +185,7 @@ class UserAPI implements IUserAPI {
       const response = await api.post<AuthenticateResponse>(`${this.route}/anonymous`, data);
       return response.data;
     } catch (error) {
-      console.error('Failed to create anonymous user', error);
-      throw new Error('Could not create anonymous user');
+      handleApiError(error);
     }
   }
 
@@ -196,8 +194,7 @@ class UserAPI implements IUserAPI {
       const response = await api.post<AuthenticateResponse>(`/authenticate`, data);
       return response.data;
     } catch (error) {
-      console.error('Failed to authenticate user', error);
-      throw new Error('Could not authenticate user');
+      handleApiError(error);
     }
   }
 
@@ -205,7 +202,7 @@ class UserAPI implements IUserAPI {
     try {
       await api.get(`${this.route}/verify-token`);
     } catch (error) {
-      throw new Error('Could not verify token');
+      handleApiError(error);
     }
   }
 }

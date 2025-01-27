@@ -60,12 +60,12 @@ export const AppWrapper = () => {
               onClose={() => closeModal('auth')}
               size="xl"
               withCloseButton={false}
-              zIndex={400}
+              zIndex={100}
             />
             <SettingsModal
               opened={modals.settings || modals.profile}
               onClose={() => closeAllModals()}
-              zIndex={200}
+              zIndex={90}
             />
           </Flex>
           {isTablet && <MobileNavigation />}

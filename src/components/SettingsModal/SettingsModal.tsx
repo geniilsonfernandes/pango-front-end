@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   IconAlertCircle,
   IconCheck,
-  IconDownload,
   IconEdit,
   IconInfoCircle,
   IconList,
@@ -13,6 +12,7 @@ import {
 } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { motion, useAnimation } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import {
   ActionIcon,
@@ -475,7 +475,7 @@ const GeneralSettings: React.FC = () => {
 
       /> */}
 
-      <Paper component={Group} withBorder p="sm" justify="space-between">
+      {/* <Paper component={Group} withBorder p="sm" justify="space-between">
         <Box>
           <Title order={4} fz="sm">
             Install PWA
@@ -488,7 +488,7 @@ const GeneralSettings: React.FC = () => {
         <Button variant="filled" rightSection={<IconDownload size={16} />}>
           Install Now
         </Button>
-      </Paper>
+      </Paper> */}
     </Stack>
   );
 };
@@ -598,6 +598,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = (props) => {
   const [tab, setTab] = useState<(typeof menus)[number]['value']>('general');
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { logout, login } = useUserStore();
   const { closeAllModals } = useModalStore();
@@ -612,6 +613,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = (props) => {
       onSuccess: (data) => {
         login(data.user, data.session);
         closeAllModals();
+        navigate('/explore');
         queryClient.invalidateQueries();
       },
     });

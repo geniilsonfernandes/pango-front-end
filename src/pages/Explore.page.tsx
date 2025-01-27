@@ -82,7 +82,7 @@ export const ExplorePage = () => {
               lg: 6,
             }}
           >
-            <Card>
+            <Card withBorder>
               <Card.Section p="md">
                 <Group align="center" justify="space-between">
                   <Box>

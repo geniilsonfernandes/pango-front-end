@@ -52,7 +52,7 @@ export const ListCard: React.FC<ListCardProps> = ({
   }, []);
 
   return (
-    <Card className={classes.card} {...props}>
+    <Card className={classes.card} {...props} withBorder>
       <Flex align="center" justify="space-between">
         <Box>
           <Title order={3} fz="h5">
