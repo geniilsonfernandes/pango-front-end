@@ -16,6 +16,7 @@ type ListActionsProps = {
   onShare: () => void;
   onPrint: () => void;
   onCopy: () => void;
+  isOwner?: boolean;
 };
 export const ListActions: React.FC<ListActionsProps> = ({
   onDelete,
@@ -23,6 +24,7 @@ export const ListActions: React.FC<ListActionsProps> = ({
   onShare,
   onPrint,
   onCopy,
+  isOwner,
 }) => {
   const { showPrice, setShowPrice } = useSettingsStore();
 
@@ -39,6 +41,7 @@ export const ListActions: React.FC<ListActionsProps> = ({
           <Menu.Item
             leftSection={<IconEdit style={{ width: rem(14), height: rem(14) }} />}
             onClick={onEdit}
+            disabled={!isOwner}
           >
             Edit
           </Menu.Item>
@@ -46,6 +49,7 @@ export const ListActions: React.FC<ListActionsProps> = ({
           <Menu.Item
             leftSection={<IconShare style={{ width: rem(14), height: rem(14) }} />}
             onClick={onShare}
+            disabled={!isOwner}
           >
             Share
           </Menu.Item>
@@ -74,10 +78,10 @@ export const ListActions: React.FC<ListActionsProps> = ({
             color="red"
             leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
             onClick={onDelete}
+            disabled={!isOwner}
           >
             Delete list
           </Menu.Item>
-          <Menu.Divider />
         </Menu.Dropdown>
       </Menu>
     </Group>

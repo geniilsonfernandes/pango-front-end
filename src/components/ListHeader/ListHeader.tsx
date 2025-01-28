@@ -28,6 +28,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { List, Product } from '@/service/models/types';
 import { useDeleteList, useUnshareList } from '@/service/queries/list';
+import useUserStore from '@/store/userStore';
 import { generateShareMessage } from '@/utils/generateShareMessage';
 import { ListActions } from '../ListActions/ListActions';
 import { DeleteConfirmation, ListForm } from '../ListForm/ListForm';
@@ -49,6 +50,8 @@ export const ListHeader: React.FC<ListHeaderProps> = ({ list, products }) => {
   const reactToPrintFn = useReactToPrint({ contentRef });
   const [printSettings, setPrintSettings] = useState<string[]>(['grouped']);
 
+  const { user } = useUserStore();
+  const isOwner = list?.owner?.id === user?.id;
   // Mutations
   const { mutate: deleteList, isLoading: isDeleting } = useDeleteList();
   const { mutate: unshareList, isLoading: isUnsharing } = useUnshareList({ listId: list.id });
@@ -118,6 +121,7 @@ export const ListHeader: React.FC<ListHeaderProps> = ({ list, products }) => {
         </AvatarGroup>
 
         <ListActions
+          isOwner={isOwner}
           onEdit={open}
           onShare={openShare}
           onCopy={openCopy}

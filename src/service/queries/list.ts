@@ -81,6 +81,7 @@ export const useShareList = () => {
     mutationFn: (id: string) => listHttpService.share(id),
     onSuccess: () => {
       queryClient.invalidateQueries(RQKEY('shared'));
+      queryClient.invalidateQueries(RQKEY(''));
     },
     onError: handleQueryError,
   });
@@ -138,6 +139,15 @@ export const useUpdateList = () => {
       successMessage('List updated');
     },
     onError: handleQueryError,
+  });
+};
+
+export const useGetList = (id?: string) => {
+  return useQuery({
+    queryKey: RQKEY(id),
+    queryFn: () => listHttpService.get(id),
+    staleTime: STALE_TIME,
+    cacheTime: CACHE_TIME,
   });
 };
 

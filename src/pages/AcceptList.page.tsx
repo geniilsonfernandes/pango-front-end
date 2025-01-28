@@ -17,7 +17,7 @@ import {
   Title,
 } from '@mantine/core';
 import { useDocumentTitle } from '@mantine/hooks';
-import { useListItems, useShareList } from '@/service/queries/list';
+import { useGetList, useShareList } from '@/service/queries/list';
 import { useEditUser } from '@/service/queries/user';
 import useUserStore from '@/store/userStore';
 
@@ -33,8 +33,7 @@ export function AcceptListPage() {
   const [name, setName] = useState('');
 
   // queries
-  const results = useListItems(id);
-  const [list, products] = results;
+  const { data, isLoading } = useGetList(id);
 
   // mutations
   const { mutate: editUser } = useEditUser();
@@ -56,19 +55,18 @@ export function AcceptListPage() {
     share(id, {
       onSuccess: () => {
         navigate(`/list/${id}`);
-        list.refetch();
       },
     });
   };
 
   const checkPermissions = () => {
-    const isOwner = list.data?.owner?.id === user?.id;
+    const isOwner = data?.owner?.id === user?.id;
 
     if (isOwner) {
       navigate(`/list/${id}`);
       return true;
     }
-    const containsInShared = list.data?.shared_with.find(
+    const containsInShared = data?.shared_with.find(
       (sharedUser) => sharedUser?.user?.id === user?.id
     );
 
@@ -80,7 +78,7 @@ export function AcceptListPage() {
     return containsInShared;
   };
 
-  if (list.isLoading || products.isLoading) {
+  if (isLoading) {
     return (
       <Center flex={1} h={rem(400)}>
         <Loader />
@@ -98,7 +96,7 @@ export function AcceptListPage() {
           <Title order={4} fz="md" ta="center" fw={500}>
             You received a list from{' '}
             <Box component="span" c="base">
-              {list.data?.owner.email ?? 'unknown'}
+              {data?.owner.email ?? 'unknown'}
             </Box>
           </Title>
         </Stack>
