@@ -13,6 +13,7 @@ import classes from './AppWrapper.module.css';
 
 export const AppWrapper = () => {
   const [colapsed, setCollapsed] = useState(false);
+
   const { modals, closeAllModals, closeModal } = useModalStore();
 
   const isTablet = useMediaQuery('(max-width: 768px)');
