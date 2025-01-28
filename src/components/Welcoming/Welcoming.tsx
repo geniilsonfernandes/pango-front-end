@@ -82,7 +82,12 @@ export const Welcoming: React.FC<WelcomingProps> = ({ opened }) => {
         Already have an account?
       </Text>
       <Group justify="center">
-        <Button variant="light" onClick={() => openModal('auth')}>
+        <Button
+          variant="light"
+          onClick={() => {
+            openModal('auth');
+          }}
+        >
           Log in/Sign up
         </Button>
         <Button variant="light" onClick={createAnonymousUser} loading={isCreating}>

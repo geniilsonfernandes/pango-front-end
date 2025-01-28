@@ -93,7 +93,6 @@ export const AuthenticationModal: React.FC<AuthenticationModalProps> = (props) =
   };
 
   // handles
-
   const createAnonymousUser = () => {
     createAnonymous(undefined, {
       onSuccess: (data) => {

@@ -13,7 +13,7 @@ export const useVerifyAuth = () => {
       ?.verifyToken()
       .then(() => {
         if (!user) {
-          openModal('auth');
+          openModal('welcoming');
         }
       })
       .catch(() => {

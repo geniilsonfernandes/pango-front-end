@@ -54,14 +54,14 @@ export const AppWrapper = () => {
             )}
             <Outlet />
 
-            <Welcoming opened={modals.welcoming} onClose={() => closeAllModals()} />
+            <Welcoming opened={modals.welcoming} onClose={() => closeAllModals()} zIndex={100} />
 
             <AuthenticationModal
               opened={modals.auth}
               onClose={() => closeModal('auth')}
               size="xl"
               withCloseButton={false}
-              zIndex={100}
+              zIndex={210}
             />
             <SettingsModal
               opened={modals.settings || modals.profile}
