@@ -92,7 +92,7 @@ export class ListHttpService {
 
   async restore(id: string): Promise<void> {
     try {
-      await api.get(`${this.route}/${id}`);
+      await api.post(`${this.route}/${id}/restore`);
     } catch (error) {
       handleApiError(error);
     }

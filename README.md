@@ -1,5 +1,9 @@
-<img src="ui_02.png">
 # Pango | Shopping List
+
+# [Live Demo](https://pangolist.netlify.app/)
+
+![Deploy](https://res.cloudinary.com/dbpayojb3/image/upload/f_auto,q_auto/v1/portfolio/uyhu3xaefrakfkoiii9q)
+
 
 <p align="center" id="menu">
   <a href="#about-the-project">About the Project</a> •
@@ -7,6 +11,7 @@
   <a href="#installation-and-local-run">Installation & Local Run</a> •
   <a href="#documentation">Documentation</a>
 </p>
+
 
 ## About the Project
 
@@ -75,66 +80,91 @@ awewoksvax6p6sggikyp">
 
 
 
-### list manager and print list
-<img src="https://res.cloudinary.com/dbpayojb3/image/upload/f_auto,q_auto/v1/portfolio/hbbbrqmzrkxdmwclhdmd">
-
+### List manager and print list
 - Users can manage lists, add, remove, and update items in their lists.
+<img src="https://res.cloudinary.com/dbpayojb3/image/upload/f_auto,q_auto/v1/portfolio/hbbbrqmzrkxdmwclhdmd">
+<img src="https://res.cloudinary.com/dbpayojb3/image/upload/f_auto,q_auto/v1/portfolio/ot8x2bivne4klp9lqll7">
 
-### list sharing
+
+
+### List sharing
+- Users can share lists with other users for collaborative shopping.
 <img src="https://res.cloudinary.com/dbpayojb3/image/upload/f_auto,q_auto/v1/portfolio/hilnomc4j11hh4yxub4m">
 
 
+## Backend
 
+- Users can create, update, and delete lists.
 
+## Entities and relations
 
-
-### [Deployed on netlify](https://pangolist.netlify.app/)
-
+<img src="pongo-db.png">
 
 
 ---
 
+## Endpoints
+
+### **Shopping Lists**
+- **GET** `/lists`  
+  Retrieves all shopping lists.
+
+- **GET** `/lists/:id`  
+  Retrieves a specific shopping list by its ID.
+
+- **POST** `/lists`  
+  Creates a new shopping list.
+
+- **PUT** `/lists/:id`  
+  Updates a specific shopping list by its ID.
+
+- **DELETE** `/lists/:id`  
+  Deletes a specific shopping list by its ID.
+
+---
+
+### **Products**
+- **GET** `/lists/:listId/products`  
+  Retrieves all products for a specific shopping list.
+
+- **POST** `/lists/:listId/products`  
+  Adds a new product to a specific shopping list.
+
+- **PUT** `/lists/:listId/products/:productId`  
+  Updates a product in a specific shopping list.
+
+- **DELETE** `/lists/:listId/products/:productId`  
+  Deletes a product from a specific shopping list.
+
+---
+
+### **Authentication and users**
+- **POST** `/user`  
+  Registers a new user.
+
+- **POST** `/anonymous`  
+  Creates an anonymous user.
+
+- **POST** `/authenticate`  
+  Logs in an existing user.
+
+- **POST** `//verify-token`  
+  Verifies the authentication token.
+
+---
+
+### **Sharing**
+- **POST** `/lists/:listId/share`  
+  Shares a shopping list with another user.
+
+- **DELETE** `/lists/:listId/share/:userId`  
+  Removes a shared user from a shopping list.
 
 
-<p>
-O aplicativo estará disponível em http://localhost:3000/
-</p>
 
-<h2 id="documentação" align="center"> Storybook </h2>
-<p>
-   A documentação de todos os componentes do aplicativo foi feita com o Storybook. Você pode acessá-la através deste link: <a href="https://65cbede3c9638330bc52e843--dreamy-shortbread-14a8ff.netlify.app/?path=/docs/just-travel-storybook--docs">Storybook</a>
-</p>
 
-<p>
-Ou pode Execultar localmente
-</p>
 
-```
-npm run storybook
-```
 
-<p>
-O aplicativo estará disponível em http://localhost:6006/
-</p>
 
-<h2 id="documentação" align="center"> Testes Unitários </h2>
 
-<p>
-  Foram utilizados testes unitários com a biblioteca Vitest, abrangendo desde funções básicas de renderização condicional até funções mais complexas, como aquelas relacionadas à manipulação do carrinho. O objetivo foi alcançar a melhor cobertura possível durante os testes.
-</p>
 
-<p>
-  Para executar os testes, utilize os comandos abaixo:
-</p>
-
-```
-npm run test
-// ou
-npm run test:ui
-```
-
-<h2 align="center">Contato e redes sociais</h2>
-
-```
-
-```

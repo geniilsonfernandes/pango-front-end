@@ -115,11 +115,11 @@ export const useRestoreList = () => {
   return useMutation({
     mutationFn: (id: string) => listHttpService.restore(id),
     onSuccess: () => {
-      successMessage('List deleted');
+      successMessage('List restored');
       queryClient.invalidateQueries(RQKEY());
     },
     onError: () => {
-      errorMessage('Error deleting list');
+      errorMessage('Error restoring list');
     },
   });
 };
