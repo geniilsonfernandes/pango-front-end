@@ -26,6 +26,7 @@ type ListCardProps = {
   onShare?: () => void;
   onRestore?: () => void;
   isRestoring?: boolean;
+  isOwner?: boolean;
   type?: 'default' | 'restore';
 } & React.ComponentPropsWithoutRef<'div'>;
 
@@ -45,6 +46,7 @@ export const ListCard: React.FC<ListCardProps> = ({
   onRestore,
   isRestoring,
   type = 'default',
+  isOwner,
   ...props
 }) => {
   const status = useMemo(() => {
@@ -52,7 +54,7 @@ export const ListCard: React.FC<ListCardProps> = ({
   }, []);
 
   return (
-    <Card className={classes.card} {...props} withBorder>
+    <Card className={classes.card} {...props} withBorder h="100%">
       <Flex align="center" justify="space-between">
         <Box>
           <Title order={3} fz="h5">
@@ -95,7 +97,12 @@ export const ListCard: React.FC<ListCardProps> = ({
               </AvatarGroup>
               <Menu shadow="md" position="left" width={200}>
                 <Menu.Target>
-                  <ActionIcon ml="auto" variant="default" onClick={stopPropagation()}>
+                  <ActionIcon
+                    display={isOwner ? 'block' : 'none'}
+                    ml="auto"
+                    variant="default"
+                    onClick={stopPropagation()}
+                  >
                     <IconMenu size={16} />
                   </ActionIcon>
                 </Menu.Target>
@@ -125,6 +132,11 @@ export const ListCard: React.FC<ListCardProps> = ({
         </Group>
       </Flex>
       <Progress value={(status?.checked / status?.total) * 100} mt="xs" />
+      {!isOwner && (
+        <Text size="xs" c="dimmed" fz="xs" mt="xs">
+          Shared by {list?.owner.name}
+        </Text>
+      )}
     </Card>
   );
 };

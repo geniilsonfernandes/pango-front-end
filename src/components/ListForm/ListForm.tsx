@@ -219,7 +219,7 @@ export const ListForm: React.FC<ListFormProps> = ({ onCancel, list, isCopy }) =>
               </ActionIcon>
             </Tooltip>
           )}
-          <Group gap="xs">
+          <Group gap="xs" ml="auto">
             <Button variant="default" color="gray" onClick={onCancel}>
               Cancel
             </Button>

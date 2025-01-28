@@ -108,4 +108,13 @@ export class ListHttpService {
       handleApiError(error);
     }
   }
+
+  async publicList(): Promise<List[]> {
+    try {
+      const response = await api.get<List[]>(`/public/lists`);
+      return response.data;
+    } catch (error) {
+      handleApiError(error);
+    }
+  }
 }

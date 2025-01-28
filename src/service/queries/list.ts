@@ -30,6 +30,15 @@ export function useList(q: { deleted?: boolean; isPublic?: boolean } = {}) {
   });
 }
 
+export function useListPublic() {
+  return useQuery({
+    queryKey: RQKEY('public'),
+    queryFn: () => listHttpService.publicList(),
+    staleTime: STALE_TIME,
+    cacheTime: CACHE_TIME,
+  });
+}
+
 export type CreateListInput = CreateListDTO;
 
 export const useCreateList = () => {

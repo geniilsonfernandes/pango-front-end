@@ -20,13 +20,11 @@ import {
 import { useDisclosure, useDocumentTitle } from '@mantine/hooks';
 import { ListForm } from '@/components/ListForm/ListForm';
 import { type List } from '@/service/models/types';
-import { useList } from '@/service/queries/list';
+import { useListPublic } from '@/service/queries/list';
 
 export const ExplorePage = () => {
   useDocumentTitle(`pango | Explore`);
-  const { data: lists, isLoading: isListsLoading } = useList({
-    isPublic: true,
-  });
+  const { data: lists, isLoading: isListsLoading } = useListPublic();
   const [selectedList, setSelectedList] = useState<List>();
   const [openedCopy, { open: openCopy, close: closeCopy }] = useDisclosure();
   const [openedPreview, { open: openPreview, close: closePreview }] = useDisclosure();

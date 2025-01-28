@@ -7,6 +7,7 @@ import { ListCard } from '@/components/ListCard/ListCard';
 import { DeleteConfirmation, ListForm } from '@/components/ListForm/ListForm';
 import { List } from '@/service/models/types';
 import { useDeleteList, useList } from '@/service/queries/list';
+import useUserStore from '@/store/userStore';
 
 export const ListsPage = () => {
   useDocumentTitle('pango | Lists');
@@ -16,6 +17,7 @@ export const ListsPage = () => {
   // TODO after, implement the month select
   // const { currentDate, setValue, nextMonth, previousMonth, formattedMonth } = useCalendar();
   const [listSelected, setListSelected] = useState<List>();
+  const { user } = useUserStore();
 
   const [openedDelete, { open: openDeleteModal, close: closeDeleteModal }] = useDisclosure(false);
   const [openedList, { open: openListModal, close: closeListModal }] = useDisclosure();
@@ -85,6 +87,7 @@ export const ListsPage = () => {
           >
             <ListCard
               list={list}
+              isOwner={user?.id === list.user_id}
               onClick={() => {
                 navigate(`/list/${list.id}`);
               }}
