@@ -5,8 +5,7 @@ import { Product, Session, User } from './models/types';
 // ---- list methods
 
 export const api = axios.create({
-  baseURL: 'https://pango-api.vercel.app/',
-  // baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 api.interceptors.request.use((config) => {
